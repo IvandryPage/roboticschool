@@ -37,7 +37,7 @@ Database relasional yang dipakai project ini. Lebih robust dibanding SQLite (def
 
 Pastikan semua sudah terinstall sebelum mulai:
 
-- PHP **8.4** (bukan 8.3 atau 8.2!)
+- PHP sekitar versi 8.4 (coba coba aja sih, kalau 8.2 bisa, yaudah.)
 - Composer
 - Node.js 22+
 - PostgreSQL 16+
