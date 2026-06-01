@@ -47,12 +47,15 @@ new #[Title('Security settings')] class extends Component {
     {
         $this->canManageTwoFactor = Features::canManageTwoFactorAuthentication();
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         if ($this->canManageTwoFactor) {
-            if (Fortify::confirmsTwoFactorAuthentication() && is_null(auth()->user()->two_factor_confirmed_at)) {
-                $disableTwoFactorAuthentication(auth()->user());
+            if (Fortify::confirmsTwoFactorAuthentication() && is_null($user->two_factor_confirmed_at)) {
+                $disableTwoFactorAuthentication($user);
             }
 
-            $this->twoFactorEnabled = auth()->user()->hasEnabledTwoFactorAuthentication();
+            $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication();
             $this->requiresConfirmation = Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm');
         }
 
@@ -79,7 +82,10 @@ new #[Title('Security settings')] class extends Component {
             throw $e;
         }
 
-        Auth::user()->update([
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $user->update([
             'password' => $validated['password'],
         ]);
 
@@ -93,7 +99,10 @@ new #[Title('Security settings')] class extends Component {
      */
     public function loadPasskeys(): void
     {
-        $this->passkeys = auth()->user()->passkeys()
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $this->passkeys = $user->passkeys()
             ->select(['id', 'name', 'credential', 'created_at', 'last_used_at'])
             ->latest()
             ->get()
@@ -112,7 +121,10 @@ new #[Title('Security settings')] class extends Component {
      */
     public function confirmDelete(int $passkeyId): void
     {
-        $passkey = auth()->user()->passkeys()->findOrFail($passkeyId);
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $passkey = $user->passkeys()->findOrFail($passkeyId);
 
         $this->deletingPasskeyId = $passkey->id;
         $this->deletingPasskeyName = $passkey->name;
@@ -128,9 +140,12 @@ new #[Title('Security settings')] class extends Component {
             return;
         }
 
-        $passkey = auth()->user()->passkeys()->findOrFail($this->deletingPasskeyId);
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-        $deletePasskey(auth()->user(), $passkey);
+        $passkey = $user->passkeys()->findOrFail($this->deletingPasskeyId);
+
+        $deletePasskey($user, $passkey);
 
         $this->closeDeleteModal();
         $this->loadPasskeys();
@@ -160,7 +175,10 @@ new #[Title('Security settings')] class extends Component {
      */
     public function disable(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
-        $disableTwoFactorAuthentication(auth()->user());
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $disableTwoFactorAuthentication($user);
 
         $this->twoFactorEnabled = false;
     }
@@ -187,7 +205,6 @@ new #[Title('Security settings')] class extends Component {
                 type="password"
                 required
                 autocomplete="new-password"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                 viewable
             />
             <flux:input
@@ -196,7 +213,6 @@ new #[Title('Security settings')] class extends Component {
                 type="password"
                 required
                 autocomplete="new-password"
-                passwordrules="{{ \Illuminate\Validation\Rules\Password::defaults()->toPasswordRulesString() }}"
                 viewable
             />
 
