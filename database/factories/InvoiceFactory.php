@@ -6,7 +6,7 @@ use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Invoice>
+ * @extends Factory<Invoice>
  */
 class InvoiceFactory extends Factory
 {
@@ -16,7 +16,7 @@ class InvoiceFactory extends Factory
     {
         return [
             'pendaftaran_id' => null,
-            'no_invoice' => 'INV-' . strtoupper(fake()->unique()->bothify('########')),
+            'no_invoice' => 'INV-'.strtoupper(fake()->unique()->bothify('########')),
             'total_tagihan' => fake()->randomFloat(2, 0, 5000000),
             'tanggal_terbit' => now(),
             'tanggal_jatuh_tempo' => now()->addDays(7),

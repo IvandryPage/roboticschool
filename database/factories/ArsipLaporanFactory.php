@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\ArsipLaporan;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ArsipLaporanFactory extends Factory
 {
@@ -14,7 +14,7 @@ class ArsipLaporanFactory extends Factory
         return [
             'id' => (string) \Str::uuid(),
             'judul' => fake()->sentence(),
-            'tipe_laporan' => fake()->randomElement(['laporan_mingguan','laporan_bulanan']),
+            'tipe_laporan' => fake()->randomElement(['laporan_mingguan', 'laporan_bulanan']),
             'file_path' => null,
             'dibuat_oleh' => null,
             'periode' => date('Y-m'),

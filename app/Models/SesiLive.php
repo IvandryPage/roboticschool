@@ -7,20 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Kelas;
-use App\Models\Kehadiran;
-use App\Models\MateriPembelajaran;
-use App\Models\Tugas;
 
 class SesiLive extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'sesi_live';
-    protected $fillable = ['id','kelas_id','nomor_sesi','judul_sesi','tanggal','jam_mulai','jam_selesai','platform','link_akses','keterangan'];
+
+    protected $fillable = ['id', 'kelas_id', 'nomor_sesi', 'judul_sesi', 'tanggal', 'jam_mulai', 'jam_selesai', 'platform', 'link_akses', 'keterangan'];
 
     public function kelas(): BelongsTo
     {

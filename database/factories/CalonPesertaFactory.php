@@ -6,7 +6,7 @@ use App\Models\CalonPeserta;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CalonPeserta>
+ * @extends Factory<CalonPeserta>
  */
 class CalonPesertaFactory extends Factory
 {
@@ -19,7 +19,7 @@ class CalonPesertaFactory extends Factory
             'email' => fake()->safeEmail(),
             'no_hp' => fake()->optional()->phoneNumber(),
             'asal_sekolah_atau_instansi' => fake()->optional()->company(),
-            'jenjang_pendidikan' => fake()->randomElement(['SD','SMP','SMA','SMK','D3','S1','Lainnya']),
+            'jenjang_pendidikan' => fake()->randomElement(['SD', 'SMP', 'SMA', 'SMK', 'D3', 'S1', 'Lainnya']),
         ];
     }
 }

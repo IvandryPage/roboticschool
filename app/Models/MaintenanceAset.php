@@ -6,18 +6,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\ItemKitRobotik;
-use App\Models\User;
 
 class MaintenanceAset extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'maintenance_aset';
-    protected $fillable = ['id','item_kit_id','dilaporkan_oleh','ditangani_oleh','tanggal_lapor','jenis_pemeliharaan','hasil_pemeriksaan','catatan'];
+
+    protected $fillable = ['id', 'item_kit_id', 'dilaporkan_oleh', 'ditangani_oleh', 'tanggal_lapor', 'jenis_pemeliharaan', 'hasil_pemeriksaan', 'catatan'];
 
     public function itemKit(): BelongsTo
     {

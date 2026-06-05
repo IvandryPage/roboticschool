@@ -8,23 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\CalonPeserta;
-use App\Models\ProgramKursus;
-use App\Models\Invoice;
-use App\Models\Siswa;
-use App\Models\RiwayatStatusPendaftaran;
-use App\Models\DokumenPendaftaran;
 
 class Pendaftaran extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'pendaftaran';
 
-    protected $fillable = ['id','calon_peserta_id','program_id','no_referensi','tanggal_daftar','status','catatan_admin'];
+    protected $fillable = ['id', 'calon_peserta_id', 'program_id', 'no_referensi', 'tanggal_daftar', 'status', 'catatan_admin'];
 
     public function calonPeserta(): BelongsTo
     {

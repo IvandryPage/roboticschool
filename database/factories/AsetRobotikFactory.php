@@ -6,7 +6,7 @@ use App\Models\AsetRobotik;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AsetRobotik>
+ * @extends Factory<AsetRobotik>
  */
 class AsetRobotikFactory extends Factory
 {
@@ -16,10 +16,10 @@ class AsetRobotikFactory extends Factory
     {
         return [
             'kode_aset' => strtoupper(fake()->unique()->bothify('ASSET-#####')),
-            'nama_kit' => fake()->word() . ' Kit',
+            'nama_kit' => fake()->word().' Kit',
             'deskripsi' => fake()->optional()->sentence(),
-            'kategori' => fake()->randomElement(['Elektronik','Mekanik','Sensor','Lainnya']),
-            'stok_minimal' => fake()->numberBetween(1,10),
+            'kategori' => fake()->randomElement(['Elektronik', 'Mekanik', 'Sensor', 'Lainnya']),
+            'stok_minimal' => fake()->numberBetween(1, 10),
         ];
     }
 }

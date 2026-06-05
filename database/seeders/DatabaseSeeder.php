@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Role;
-use App\Models\ProgramKursus;
-use App\Models\Batch;
 use App\Models\AsetRobotik;
+use App\Models\Batch;
 use App\Models\ItemKitRobotik;
+use App\Models\ProgramKursus;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

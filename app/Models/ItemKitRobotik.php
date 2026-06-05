@@ -11,9 +11,10 @@ class ItemKitRobotik extends Model
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'item_kit_robotik';
 
-    protected $fillable = ['id','aset_id','serial_number','status_kondisi','lokasi_rak'];
+    protected $fillable = ['id', 'aset_id', 'serial_number', 'status_kondisi', 'lokasi_rak'];
 }

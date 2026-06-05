@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\TiketKeluhan;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TiketKeluhanFactory extends Factory
 {
@@ -15,8 +15,8 @@ class TiketKeluhanFactory extends Factory
             'id' => (string) \Str::uuid(),
             'pelapor_id' => null,
             'ditangani_oleh' => null,
-            'kategori' => fake()->randomElement(['Akademik','Teknis','Administratif']),
-            'prioritas' => fake()->randomElement(['Rendah','Sedang','Tinggi','Kritis']),
+            'kategori' => fake()->randomElement(['Akademik', 'Teknis', 'Administratif']),
+            'prioritas' => fake()->randomElement(['Rendah', 'Sedang', 'Tinggi', 'Kritis']),
             'subjek' => fake()->sentence(3),
             'deskripsi' => fake()->paragraph(),
             'status' => 'Open',

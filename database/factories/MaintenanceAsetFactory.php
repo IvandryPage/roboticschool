@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\MaintenanceAset;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MaintenanceAsetFactory extends Factory
 {
@@ -17,7 +17,7 @@ class MaintenanceAsetFactory extends Factory
             'dilaporkan_oleh' => null,
             'ditangani_oleh' => null,
             'tanggal_lapor' => now(),
-            'jenis_pemeliharaan' => fake()->randomElement(['inspeksi','perbaikan','kalibrasi']),
+            'jenis_pemeliharaan' => fake()->randomElement(['inspeksi', 'perbaikan', 'kalibrasi']),
             'hasil_pemeriksaan' => null,
             'catatan' => null,
         ];

@@ -7,18 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Kelas;
-use App\Models\User;
 
 class ForumTopik extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'forum_topik';
-    protected $fillable = ['id','kelas_id','pembuat_id','judul','konten'];
+
+    protected $fillable = ['id', 'kelas_id', 'pembuat_id', 'judul', 'konten'];
 
     public function pembuat(): BelongsTo
     {

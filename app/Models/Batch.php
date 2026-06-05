@@ -7,20 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\ProgramKursus;
-use App\Models\Kelas;
 
 class Batch extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'batch';
 
     protected $fillable = [
-        'id', 'program_id', 'nama_batch', 'tanggal_mulai', 'tanggal_selesai', 'kuota_max', 'status_aktif'
+        'id', 'program_id', 'nama_batch', 'tanggal_mulai', 'tanggal_selesai', 'kuota_max', 'status_aktif',
     ];
 
     public function program(): BelongsTo

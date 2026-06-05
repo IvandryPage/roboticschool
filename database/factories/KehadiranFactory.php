@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Kehadiran;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class KehadiranFactory extends Factory
 {
@@ -15,7 +15,7 @@ class KehadiranFactory extends Factory
             'id' => (string) \Str::uuid(),
             'sesi_id' => null,
             'siswa_id' => null,
-            'status_hadir' => fake()->randomElement(['hadir','izin','alpha']),
+            'status_hadir' => fake()->randomElement(['hadir', 'izin', 'alpha']),
             'catatan' => null,
             'dicatat_oleh' => null,
             'waktu_pencatatan' => now(),

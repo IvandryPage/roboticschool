@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Actions\ConfirmTwoFactorAuthentication;
 use Laravel\Fortify\Actions\EnableTwoFactorAuthentication;
 use Livewire\Attributes\Computed;
@@ -37,7 +38,7 @@ new class extends Component {
     public function startTwoFactorSetup(): void
     {
         $enableTwoFactorAuthentication = app(EnableTwoFactorAuthentication::class);
-        $enableTwoFactorAuthentication(auth()->user());
+        $enableTwoFactorAuthentication(Auth::user());
 
         $this->loadSetupData();
     }
@@ -47,8 +48,12 @@ new class extends Component {
      */
     private function loadSetupData(): void
     {
-        $user = auth()->user()?->fresh();
+        $user = Auth::user();
+        if ($user instanceof \App\Models\User) {
+            $user = $user->fresh();
+        }
 
+        /** @var \App\Models\User|null $user */
         try {
             if (! $user || ! $user->two_factor_secret) {
                 throw new Exception('Two-factor setup secret is not available.');
@@ -87,7 +92,7 @@ new class extends Component {
     {
         $this->validate();
 
-        $confirmTwoFactorAuthentication(auth()->user(), $this->code);
+        $confirmTwoFactorAuthentication(Auth::user(), $this->code);
 
         $this->setupComplete = true;
 
