@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\AuditLog;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AuditLogFactory extends Factory
 {
@@ -14,7 +14,7 @@ class AuditLogFactory extends Factory
         return [
             'id' => (string) \Str::uuid(),
             'user_id' => null,
-            'aksi' => fake()->randomElement(['Login','Create','Update','Delete','Verify']),
+            'aksi' => fake()->randomElement(['Login', 'Create', 'Update', 'Delete', 'Verify']),
             'model' => null,
             'model_id' => null,
             'perubahan' => null,

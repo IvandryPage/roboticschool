@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Kelas;
 
 class ProgressAkademik extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'progress_akademik';
-    protected $fillable = ['id','siswa_id','program_id','kelas_id','status','nilai_rata_rata','catatan'];
+
+    protected $fillable = ['id', 'siswa_id', 'program_id', 'kelas_id', 'status', 'nilai_rata_rata', 'catatan'];
 
     public function siswa(): BelongsTo
     {

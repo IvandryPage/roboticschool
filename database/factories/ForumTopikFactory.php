@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\ForumTopik;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ForumTopikFactory extends Factory
 {

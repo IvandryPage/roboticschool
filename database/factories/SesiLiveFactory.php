@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\SesiLive;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SesiLiveFactory extends Factory
 {

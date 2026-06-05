@@ -6,7 +6,7 @@ use App\Models\ItemKitRobotik;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ItemKitRobotik>
+ * @extends Factory<ItemKitRobotik>
  */
 class ItemKitRobotikFactory extends Factory
 {
@@ -17,7 +17,7 @@ class ItemKitRobotikFactory extends Factory
         return [
             'aset_id' => null,
             'serial_number' => strtoupper(fake()->unique()->bothify('SN-########')),
-            'status_kondisi' => fake()->randomElement(['Bagus','Rusak','Perbaikan']),
+            'status_kondisi' => fake()->randomElement(['Bagus', 'Rusak', 'Perbaikan']),
             'lokasi_rak' => fake()->optional()->bothify('RACK-#'),
         ];
     }

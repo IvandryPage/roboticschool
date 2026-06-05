@@ -6,7 +6,7 @@ use App\Models\Siswa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Siswa>
+ * @extends Factory<Siswa>
  */
 class SiswaFactory extends Factory
 {
@@ -18,7 +18,7 @@ class SiswaFactory extends Factory
             'user_id' => null,
             'pendaftaran_id' => null,
             'tanggal_lahir' => fake()->optional()->date(),
-            'jenis_kelamin' => fake()->optional()->randomElement(['L','P']),
+            'jenis_kelamin' => fake()->optional()->randomElement(['L', 'P']),
             'alamat' => fake()->optional()->address(),
         ];
     }

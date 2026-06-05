@@ -12,10 +12,12 @@ class Notifikasi extends Model
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'notifikasi';
-    protected $fillable = ['id','user_id','judul','pesan','jenis','read_at','created_at'];
+
+    protected $fillable = ['id', 'user_id', 'judul', 'pesan', 'jenis', 'read_at', 'created_at'];
 
     public function user(): BelongsTo
     {

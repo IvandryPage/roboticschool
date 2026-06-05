@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\EvaluasiInstruktur;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EvaluasiInstrukturFactory extends Factory
 {

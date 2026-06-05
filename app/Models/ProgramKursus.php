@@ -6,21 +6,19 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\MateriProgram;
-use App\Models\Batch;
-use App\Models\Pendaftaran;
 
 class ProgramKursus extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'program_kursus';
 
     protected $fillable = [
-        'id', 'nama_program', 'deskripsi', 'level', 'biaya', 'durasi_minggu', 'gambar', 'status_tampil'
+        'id', 'nama_program', 'deskripsi', 'level', 'biaya', 'durasi_minggu', 'gambar', 'status_tampil',
     ];
 
     public function materiProgram(): HasMany

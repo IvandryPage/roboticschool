@@ -29,11 +29,16 @@ new #[Title('Profile settings')] class extends Component {
      */
     public function updateProfileInformation(): void
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $validated = $this->validate($this->profileRules($user->id));
 
-        $user->fill($validated);
+        $user->fill([
+            'name' => $validated['name'],
+            'nama_lengkap' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -49,6 +54,7 @@ new #[Title('Profile settings')] class extends Component {
      */
     public function resendVerificationNotification(): void
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
@@ -65,14 +71,20 @@ new #[Title('Profile settings')] class extends Component {
     #[Computed]
     public function hasUnverifiedEmail(): bool
     {
-        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+
+        return $user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail();
     }
 
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
-            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+
+        return ! $user instanceof MustVerifyEmail
+            || ($user instanceof MustVerifyEmail && $user->hasVerifiedEmail());
     }
 }; ?>
 

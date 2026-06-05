@@ -6,7 +6,7 @@ use App\Models\Pembayaran;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Pembayaran>
+ * @extends Factory<Pembayaran>
  */
 class PembayaranFactory extends Factory
 {

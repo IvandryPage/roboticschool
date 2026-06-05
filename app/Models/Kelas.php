@@ -7,25 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Batch;
-use App\Models\User;
-use App\Models\EnrollmentKelas;
-use App\Models\SesiLive;
-use App\Models\ProgressAkademik;
-use App\Models\ForumTopik;
-use App\Models\Sertifikat;
-use App\Models\EvaluasiInstruktur;
 
 class Kelas extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'kelas';
 
-    protected $fillable = ['id','batch_id','nama_kelas','instruktur_id','kapasitas','status'];
+    protected $fillable = ['id', 'batch_id', 'nama_kelas', 'instruktur_id', 'kapasitas', 'status'];
 
     public function batch(): BelongsTo
     {

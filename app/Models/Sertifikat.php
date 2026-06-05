@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Kelas;
 
 class Sertifikat extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'sertifikat';
-    protected $fillable = ['id','siswa_id','kelas_id','nomor_sertifikat','file_path','qr_code','verified_url','tanggal_terbit'];
+
+    protected $fillable = ['id', 'siswa_id', 'kelas_id', 'nomor_sertifikat', 'file_path', 'qr_code', 'verified_url', 'tanggal_terbit'];
 
     public function siswa(): BelongsTo
     {

@@ -7,25 +7,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\User;
-use App\Models\Pendaftaran;
-use App\Models\EnrollmentKelas;
-use App\Models\Kehadiran;
-use App\Models\PengumpulanTugas;
-use App\Models\ProgressAkademik;
-use App\Models\Sertifikat;
-use App\Models\EvaluasiInstruktur;
 
 class Siswa extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'siswa';
 
-    protected $fillable = ['id','user_id','pendaftaran_id','tanggal_lahir','jenis_kelamin','alamat'];
+    protected $fillable = ['id', 'user_id', 'pendaftaran_id', 'tanggal_lahir', 'jenis_kelamin', 'alamat'];
 
     public function user(): BelongsTo
     {

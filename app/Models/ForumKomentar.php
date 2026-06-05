@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\User;
 
 class ForumKomentar extends Model
 {
     use HasFactory, HasUuids;
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $table = 'forum_komentar';
-    protected $fillable = ['id','topik_id','user_id','komentar'];
+
+    protected $fillable = ['id', 'topik_id', 'user_id', 'komentar'];
 
     public function topik(): BelongsTo
     {

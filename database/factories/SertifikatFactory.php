@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Sertifikat;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SertifikatFactory extends Factory
 {

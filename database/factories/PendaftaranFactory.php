@@ -6,7 +6,7 @@ use App\Models\Pendaftaran;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Pendaftaran>
+ * @extends Factory<Pendaftaran>
  */
 class PendaftaranFactory extends Factory
 {
@@ -17,7 +17,7 @@ class PendaftaranFactory extends Factory
         return [
             'calon_peserta_id' => null,
             'program_id' => null,
-            'no_referensi' => 'REF-' . strtoupper(fake()->unique()->bothify('??????')),
+            'no_referensi' => 'REF-'.strtoupper(fake()->unique()->bothify('??????')),
             'tanggal_daftar' => now(),
             'status' => 'Menunggu Verifikasi',
             'catatan_admin' => null,

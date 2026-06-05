@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Tugas;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TugasFactory extends Factory
 {
