@@ -7,7 +7,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
@@ -16,10 +16,16 @@ class ArsipLaporan extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-    protected static ?string $navigationLabel = 'Arsip Laporan';
-    protected static ?string $title = 'Arsip Laporan';
-    protected static string $view = 'filament.pages.arsip-laporan';
+  protected static ?string $title = 'Arsip Laporan';
+
+public static function getNavigationLabel(): string
+{
+    return 'Arsip Laporan';
+}
+    public function getView(): string
+{
+    return 'filament.pages.arsip-laporan';
+}
 
     public ?array $data = [];
 
@@ -28,10 +34,10 @@ class ArsipLaporan extends Page implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
+   public function form(Schema $schema): Schema
+{
+    return $schema
+        ->components([
                 TextInput::make('judul')
                     ->label('Judul Laporan')
                     ->required(),

@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardInstruktur extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
-    protected static ?string $navigationLabel = 'Dashboard Instruktur';
-    protected static ?string $title = 'Dashboard Instruktur';
-    protected static string $view = 'filament.pages.dashboard-instruktur';
+    public function getView(): string
+{
+    return 'filament.pages.dashboard-instruktur';
+}
+
+public static function getNavigationLabel(): string
+{
+    return 'Dashboard Instruktur';
+}
 
     public function getKelasSaya()
     {

@@ -1,6 +1,5 @@
 <?php
 namespace App\Filament\Pages;
-
 use App\Models\EnrollmentKelas;
 use App\Models\ProgramKursus;
 use App\Models\Sertifikat;
@@ -8,15 +7,19 @@ use App\Models\Siswa;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
-
 class DashboardDirektur extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
-    protected static ?string $navigationLabel = 'Dashboard Direktur';
-    protected static ?string $title = 'Dashboard Direktur';
-    protected static string $view = 'filament.pages.dashboard-direktur';
+    public static function getNavigationLabel(): string
+    {
+        return 'Dashboard Direktur';
+    }
+
+    public function getView(): string
+    {
+        return 'filament.pages.dashboard-direktur';
+    }
 
     public ?string $filterProgram = null;
     public ?string $filterPeriode = null;
