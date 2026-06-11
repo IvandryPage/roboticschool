@@ -1,62 +1,47 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Kelas extends Model
 {
-    use HasFactory, HasUuids;
-
+    protected $table = 'kelas';
     public $incrementing = false;
-
     protected $keyType = 'string';
 
-    protected $table = 'kelas';
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+        });
+    }
 
-    protected $fillable = ['id', 'batch_id', 'nama_kelas', 'instruktur_id', 'kapasitas', 'status'];
+    protected $fillable = [
+        'id', 'batch_id', 'nama_kelas',
+        'instruktur_id', 'kapasitas', 'status',
+    ];
 
-    public function batch(): BelongsTo
+    public function batch()
     {
         return $this->belongsTo(Batch::class, 'batch_id');
     }
 
-    public function instruktur(): BelongsTo
+    public function instruktur()
     {
         return $this->belongsTo(User::class, 'instruktur_id');
     }
 
-    public function enrollmentKelas(): HasMany
+    public function enrollments()
     {
-        return $this->hasMany(EnrollmentKelas::class);
+        return $this->hasMany(EnrollmentKelas::class, 'kelas_id');
     }
 
-    public function sesiLive(): HasMany
+    public function sertifikat()
     {
-        return $this->hasMany(SesiLive::class);
-    }
-
-    public function progressAkademik(): HasMany
-    {
-        return $this->hasMany(ProgressAkademik::class);
-    }
-
-    public function forumTopik(): HasMany
-    {
-        return $this->hasMany(ForumTopik::class);
-    }
-
-    public function sertifikat(): HasMany
-    {
-        return $this->hasMany(Sertifikat::class);
-    }
-
-    public function evaluasiInstruktur(): HasMany
-    {
-        return $this->hasMany(EvaluasiInstruktur::class);
+        return $this->hasMany(Sertifikat::class, 'kelas_id');
     }
 }

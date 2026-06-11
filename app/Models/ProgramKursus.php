@@ -1,38 +1,33 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class ProgramKursus extends Model
 {
-    use HasFactory, HasUuids;
-
+    protected $table = 'program_kursus';
     public $incrementing = false;
-
     protected $keyType = 'string';
 
-    protected $table = 'program_kursus';
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+        });
+    }
 
     protected $fillable = [
-        'id', 'nama_program', 'deskripsi', 'level', 'biaya', 'durasi_minggu', 'gambar', 'status_tampil',
+        'id', 'nama_program', 'deskripsi',
+        'level', 'biaya', 'durasi_minggu',
+        'gambar', 'status_tampil',
     ];
 
-    public function materiProgram(): HasMany
-    {
-        return $this->hasMany(MateriProgram::class, 'program_id');
-    }
-
-    public function batches(): HasMany
+    public function batch()
     {
         return $this->hasMany(Batch::class, 'program_id');
-    }
-
-    public function pendaftaran(): HasMany
-    {
-        return $this->hasMany(Pendaftaran::class, 'program_id');
     }
 }

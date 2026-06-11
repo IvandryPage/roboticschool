@@ -1,62 +1,52 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Siswa extends Model
 {
-    use HasFactory, HasUuids;
-
+    protected $table = 'siswa';
     public $incrementing = false;
-
     protected $keyType = 'string';
 
-    protected $table = 'siswa';
-
-    protected $fillable = ['id', 'user_id', 'pendaftaran_id', 'tanggal_lahir', 'jenis_kelamin', 'alamat'];
-
-    public function user(): BelongsTo
+    protected static function boot()
     {
-        return $this->belongsTo(User::class);
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+        });
     }
 
-    public function pendaftaran(): BelongsTo
+    protected $fillable = [
+        'id', 'user_id', 'pendaftaran_id',
+        'tanggal_lahir', 'jenis_kelamin', 'alamat',
+    ];
+
+    public function user()
     {
-        return $this->belongsTo(Pendaftaran::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function enrollmentKelas(): HasMany
+    public function enrollments()
     {
-        return $this->hasMany(EnrollmentKelas::class);
+        return $this->hasMany(EnrollmentKelas::class, 'siswa_id');
     }
 
-    public function kehadiran(): HasMany
+    public function kehadiran()
     {
-        return $this->hasMany(Kehadiran::class);
+        return $this->hasMany(Kehadiran::class, 'siswa_id');
     }
 
-    public function pengumpulanTugas(): HasMany
+    public function pengumpulanTugas()
     {
-        return $this->hasMany(PengumpulanTugas::class);
+        return $this->hasMany(PengumpulanTugas::class, 'siswa_id');
     }
 
-    public function progressAkademik(): HasMany
+    public function sertifikat()
     {
-        return $this->hasMany(ProgressAkademik::class);
-    }
-
-    public function sertifikat(): HasMany
-    {
-        return $this->hasMany(Sertifikat::class);
-    }
-
-    public function evaluasiInstruktur(): HasMany
-    {
-        return $this->hasMany(EvaluasiInstruktur::class);
+        return $this->hasMany(Sertifikat::class, 'siswa_id');
     }
 }

@@ -1,36 +1,32 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Kehadiran extends Model
 {
-    use HasFactory, HasUuids;
-
+    protected $table = 'kehadiran';
     public $incrementing = false;
-
     protected $keyType = 'string';
 
-    protected $table = 'kehadiran';
-
-    protected $fillable = ['id', 'sesi_id', 'siswa_id', 'status_hadir', 'catatan', 'dicatat_oleh', 'waktu_pencatatan'];
-
-    public function sesi(): BelongsTo
+    protected static function boot()
     {
-        return $this->belongsTo(SesiLive::class, 'sesi_id');
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+        });
     }
 
-    public function siswa(): BelongsTo
-    {
-        return $this->belongsTo(Siswa::class);
-    }
+    protected $fillable = [
+        'id', 'sesi_id', 'siswa_id',
+        'status_hadir', 'catatan', 'dicatat_oleh', 'waktu_pencatatan',
+    ];
 
-    public function dicatatOleh(): BelongsTo
+    public function siswa()
     {
-        return $this->belongsTo(User::class, 'dicatat_oleh');
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 }

@@ -1,31 +1,33 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class PengumpulanTugas extends Model
 {
-    use HasFactory, HasUuids;
-
+    protected $table = 'pengumpulan_tugas';
     public $incrementing = false;
-
     protected $keyType = 'string';
 
-    protected $table = 'pengumpulan_tugas';
-
-    protected $fillable = ['id', 'tugas_id', 'siswa_id', 'file_kumpul', 'komentar', 'nilai', 'tanggal_kumpul'];
-
-    public function tugas(): BelongsTo
+    protected static function boot()
     {
-        return $this->belongsTo(Tugas::class);
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+        });
     }
 
-    public function siswa(): BelongsTo
+    protected $fillable = [
+        'id', 'tugas_id', 'siswa_id',
+        'file_jawaban', 'catatan_siswa', 'waktu_kumpul',
+        'nilai', 'umpan_balik', 'status_penilaian',
+    ];
+
+    public function siswa()
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 }
