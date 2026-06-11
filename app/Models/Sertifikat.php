@@ -1,31 +1,43 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Sertifikat extends Model
 {
-    use HasFactory, HasUuids;
-
+    protected $table = 'sertifikat';
     public $incrementing = false;
-
     protected $keyType = 'string';
 
-    protected $table = 'sertifikat';
-
-    protected $fillable = ['id', 'siswa_id', 'kelas_id', 'nomor_sertifikat', 'file_path', 'qr_code', 'verified_url', 'tanggal_terbit'];
-
-    public function siswa(): BelongsTo
+    protected static function boot()
     {
-        return $this->belongsTo(Siswa::class);
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->id)) {
+                $model->id = (string) Str::uuid();
+            }
+        });
     }
 
-    public function kelas(): BelongsTo
+    protected $fillable = [
+        'id', 'siswa_id', 'kelas_id',
+        'nomor_sertifikat', 'file_path', 'qr_code',
+        'verified_url', 'tanggal_terbit', 'diterbitkan_oleh',
+    ];
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'siswa_id');
+    }
+
+    public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    public function penerbit()
+    {
+        return $this->belongsTo(User::class, 'diterbitkan_oleh');
     }
 }
