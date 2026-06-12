@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Filament\Resources\Submissions;
+
+use App\Filament\Resources\Submissions\Pages\CreateSubmission;
+use App\Filament\Resources\Submissions\Pages\EditSubmission;
+use App\Filament\Resources\Submissions\Pages\ListSubmissions;
+use App\Filament\Resources\Submissions\Pages\ViewSubmission;
+use App\Filament\Resources\Submissions\Schemas\SubmissionForm;
+use App\Filament\Resources\Submissions\Schemas\SubmissionInfolist;
+use App\Filament\Resources\Submissions\Tables\SubmissionsTable;
+use App\Models\Submission;
+use BackedEnum;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class SubmissionResource extends Resource
+{
+    protected static ?string $model = Submission::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->schema([
+    Forms\Components\Select::make('assignment_id')->relationship('assignment', 'title')->required(),
+    Forms\Components\Select::make('student_id')->relationship('student', 'name')->required(),
+    Forms\Components\FileUpload::make('file_path')->required()->directory('submissions'),
+    Forms\Components\DateTimePicker::make('submitted_at')->default(now()),
+    Forms\Components\TextInput::make('score')->numeric(),
+    Forms\Components\Textarea::make('feedback'),
+]);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return SubmissionInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return SubmissionsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListSubmissions::route('/'),
+            'create' => CreateSubmission::route('/create'),
+            'view' => ViewSubmission::route('/{record}'),
+            'edit' => EditSubmission::route('/{record}/edit'),
+        ];
+    }
+}

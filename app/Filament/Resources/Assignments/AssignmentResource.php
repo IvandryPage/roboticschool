@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Filament\Resources\Assignments;
+
+use App\Filament\Resources\Assignments\Pages\CreateAssignment;
+use App\Filament\Resources\Assignments\Pages\EditAssignment;
+use App\Filament\Resources\Assignments\Pages\ListAssignments;
+use App\Filament\Resources\Assignments\Pages\ViewAssignment;
+use App\Filament\Resources\Assignments\Schemas\AssignmentForm;
+use App\Filament\Resources\Assignments\Schemas\AssignmentInfolist;
+use App\Filament\Resources\Assignments\Tables\AssignmentsTable;
+use App\Models\Assignment;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Forms;
+use Filament\Tables\Table;
+
+class AssignmentResource extends Resource
+{
+    protected static ?string $model = Assignment::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->schema([
+    Forms\Components\TextInput::make('title')->required(),
+    Forms\Components\Textarea::make('description')->required(),
+    Forms\Components\DateTimePicker::make('due_date')->required(),
+    Forms\Components\TextInput::make('max_score')->numeric()->default(100),
+]);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return AssignmentInfolist::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return AssignmentsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListAssignments::route('/'),
+            'create' => CreateAssignment::route('/create'),
+            'view' => ViewAssignment::route('/{record}'),
+            'edit' => EditAssignment::route('/{record}/edit'),
+        ];
+    }
+}
