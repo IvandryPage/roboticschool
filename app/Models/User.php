@@ -4,7 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -15,7 +19,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use HasFactory, HasUuids, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -23,9 +27,14 @@ class User extends Authenticatable implements PasskeyUser
      * @var array<int, string>
      */
     protected $fillable = [
+        'nama_lengkap',
         'name',
         'email',
+        'no_hp',
         'password',
+        'foto_profil',
+        'role_id',
+        'status_aktif',
     ];
 
     /**
@@ -45,23 +54,98 @@ class User extends Authenticatable implements PasskeyUser
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'status_aktif' => 'boolean',
+    ];
 
     /**
      * Get the user's initials
      */
     public function initials(): string
     {
-        return Str::of($this->name)
+        $source = $this->nama_lengkap ?? $this->name ?? '';
+
+        return Str::of($source)
             ->explode(' ')
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function siswa(): HasOne
+    {
+        return $this->hasOne(Siswa::class);
+    }
+
+    public function statusHistory(): HasMany
+    {
+        return $this->hasMany(RiwayatStatusPendaftaran::class, 'diubah_oleh');
+    }
+
+    public function forumTopik(): HasMany
+    {
+        return $this->hasMany(ForumTopik::class, 'pembuat_id');
+    }
+
+    public function forumKomentar(): HasMany
+    {
+        return $this->hasMany(ForumKomentar::class, 'user_id');
+    }
+
+    public function kelasInstruktur(): HasMany
+    {
+        return $this->hasMany(Kelas::class, 'instruktur_id');
+    }
+
+    public function peminjamanItemAset(): HasMany
+    {
+        return $this->hasMany(PeminjamanItemAset::class);
+    }
+
+    public function maintenanceDilaporkan(): HasMany
+    {
+        return $this->hasMany(MaintenanceAset::class, 'dilaporkan_oleh');
+    }
+
+    public function maintenanceDitangani(): HasMany
+    {
+        return $this->hasMany(MaintenanceAset::class, 'ditangani_oleh');
+    }
+
+    public function arsipLaporan(): HasMany
+    {
+        return $this->hasMany(ArsipLaporan::class, 'dibuat_oleh');
+    }
+
+    public function notifikasi(): HasMany
+    {
+        return $this->hasMany(Notifikasi::class);
+    }
+
+    public function tiketDilaporkan(): HasMany
+    {
+        return $this->hasMany(TiketKeluhan::class, 'pelapor_id');
+    }
+
+    public function tiketDitangani(): HasMany
+    {
+        return $this->hasMany(TiketKeluhan::class, 'ditangani_oleh');
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
+    public function evaluasiInstruktur(): HasMany
+    {
+        return $this->hasMany(EvaluasiInstruktur::class, 'instruktur_id');
     }
 }
