@@ -13,8 +13,8 @@ return new class extends Migration
 {
     Schema::create('submissions', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('assignment_id')->constrained()->cascadeOnDelete();
-        $table->foreignId('student_id')->constrained('users')->cascadeOnDelete();
+        $table->foreignId('assignment_id')->constrained('assignments')->cascadeOnDelete();
+        $table->foreignUuid('student_id')->constrained('users')->cascadeOnDelete();
         $table->string('file_path');
         $table->dateTime('submitted_at');
         $table->integer('score')->nullable();

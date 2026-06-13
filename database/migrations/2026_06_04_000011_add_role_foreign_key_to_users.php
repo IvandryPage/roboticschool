@@ -7,11 +7,15 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreign('role_id')->references('id')->on('roles')->nullOnDelete();
-        });
-    }
+{
+    Schema::table('users', function (Blueprint $table) {
+        // Baris ini hapus/komentar karena kolomnya sudah ada
+        // $table->uuid('role_id')->nullable(); 
+        
+        //  langsung pasang gembok relasinya saja
+        $table->foreign('role_id')->references('id')->on('roles')->onDelete('set null');
+    });
+}
 
     public function down(): void
     {
