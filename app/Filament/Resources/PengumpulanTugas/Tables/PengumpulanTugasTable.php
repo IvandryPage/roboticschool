@@ -16,15 +16,17 @@ class PengumpulanTugasTable
         return $table
             ->columns([
                 TextColumn::make('id')
+                    ->label('ID Tugas')
                     ->label('ID'),
                 TextColumn::make('tugas.id')
+                    ->label('ID Siswa')
                     ->searchable(),
                 TextColumn::make('siswa.id')
                     ->searchable(),
                 TextColumn::make('file_jawaban')
                     ->searchable(),
                 TextColumn::make('waktu_kumpul')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
                     ->sortable(),
                 TextColumn::make('nilai')
                     ->numeric()

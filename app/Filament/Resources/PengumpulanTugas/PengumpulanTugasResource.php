@@ -20,6 +20,10 @@ class PengumpulanTugasResource extends Resource
 {
     protected static ?string $model = PengumpulanTugas::class;
 
+    protected static ?string $modelLabel = 'Pengumpulan Tugas';
+
+    protected static ?string $pluralModelLabel = 'Pengumpulan Tugas';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'yes';
