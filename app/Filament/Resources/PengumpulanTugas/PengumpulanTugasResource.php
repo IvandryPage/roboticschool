@@ -1,62 +1,69 @@
 <?php
 
-namespace App\Filament\Resources\PengumpulanTugas;
+namespace App\Filament\Resources;
 
-use App\Filament\Resources\PengumpulanTugas\Pages\CreatePengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Pages\EditPengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Pages\ListPengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Pages\ViewPengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Schemas\PengumpulanTugasForm;
-use App\Filament\Resources\PengumpulanTugas\Schemas\PengumpulanTugasInfolist;
-use App\Filament\Resources\PengumpulanTugas\Tables\PengumpulanTugasTable;
+use App\Filament\Resources\PengumpulanTugasResource\Pages;
 use App\Models\PengumpulanTugas;
-use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
+use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
+use Illuminate\Database\Eloquent\Builder;
 
 class PengumpulanTugasResource extends Resource
 {
     protected static ?string $model = PengumpulanTugas::class;
 
-    protected static ?string $modelLabel = 'Pengumpulan Tugas';
-
-    protected static ?string $pluralModelLabel = 'Pengumpulan Tugas';
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?string $recordTitleAttribute = 'yes';
-
-    public static function form(Schema $schema): Schema
-    {
-        return PengumpulanTugasForm::configure($schema);
-    }
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return PengumpulanTugasInfolist::configure($schema);
-    }
+    // ... (kode lainnya)
 
     public static function table(Table $table): Table
     {
-        return PengumpulanTugasTable::configure($table);
+        return $table
+            ->columns([
+                TextColumn::make('tugas.nama_tugas')
+                    ->label('Nama Tugas')
+                    ->searchable()
+                    ->sortable(),
+
+                BadgeColumn::make('status_penilaian')
+                    ->label('Status')
+                    ->colors([
+                        'warning' => 'Belum Dinilai',
+                        'success' => 'Dinilai',
+                    ]),
+
+                TextColumn::make('nilai')
+                    ->label('Nilai')
+                    ->suffix('/100')
+                    ->sortable()
+                    ->color(fn ($state): string => $state >= 75 ? 'success' : 'danger'),
+
+                TextColumn::make('umpan_balik')
+                    ->label('Umpan Balik')
+                    ->limit(40)
+                    ->tooltip(fn ($record): ?string => $record->umpan_balik),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
     }
 
-    public static function getRelations(): array
+    public static function getEloquentQuery(): Builder
     {
-        return [
-            //
-        ];
-    }
+        // PBI-107: Keamanan Data
+        // Memastikan siswa hanya melihat pengumpulan tugas milik mereka sendiri
+        // Jika user adalah admin, biarkan mereka melihat semuanya.
+        if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('instruktur')) {
+            return parent::getEloquentQuery();
+        }
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListPengumpulanTugas::route('/'),
-            'create' => CreatePengumpulanTugas::route('/create'),
-            'view' => ViewPengumpulanTugas::route('/{record}'),
-            'edit' => EditPengumpulanTugas::route('/{record}/edit'),
-        ];
+        return parent::getEloquentQuery()->where('siswa_id', auth()->id());
     }
 }
