@@ -6,7 +6,6 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Section;
 use Illuminate\Support\Carbon;
 use Closure;
 
@@ -16,21 +15,17 @@ class PengumpulanTugasForm
     {
         return $form
             ->schema([
-                // 1. Informasi Dasar
-                Section::make('Informasi Pengumpulan')
-                    ->schema([
-                        Select::make('tugas_id')
-                            ->label('Pilih Tugas')
-                            ->relationship('tugas', 'id')
-                            ->required(),
+                // Tanpa Section, kita langsung masukkan komponennya
+                Select::make('tugas_id')
+                    ->label('Pilih Tugas')
+                    ->relationship('tugas', 'id')
+                    ->required(),
 
-                        Select::make('siswa_id')
-                            ->label('Nama Siswa')
-                            ->relationship('siswa', 'id')
-                            ->required(),
-                    ])->columns(2),
+                Select::make('siswa_id')
+                    ->label('Nama Siswa')
+                    ->relationship('siswa', 'id')
+                    ->required(),
 
-                // 2. KODE PBI-104 (VALIDASI FILE & WAKTU)
                 FileUpload::make('file_jawaban')
                     ->label('Unggah File Jawaban')
                     ->required()
@@ -49,30 +44,24 @@ class PengumpulanTugasForm
                         },
                     ]),
 
-                // 3. PB-105: PENILAIAN INSTRUKTUR
-                Section::make('Penilaian Instruktur')
-                    ->description('Instruktur dapat memberikan nilai dan umpan balik di sini.')
-                    ->schema([
-                        TextInput::make('nilai')
-                            ->label('Nilai Akhir')
-                            ->numeric()
-                            ->minValue(0)
-                            ->maxValue(100)
-                            ->suffix('/100'),
+                TextInput::make('nilai')
+                    ->label('Nilai Akhir')
+                    ->numeric()
+                    ->minValue(0)
+                    ->maxValue(100),
 
-                        Textarea::make('umpan_balik')
-                            ->label('Umpan Balik')
-                            ->rows(3),
+                Textarea::make('umpan_balik')
+                    ->label('Umpan Balik')
+                    ->rows(3),
 
-                        Select::make('status_penilaian')
-                            ->label('Status Penilaian')
-                            ->options([
-                                'Belum Dinilai' => 'Belum Dinilai',
-                                'Dinilai' => 'Dinilai',
-                            ])
-                            ->default('Belum Dinilai')
-                            ->required(),
-                    ]),
+                Select::make('status_penilaian')
+                    ->label('Status Penilaian')
+                    ->options([
+                        'Belum Dinilai' => 'Belum Dinilai',
+                        'Dinilai' => 'Dinilai',
+                    ])
+                    ->default('Belum Dinilai')
+                    ->required(),
             ]);
     }
 }
