@@ -17,15 +17,25 @@ class PengumpulanTugas extends Model
 
     protected $table = 'pengumpulan_tugas';
 
-    protected $fillable = ['id', 'tugas_id', 'siswa_id', 'file_kumpul', 'komentar', 'nilai', 'tanggal_kumpul'];
+    // Kolom disesuaikan dengan file migration PBI-094
+    protected $fillable = [
+        'tugas_id', 
+        'siswa_id', 
+        'file_jawaban', 
+        'catatan_siswa', 
+        'waktu_kumpul', 
+        'nilai', 
+        'umpan_balik', 
+        'status_penilaian'
+    ];
 
     public function tugas(): BelongsTo
     {
-        return $this->belongsTo(Tugas::class);
+        return $this->belongsTo(Tugas::class, 'tugas_id');
     }
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 }

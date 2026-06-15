@@ -18,4 +18,13 @@ class MateriPembelajaran extends Model
         'urutan',
         'keterangan',
     ];
+
+    /**
+     * Relasi ke tabel Sesi
+     * (Sesuaikan 'Sesi::class' dengan nama model sesimu yang sebenarnya, misalnya 'SesiLive::class' atau 'Jadwal::class')
+     */
+    public function sesi()
+    {
+        return $this->belongsTo(Sesi::class, 'sesi_id');
+    }
 }

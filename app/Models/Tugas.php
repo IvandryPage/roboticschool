@@ -27,6 +27,6 @@ class Tugas extends Model
 
     public function pengumpulanTugas(): HasMany
     {
-        return $this->hasMany(PengumpulanTugas::class);
+        return $this->hasMany(PengumpulanTugas::class, 'tugas_id');
     }
 }
