@@ -20,6 +20,14 @@ class Siswa extends Model
 
     protected $fillable = ['id', 'user_id', 'pendaftaran_id', 'tanggal_lahir', 'jenis_kelamin', 'alamat'];
 
+    // --- TAMBAHAN: Aksesori untuk mempermudah panggil nama ---
+    // Sekarang Anda bisa memanggil $siswa->nama dan akan otomatis mengambil dari user->name
+    public function getNamaAttribute()
+    {
+        return $this->user ? $this->user->name : 'Nama Tidak Ditemukan';
+    }
+
+    // --- RELASI ---
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
