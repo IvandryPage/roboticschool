@@ -20,6 +20,10 @@ class TugasResource extends Resource
 {
     protected static ?string $model = Tugas::class;
 
+    protected static ?string $modelLabel = 'Tugas';
+
+    protected static ?string $pluralModelLabel = 'Tugas';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'yes';

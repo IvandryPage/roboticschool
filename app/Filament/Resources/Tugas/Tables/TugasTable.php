@@ -24,14 +24,15 @@ class TugasTable
                 TextColumn::make('file_soal')
                     ->searchable(),
                 TextColumn::make('batas_waktu')
-                    ->dateTime()
+                    ->dateTime('d M Y H:i')
+                    ->label('Batas Waktu')
                     ->sortable(),
                 TextColumn::make('nilai_maksimum')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
+                    ->dateTime('d M Y')
+                    ->label('Dibuat Pada')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->dateTime()

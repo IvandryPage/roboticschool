@@ -21,6 +21,10 @@ class MateriPembelajaranResource extends Resource
     protected static ?string $model = MateriPembelajaran::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    
+    protected static ?string $modelLabel = 'Materi Pembelajaran';
+
+    protected static ?string $pluralModelLabel = 'Materi Pembelajaran';
 
     protected static ?string $recordTitleAttribute = 'yes';
 
