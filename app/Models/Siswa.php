@@ -13,15 +13,12 @@ class Siswa extends Model
     use HasFactory, HasUuids;
 
     public $incrementing = false;
-
     protected $keyType = 'string';
-
     protected $table = 'siswa';
 
     protected $fillable = ['id', 'user_id', 'pendaftaran_id', 'tanggal_lahir', 'jenis_kelamin', 'alamat'];
 
-    // --- TAMBAHAN: Aksesori untuk mempermudah panggil nama ---
-    // Sekarang Anda bisa memanggil $siswa->nama dan akan otomatis mengambil dari user->name
+    // --- AKSESORI ---
     public function getNamaAttribute()
     {
         return $this->user ? $this->user->name : 'Nama Tidak Ditemukan';
@@ -45,17 +42,17 @@ class Siswa extends Model
 
     public function kehadiran(): HasMany
     {
-        return $this->hasMany(Kehadiran::class);
+        return $this->hasMany(Kehadiran::class, 'siswa_id');
     }
 
     public function pengumpulanTugas(): HasMany
     {
-        return $this->hasMany(PengumpulanTugas::class);
+        return $this->hasMany(PengumpulanTugas::class, 'siswa_id');
     }
 
     public function progressAkademik(): HasMany
     {
-        return $this->hasMany(ProgressAkademik::class);
+        return $this->hasMany(ProgressAkademik::class, 'siswa_id');
     }
 
     public function sertifikat(): HasMany
@@ -66,5 +63,32 @@ class Siswa extends Model
     public function evaluasiInstruktur(): HasMany
     {
         return $this->hasMany(EvaluasiInstruktur::class);
+    }
+
+    // --- LOGIKA PBI 110: SINKRONISASI PERMANEN ---
+    public function sinkronkanProgressAkademik()
+    {
+        // 1. Hitung Kehadiran
+        $totalPertemuan = $this->kehadiran()->count();
+        $jumlahHadir = $this->kehadiran()->where('status', 'Hadir')->count();
+        $persentaseKehadiran = ($totalPertemuan > 0) ? ($jumlahHadir / $totalPertemuan) * 100 : 0;
+
+        // 2. Hitung Rata-Rata Nilai
+        $rataRataTugas = $this->pengumpulanTugas()->avg('nilai') ?? 0;
+
+        // 3. Kalkulasi (30% Kehadiran, 70% Tugas)
+        $progressFinal = ($persentaseKehadiran * 0.30) + ($rataRataTugas * 0.70);
+
+        // 4. Update ke tabel progress_akademik
+        // Catatan: Jika siswa memiliki lebih dari satu data di progress_akademik, 
+        // gunakan where/first untuk memilih record yang tepat.
+        return $this->progressAkademik()->updateOrCreate(
+            ['siswa_id' => $this->id], // Syarat pencarian
+            [
+                'persentase_kehadiran' => $persentaseKehadiran,
+                'nilai_rata_rata'      => $rataRataTugas,
+                'nilai_progress_akhir' => $progressFinal,
+            ]
+        );
     }
 }
