@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\PengumpulanTugas\Pages;
+namespace App\Filament\Resources\PengumpulanTugasResource\Pages;
 
-use App\Filament\Resources\PengumpulanTugas\PengumpulanTugasResource;
+use App\Filament\Resources\PengumpulanTugasResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
