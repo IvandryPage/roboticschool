@@ -65,7 +65,7 @@ class User extends Authenticatable implements PasskeyUser
      */
     public function initials(): string
     {
-        $source = $this->nama_lengkap ?? $this->name ?? '';
+        $source = $this->nama_lengkap = $this->name ?? '';
 
         return Str::of($source)
             ->explode(' ')
