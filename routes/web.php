@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\ProgramKursus; // Tambahkan ini
+use App\Http\Controllers\Siswa\MateriController;
+
+Route::get('/siswa/materi', [MateriController::class, 'index'])->name('siswa.materi.index');
 
 Route::view('/', 'welcome')->name('home');
 
