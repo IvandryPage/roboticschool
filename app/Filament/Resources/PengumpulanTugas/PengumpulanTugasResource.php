@@ -3,16 +3,11 @@
 namespace App\Filament\Resources\PengumpulanTugas;
 
 use App\Models\PengumpulanTugas;
-<<<<<<< HEAD
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-=======
-use App\Filament\Resources\PengumpulanTugas\Pages;
-use Filament\Forms;
->>>>>>> 01e1427be3bd9d2e5adbe5a70f2b7ec8f39b390d
 use Filament\Resources\Resource;
 use Filament\Schemas; // KITA KEMBALI MENGGUNAKAN SCHEMAS
 use Filament\Tables;
