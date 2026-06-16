@@ -8,6 +8,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use App\Models\SesiLive;
 
+
 class MateriPembelajaranForm
 {
     public static function configure(Schema $schema): Schema
@@ -15,7 +16,7 @@ class MateriPembelajaranForm
         return $schema->schema([
             Select::make('sesi_id')
                 ->label('Pilih Sesi Live')
-                ->options(SesiLive::pluck('nama', 'id'))
+                ->options(SesiLive::pluck('judul_sesi', 'id'))
                 ->required(),
 
             TextInput::make('judul')
