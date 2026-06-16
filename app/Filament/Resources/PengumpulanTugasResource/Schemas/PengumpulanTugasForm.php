@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\PengumpulanTugas\Schemas;
+namespace App\Filament\Resources\PengumpulanTugasResource\Schemas;
 
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
