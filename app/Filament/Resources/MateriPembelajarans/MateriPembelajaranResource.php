@@ -33,7 +33,7 @@ class MateriPembelajaranResource extends Resource
 
     public static function form(Schema $schema): Schema
 {
-    return \App\Filament\Resources\PengumpulanTugas\Schemas\PengumpulanTugasForm::configure($schema);
+    return \App\Filament\Resources\MateriPembelajarans\Schemas\MateriPembelajaranForm::configure($schema);
 }
 
     public static function infolist(Schema $schema): Schema
