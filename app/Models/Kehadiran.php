@@ -19,6 +19,17 @@ class Kehadiran extends Model
 
     protected $fillable = ['id', 'sesi_id', 'siswa_id', 'status_hadir', 'catatan', 'dicatat_oleh', 'waktu_pencatatan'];
 
+    protected static function booted()
+    {
+    // Setiap kali data kehadiran disimpan atau dihapus, update progress akademik siswanya
+    static::saved(function ($kehadiran) {
+        $kehadiran->siswa?->sinkronkanProgressAkademik();
+    });
+
+    static::deleted(function ($kehadiran) {
+        $kehadiran->siswa?->sinkronkanProgressAkademik();
+    });
+        }   
     public function sesi(): BelongsTo
     {
         return $this->belongsTo(SesiLive::class, 'sesi_id');

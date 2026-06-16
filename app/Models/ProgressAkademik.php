@@ -12,16 +12,25 @@ class ProgressAkademik extends Model
     use HasFactory, HasUuids;
 
     public $incrementing = false;
-
     protected $keyType = 'string';
-
     protected $table = 'progress_akademik';
 
-    protected $fillable = ['id', 'siswa_id', 'program_id', 'kelas_id', 'status', 'nilai_rata_rata', 'catatan'];
+    // TAMBAHKAN kolom-kolom hasil hitungan PBI 110 ke $fillable
+    protected $fillable = [
+        'id', 
+        'siswa_id', 
+        'program_id', 
+        'kelas_id', 
+        'status', 
+        'nilai_rata_rata', 
+        'catatan',
+        'persentase_kehadiran', // Tambahan PBI 110
+        'nilai_progress_akhir'   // Tambahan PBI 110
+    ];
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
     public function program(): BelongsTo
