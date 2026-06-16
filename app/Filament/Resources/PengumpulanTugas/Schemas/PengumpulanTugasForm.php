@@ -2,21 +2,30 @@
 
 namespace App\Filament\Resources\PengumpulanTugas\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+<<<<<<< HEAD
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use Closure;
 use Filament\Forms\Get;
 use App\Models\Tugas;
 use Carbon\Carbon;
+=======
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Illuminate\Support\Carbon;
+use Closure;
+>>>>>>> 01e1427be3bd9d2e5adbe5a70f2b7ec8f39b390d
 
 class PengumpulanTugasForm
 {
-    public static function configure(Schema $schema): Schema
+    public static function configure($form)
     {
+<<<<<<< HEAD
         return $schema
             ->components([
                 TextInput::make('tugas_id')
@@ -62,8 +71,41 @@ class PengumpulanTugasForm
                 DateTimePicker::make('waktu_kumpul')
                     ->label('Waktu Kumpul'),
                 
+=======
+        return $form
+            ->schema([
+                // 1. Informasi Dasar (Tanpa Section untuk menghindari error class)
+                Select::make('tugas_id')
+                    ->label('Pilih Tugas')
+                    ->relationship('tugas', 'id')
+                    ->required(),
+
+                Select::make('siswa_id')
+                    ->label('Nama Siswa')
+                    ->relationship('siswa', 'id')
+                    ->required(),
+
+                // 2. PBI-104: Validasi File
+                FileUpload::make('file_jawaban')
+                    ->label('Unggah File Jawaban')
+                    ->required()
+                    ->maxSize(5120)
+                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                    ->rules([
+                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
+                            $batasWaktu = Carbon::parse('2026-06-20 23:59:00');
+                            if (now()->greaterThan($batasWaktu)) {
+                                $fail('Maaf, waktu pengumpulan tugas sudah ditutup.');
+                            }
+                        },
+                    ]),
+
+                // 3. PB-106: Penilaian Instruktur
+>>>>>>> 01e1427be3bd9d2e5adbe5a70f2b7ec8f39b390d
                 TextInput::make('nilai')
+                    ->label('Nilai Akhir')
                     ->numeric()
+<<<<<<< HEAD
                     ->label('Nilai')
                     ->inputMode('decimal'),
                 
@@ -71,12 +113,33 @@ class PengumpulanTugasForm
                     ->label('Umpan Balik')
                     ->columnSpanFull(),
                 
+=======
+                    ->minValue(0)
+                    ->maxValue(100)
+                    ->suffix('/100')
+                    // Logic otomatis: Update status jika nilai diisi
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
+                        if (!empty($state)) {
+                            $set('status_penilaian', 'Dinilai');
+                        } else {
+                            $set('status_penilaian', 'Belum Dinilai');
+                        }
+                    }),
+
+                Textarea::make('umpan_balik')
+                    ->label('Umpan Balik')
+                    ->rows(3),
+
+>>>>>>> 01e1427be3bd9d2e5adbe5a70f2b7ec8f39b390d
                 Select::make('status_penilaian')
+                    ->label('Status Penilaian')
                     ->options([
                         'Belum Dinilai' => 'Belum Dinilai',
-                        'Sudah Dinilai' => 'Sudah Dinilai',
+                        'Dinilai' => 'Dinilai',
                     ])
-                    ->label('Status Penilaian'),
+                    ->default('Belum Dinilai')
+                    ->required(),
             ]);
     }
 }

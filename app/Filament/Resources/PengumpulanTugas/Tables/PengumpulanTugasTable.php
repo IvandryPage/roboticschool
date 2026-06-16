@@ -15,30 +15,51 @@ class PengumpulanTugasTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('ID Tugas')
-                    ->label('ID'),
-                TextColumn::make('tugas.id')
-                    ->label('ID Siswa')
-                    ->searchable(),
-                TextColumn::make('siswa.id')
-                    ->searchable(),
+                // 1. Nama Siswa (Menggunakan relasi siswa)
+                TextColumn::make('siswa.nama')
+                    ->label('Nama Siswa')
+                    ->searchable()
+                    ->sortable(),
+
+                // 2. Judul Tugas (Mengambil dari relasi tugas)
+                TextColumn::make('tugas.judul')
+                    ->label('Tugas')
+                    ->searchable()
+                    ->sortable(),
+
+                // 3. File Jawaban
                 TextColumn::make('file_jawaban')
+                    ->label('File Jawaban')
                     ->searchable(),
+
+                // 4. Waktu Kumpul
                 TextColumn::make('waktu_kumpul')
+                    ->label('Waktu Pengumpulan')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
+
+                // 5. Nilai
                 TextColumn::make('nilai')
+                    ->label('Nilai')
                     ->numeric()
                     ->sortable(),
+
+                // 6. Status Penilaian
                 TextColumn::make('status_penilaian')
+                    ->label('Status Penilaian')
                     ->searchable(),
+
+                // 7. Waktu Dibuat (Hidden by default)
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Dibuat')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                // 8. Waktu Diperbarui (Hidden by default)
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

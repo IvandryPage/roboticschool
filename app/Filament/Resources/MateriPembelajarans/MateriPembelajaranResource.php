@@ -32,9 +32,9 @@ class MateriPembelajaranResource extends Resource
     protected static ?string $recordTitleAttribute = 'yes';
 
     public static function form(Schema $schema): Schema
-    {
-        return MateriPembelajaranForm::configure($schema);
-    }
+{
+    return \App\Filament\Resources\PengumpulanTugas\Schemas\PengumpulanTugasForm::configure($schema);
+}
 
     public static function infolist(Schema $schema): Schema
     {

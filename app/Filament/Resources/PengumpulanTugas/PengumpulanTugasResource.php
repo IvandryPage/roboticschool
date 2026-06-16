@@ -2,65 +2,69 @@
 
 namespace App\Filament\Resources\PengumpulanTugas;
 
-use App\Filament\Resources\PengumpulanTugas\Pages\CreatePengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Pages\EditPengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Pages\ListPengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Pages\ViewPengumpulanTugas;
-use App\Filament\Resources\PengumpulanTugas\Schemas\PengumpulanTugasForm;
-use App\Filament\Resources\PengumpulanTugas\Schemas\PengumpulanTugasInfolist;
-use App\Filament\Resources\PengumpulanTugas\Tables\PengumpulanTugasTable;
 use App\Models\PengumpulanTugas;
+<<<<<<< HEAD
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+=======
+use App\Filament\Resources\PengumpulanTugas\Pages;
+use Filament\Forms;
+>>>>>>> 01e1427be3bd9d2e5adbe5a70f2b7ec8f39b390d
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Table;
+use Filament\Schemas; // KITA KEMBALI MENGGUNAKAN SCHEMAS
+use Filament\Tables;
 
 class PengumpulanTugasResource extends Resource
 {
+    // 1. Model tetap menggunakan ?string
     protected static ?string $model = PengumpulanTugas::class;
 
-    protected static ?string $modelLabel = 'Pengumpulan Tugas';
-
-    protected static ?string $pluralModelLabel = 'Pengumpulan Tugas';
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static ?string $recordTitleAttribute = 'yes';
-
-    public static function form(Schema $schema): Schema
+    // 2. Icon menggunakan fungsi agar terhindar dari Fatal Error BackedEnum
+    public static function getNavigationIcon(): string
     {
-        return PengumpulanTugasForm::configure($schema);
+        return 'heroicon-o-document-text';
     }
 
-    public static function infolist(Schema $schema): Schema
+    // 3. Form KEMBALI menggunakan Schemas\Schema sesuai permintaan sistem Anda
+    public static function form(Schemas\Schema $schema): Schemas\Schema
     {
-        return PengumpulanTugasInfolist::configure($schema);
+        return $schema->schema([
+            Forms\Components\TextInput::make('nilai')
+                ->label('Nilai')
+                ->numeric()
+                ->disabled(), // PBI-107: Dashboard siswa hanya melihat nilai
+                
+            Forms\Components\Textarea::make('umpan_balik')
+                ->label('Umpan Balik Instruktur')
+                ->disabled(), // PBI-107: Siswa tidak bisa mengubah umpan balik
+        ]);
     }
 
-    public static function table(Table $table): Table
+    // 4. Tabel tetap menggunakan Tables\Table
+    public static function table(Tables\Table $table): Tables\Table
     {
-        return PengumpulanTugasTable::configure($table);
+        return $table->columns([
+            Tables\Columns\TextColumn::make('nilai')
+                ->label('Nilai')
+                ->badge()
+                ->color('success'),
+                
+            Tables\Columns\TextColumn::make('umpan_balik')
+                ->label('Umpan Balik')
+                ->wrap(),
+        ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
+    // 5. Fungsi getPages wajib ada agar web bisa terbuka
     public static function getPages(): array
     {
         return [
-            'index' => ListPengumpulanTugas::route('/'),
-            'create' => CreatePengumpulanTugas::route('/create'),
-            'view' => ViewPengumpulanTugas::route('/{record}'),
-            'edit' => EditPengumpulanTugas::route('/{record}/edit'),
+            'index' => Pages\ListPengumpulanTugas::route('/'),
+            'create' => Pages\CreatePengumpulanTugas::route('/create'),
+            'edit' => Pages\EditPengumpulanTugas::route('/{record}/edit'),
         ];
     }
 }
