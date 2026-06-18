@@ -13,15 +13,14 @@ class Batch extends Model
     use HasFactory, HasUuids;
 
     public $incrementing = false;
-
     protected $keyType = 'string';
-
-    protected $table = 'batch';
+    protected $table = 'batch'; // Pastikan nama tabel ini benar di database
 
     protected $fillable = [
         'id', 'program_id', 'nama_batch', 'tanggal_mulai', 'tanggal_selesai', 'kuota_max', 'status_aktif',
     ];
 
+    // Relasi ke ProgramKursus
     public function program(): BelongsTo
     {
         return $this->belongsTo(ProgramKursus::class, 'program_id');

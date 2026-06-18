@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\MateriPembelajarans\Tables;
+namespace App\Filament\Resources\Batches\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class MateriPembelajaransTable
+class BatchesTable
 {
     public static function configure(Table $table): Table
     {
@@ -18,16 +17,21 @@ class MateriPembelajaransTable
             ->columns([
                 TextColumn::make('id')
                     ->label('ID'),
-                TextColumn::make('sesi_id'),
-                TextColumn::make('judul')
+                TextColumn::make('program.id')
                     ->searchable(),
-                TextColumn::make('tipe_konten')
+                TextColumn::make('nama_batch')
                     ->searchable(),
-                TextColumn::make('file_path_atau_url')
-                    ->searchable(),
-                TextColumn::make('urutan')
+                TextColumn::make('tanggal_mulai')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('tanggal_selesai')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('kuota_max')
                     ->numeric()
                     ->sortable(),
+                IconColumn::make('status_aktif')
+                    ->boolean(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -41,9 +45,7 @@ class MateriPembelajaransTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

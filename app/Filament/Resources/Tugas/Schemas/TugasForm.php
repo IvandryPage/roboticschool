@@ -15,24 +15,38 @@ class TugasForm
     {
         return $schema
             ->components([
-               TextInput::make('sesi_id')
-                    ->numeric()
-                    ->required()
-                    ->label('ID Sesi'),
+                // 1. Mengubah TextInput jadi Select agar Instruktur tinggal klik dan pilih Sesi
+                TextInput::make('sesi_id')
+    ->numeric()
+    ->required()
+    ->label('ID Sesi Pembelajaran'),
+
                 TextInput::make('judul_tugas')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Judul Tugas'),
+
+                // 2. Menambahkan required agar instruktur tidak lupa menulis detail tugas
                 Textarea::make('deskripsi')
-                    ->columnSpanFull(),
+                    ->required()
+                    ->columnSpanFull()
+                    ->label('Deskripsi Tugas'),
+
+                // 3. File upload secara default sudah opsional di Filament jika tidak diberi ->required()
                 FileUpload::make('file_soal')
-                    ->label('File Soal')
+                    ->label('File Soal (Opsional)')
                     ->directory('tugas_soal'),
+
+                // 4. Menambahkan required agar batas waktu pengumpulan wajib ditentukan
                 DateTimePicker::make('batas_waktu')
+                    ->required()
                     ->label('Batas Waktu Pengumpulan'),
+
                 TextInput::make('nilai_maksimum')
                     ->numeric()
                     ->default(100)
-                    ->required(),
+                    ->required()
+                    ->label('Nilai Maksimum'),
             ]);
     }
 }

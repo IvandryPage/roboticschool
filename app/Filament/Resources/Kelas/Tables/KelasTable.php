@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\MateriPembelajarans\Tables;
+namespace App\Filament\Resources\Kelas\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class MateriPembelajaransTable
+class KelasTable
 {
     public static function configure(Table $table): Table
     {
@@ -18,16 +16,17 @@ class MateriPembelajaransTable
             ->columns([
                 TextColumn::make('id')
                     ->label('ID'),
-                TextColumn::make('sesi_id'),
-                TextColumn::make('judul')
+                TextColumn::make('batch.id')
                     ->searchable(),
-                TextColumn::make('tipe_konten')
+                TextColumn::make('nama_kelas')
                     ->searchable(),
-                TextColumn::make('file_path_atau_url')
+                TextColumn::make('instruktur.name')
                     ->searchable(),
-                TextColumn::make('urutan')
+                TextColumn::make('kapasitas')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('status')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -41,9 +40,7 @@ class MateriPembelajaransTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

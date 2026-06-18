@@ -1,4 +1,7 @@
 <?php
+if (!extension_loaded('dom')) {
+    die('Ekstensi DOM PHP belum aktif! Silakan aktifkan extension=dom di php.ini');
+}
 
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;

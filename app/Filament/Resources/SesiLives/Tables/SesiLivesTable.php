@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\MateriPembelajarans\Tables;
+namespace App\Filament\Resources\SesiLives\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class MateriPembelajaransTable
+class SesiLivesTable
 {
     public static function configure(Table $table): Table
     {
@@ -18,16 +17,26 @@ class MateriPembelajaransTable
             ->columns([
                 TextColumn::make('id')
                     ->label('ID'),
-                TextColumn::make('sesi_id'),
-                TextColumn::make('judul')
+                TextColumn::make('kelas.id')
                     ->searchable(),
-                TextColumn::make('tipe_konten')
-                    ->searchable(),
-                TextColumn::make('file_path_atau_url')
-                    ->searchable(),
-                TextColumn::make('urutan')
+                TextColumn::make('nomor_sesi')
                     ->numeric()
                     ->sortable(),
+                TextColumn::make('judul_sesi')
+                    ->searchable(),
+                TextColumn::make('tanggal')
+                    ->date()
+                    ->sortable(),
+                TextColumn::make('jam_mulai')
+                    ->time()
+                    ->sortable(),
+                TextColumn::make('jam_selesai')
+                    ->time()
+                    ->sortable(),
+                TextColumn::make('platform')
+                    ->searchable(),
+                TextColumn::make('link_akses')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -43,7 +52,6 @@ class MateriPembelajaransTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
