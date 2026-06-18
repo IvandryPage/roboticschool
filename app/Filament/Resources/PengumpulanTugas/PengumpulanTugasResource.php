@@ -3,68 +3,38 @@
 namespace App\Filament\Resources\PengumpulanTugas;
 
 use App\Models\PengumpulanTugas;
-<<<<<<< HEAD
-use BackedEnum;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-=======
-use App\Filament\Resources\PengumpulanTugas\Pages;
-use Filament\Forms;
->>>>>>> 01e1427be3bd9d2e5adbe5a70f2b7ec8f39b390d
 use Filament\Resources\Resource;
-use Filament\Schemas; // KITA KEMBALI MENGGUNAKAN SCHEMAS
-use Filament\Tables;
+use Filament\Tables\Table;
+use Filament\Schemas\Schema; // PASTI GUNAKAN INI
+use App\Filament\Resources\PengumpulanTugas\Schemas\PengumpulanTugasForm;
+use App\Filament\Resources\PengumpulanTugas\Pages\ListPengumpulanTugas;
+use App\Filament\Resources\PengumpulanTugas\Pages\CreatePengumpulanTugas;
+use App\Filament\Resources\PengumpulanTugas\Pages\EditPengumpulanTugas;
 
 class PengumpulanTugasResource extends Resource
 {
-    // 1. Model tetap menggunakan ?string
     protected static ?string $model = PengumpulanTugas::class;
 
-    // 2. Icon menggunakan fungsi agar terhindar dari Fatal Error BackedEnum
-    public static function getNavigationIcon(): string
+    // Pastikan ini menggunakan Schema, bukan Form
+   public static function form(Schema $schema): Schema
     {
-        return 'heroicon-o-document-text';
+        // Ubah bagian ini agar menarik skema dari file PengumpulanTugasForm yang sudah kamu buat
+        return PengumpulanTugasForm::configure($schema);
     }
 
-    // 3. Form KEMBALI menggunakan Schemas\Schema sesuai permintaan sistem Anda
-    public static function form(Schemas\Schema $schema): Schemas\Schema
-    {
-        return $schema->schema([
-            Forms\Components\TextInput::make('nilai')
-                ->label('Nilai')
-                ->numeric()
-                ->disabled(), // PBI-107: Dashboard siswa hanya melihat nilai
-                
-            Forms\Components\Textarea::make('umpan_balik')
-                ->label('Umpan Balik Instruktur')
-                ->disabled(), // PBI-107: Siswa tidak bisa mengubah umpan balik
-        ]);
-    }
-
-    // 4. Tabel tetap menggunakan Tables\Table
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table->columns([
-            Tables\Columns\TextColumn::make('nilai')
-                ->label('Nilai')
-                ->badge()
-                ->color('success'),
-                
-            Tables\Columns\TextColumn::make('umpan_balik')
-                ->label('Umpan Balik')
-                ->wrap(),
+            // Tambahkan kolom di sini
         ]);
     }
 
-    // 5. Fungsi getPages wajib ada agar web bisa terbuka
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPengumpulanTugas::route('/'),
-            'create' => Pages\CreatePengumpulanTugas::route('/create'),
-            'edit' => Pages\EditPengumpulanTugas::route('/{record}/edit'),
+            'index' => ListPengumpulanTugas::route('/'),
+            'create' => CreatePengumpulanTugas::route('/create'),
+            'edit' => EditPengumpulanTugas::route('/{record}/edit'),
         ];
     }
 }
