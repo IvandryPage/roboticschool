@@ -12,7 +12,7 @@ class ProgressAkademikFactory extends Factory
     public function definition(): array
     {
         return [
-            // FIX ERROR 9: sesuaikan dengan kolom migration yang ada
+            // Kolom sesuai migration: persentase_kehadiran, rata_nilai_tugas, persentase_penyelesaian, status
             'siswa_id'                => null,
             'kelas_id'                => null,
             'persentase_kehadiran'    => fake()->randomFloat(2, 40, 100),

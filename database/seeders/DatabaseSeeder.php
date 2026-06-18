@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\ArsipLaporan;
 use App\Models\AsetRobotik;
+use App\Models\AuditLog;
 use App\Models\Batch;
 use App\Models\EnrollmentKelas;
 use App\Models\EvaluasiInstruktur;
@@ -11,12 +12,14 @@ use App\Models\ItemKitRobotik;
 use App\Models\Kelas;
 use App\Models\ProgressAkademik;
 use App\Models\ProgramKursus;
+use App\Models\RiwayatStatusPendaftaran;
 use App\Models\Role;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -132,27 +135,27 @@ class DatabaseSeeder extends Seeder
         // 4. BATCH
         // =============================================
         $batch1 = Batch::firstOrCreate(['nama_batch' => 'Batch 1 - 2026'], [
-            'program_id'     => $programRobot->id,
-            'tanggal_mulai'  => '2026-01-15',
-            'tanggal_selesai'=> '2026-04-15',
-            'kuota_max'      => 20,
-            'status_aktif'   => true,
+            'program_id'      => $programRobot->id,
+            'tanggal_mulai'   => '2026-01-15',
+            'tanggal_selesai' => '2026-04-15',
+            'kuota_max'       => 20,
+            'status_aktif'    => true,
         ]);
 
         $batch2 = Batch::firstOrCreate(['nama_batch' => 'Batch 2 - 2026'], [
-            'program_id'     => $programIoT->id,
-            'tanggal_mulai'  => '2026-02-01',
-            'tanggal_selesai'=> '2026-06-01',
-            'kuota_max'      => 15,
-            'status_aktif'   => true,
+            'program_id'      => $programIoT->id,
+            'tanggal_mulai'   => '2026-02-01',
+            'tanggal_selesai' => '2026-06-01',
+            'kuota_max'       => 15,
+            'status_aktif'    => true,
         ]);
 
         $batch3 = Batch::firstOrCreate(['nama_batch' => 'Batch 3 - 2026'], [
-            'program_id'     => $programAI->id,
-            'tanggal_mulai'  => '2026-03-01',
-            'tanggal_selesai'=> '2026-07-31',
-            'kuota_max'      => 10,
-            'status_aktif'   => true,
+            'program_id'      => $programAI->id,
+            'tanggal_mulai'   => '2026-03-01',
+            'tanggal_selesai' => '2026-07-31',
+            'kuota_max'       => 10,
+            'status_aktif'    => true,
         ]);
 
         // =============================================
