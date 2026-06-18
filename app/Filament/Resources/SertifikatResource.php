@@ -21,12 +21,30 @@ class SertifikatResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return 'Sertifikat';
+        return 'Daftar Sertifikat';
     }
 
     public static function getNavigationGroup(): ?string
     {
         return 'Akademik';
+    }
+
+    public static function getNavigationIcon(): string
+    {
+        return 'heroicon-o-document-check';
+    }
+
+    /**
+     * PBI-129: Hanya Admin Akademik yang bisa mengakses daftar sertifikat.
+     */
+    public static function canViewAny(): bool
+    {
+        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
     }
 
     public static function form(Schema $schema): Schema
@@ -45,21 +63,27 @@ class SertifikatResource extends Resource
                     ->copyable()
                     ->badge()
                     ->color('primary'),
-                TextColumn::make('siswa.user.name')
+
+                TextColumn::make('siswa.user.nama_lengkap')
                     ->label('Nama Siswa')
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('kelas.nama_kelas')
                     ->label('Kelas')
                     ->searchable(),
-                TextColumn::make('kelas.programKursus.nama_program')
+
+                // FIX ERROR 7: path relasi yang benar melewati batch -> program
+                TextColumn::make('kelas.batch.program.nama_program')
                     ->label('Program')
                     ->searchable(),
+
                 TextColumn::make('tanggal_terbit')
                     ->label('Tanggal Terbit')
                     ->dateTime('d M Y')
                     ->sortable(),
-                TextColumn::make('penerbit.name')
+
+                TextColumn::make('penerbit.nama_lengkap')
                     ->label('Diterbitkan Oleh')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -72,7 +96,7 @@ class SertifikatResource extends Resource
                 Action::make('lihat')
                     ->label('Lihat')
                     ->icon('heroicon-o-eye')
-                    ->url(fn(Sertifikat $record) => route('sertifikat.verifikasi', $record->nomor_sertifikat))
+                    ->url(fn (Sertifikat $record) => route('sertifikat.verifikasi', $record->nomor_sertifikat))
                     ->openUrlInNewTab(),
                 DeleteAction::make(),
             ])

@@ -1,6 +1,12 @@
 <?php
+
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\ArsipLaporanWidget;
+use App\Filament\Widgets\DashboardInstrukturWidget;
+use App\Filament\Widgets\RekapKelulusanWidget;
+use App\Filament\Widgets\SertifikatSiswaWidget;
+use App\Filament\Widgets\StatistikDirekturWidget;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -39,7 +45,11 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                StatistikDirekturWidget::class,
+                RekapKelulusanWidget::class,
+                DashboardInstrukturWidget::class,
+                ArsipLaporanWidget::class,
+                SertifikatSiswaWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

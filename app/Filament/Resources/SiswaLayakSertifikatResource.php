@@ -31,6 +31,25 @@ class SiswaLayakSertifikatResource extends Resource
         return 'Akademik';
     }
 
+    public static function getNavigationIcon(): string
+    {
+        return 'heroicon-o-academic-cap';
+    }
+
+    /**
+     * PBI-124: Hanya Admin Akademik yang bisa melihat & mengakses daftar siswa layak sertifikat.
+     * canViewAny() adalah method yang benar di Filament v5 untuk mengontrol akses list page.
+     */
+    public static function canViewAny(): bool
+    {
+        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema->components([]);
@@ -40,40 +59,63 @@ class SiswaLayakSertifikatResource extends Resource
     {
         return $table
             ->query(
+                // PBI-124: Siswa layak sertifikat:
+                // - Status enrollment = 'Selesai' (bukan 'lulus', sesuai spesifikasi db)
+                // - Belum memiliki sertifikat di kelas tersebut
+                // - Memenuhi syarat: kehadiran >= 75% dan nilai >= 70
                 EnrollmentKelas::query()
-                    ->where('status', 'lulus')
-                    ->whereDoesntHave('sertifikat')
-                    ->with(['siswa.user', 'kelas.batch'])
+                    ->where('status', 'Selesai')
+                    ->whereDoesntHave('siswa.sertifikat', function ($q) {
+                        // Exclude yang sudah punya sertifikat di kelas yang sama
+                        $q->whereColumn('sertifikat.kelas_id', 'enrollment_kelas.kelas_id');
+                    })
+                    ->whereHas('siswa.progressAkademik', function ($q) {
+                        // PBI-121: Syarat kelulusan — kehadiran >= 75% DAN nilai >= 70
+                        $q->whereColumn('progress_akademik.kelas_id', 'enrollment_kelas.kelas_id')
+                          ->where('persentase_kehadiran', '>=', SertifikatService::SYARAT_KEHADIRAN_MIN)
+                          ->where('rata_nilai_tugas', '>=', SertifikatService::SYARAT_NILAI_MIN);
+                    })
+                    ->with(['siswa.user', 'kelas.batch.program', 'siswa.progressAkademik'])
             )
             ->columns([
-                TextColumn::make('siswa.user.name')
+                TextColumn::make('siswa.user.nama_lengkap')
                     ->label('Nama Siswa')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('kelas.batch.nama_batch')
-                    ->label('Batch/Program')
+
+                TextColumn::make('kelas.batch.program.nama_program')
+                    ->label('Program')
                     ->searchable(),
+
                 TextColumn::make('kelas.nama_kelas')
                     ->label('Kelas')
                     ->searchable(),
-                TextColumn::make('nilai_akhir')
-                    ->label('Nilai Akhir')
-                    ->suffix('/100')
-                    ->sortable(),
-                TextColumn::make('persentase_kehadiran')
+
+                TextColumn::make('siswa.progressAkademik.persentase_kehadiran')
                     ->label('Kehadiran')
-                    ->formatStateUsing(fn($state) => $state . '%')
+                    ->formatStateUsing(fn ($state) => $state !== null ? number_format($state, 1).'%' : '-')
+                    ->color(fn ($state) => $state !== null && $state >= SertifikatService::SYARAT_KEHADIRAN_MIN ? 'success' : 'danger')
+                    ->badge()
                     ->sortable(),
+
+                TextColumn::make('siswa.progressAkademik.rata_nilai_tugas')
+                    ->label('Rata-rata Nilai')
+                    ->formatStateUsing(fn ($state) => $state !== null ? number_format($state, 1).'/100' : '-')
+                    ->color(fn ($state) => $state !== null && $state >= SertifikatService::SYARAT_NILAI_MIN ? 'success' : 'danger')
+                    ->badge()
+                    ->sortable(),
+
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'lulus' => 'success',
-                        default => 'gray',
+                    ->color(fn (string $state): string => match ($state) {
+                        'Selesai' => 'success',
+                        'Aktif'   => 'info',
+                        'Drop'    => 'danger',
+                        default   => 'gray',
                     }),
             ])
             ->actions([
-                // Ganti Actions::make jadi Action::make
                 Action::make('terbitkan')
                     ->label('Terbitkan Sertifikat')
                     ->icon('heroicon-o-academic-cap')
@@ -81,8 +123,8 @@ class SiswaLayakSertifikatResource extends Resource
                     ->requiresConfirmation()
                     ->modalHeading('Terbitkan Sertifikat')
                     ->modalDescription(
-                        fn(EnrollmentKelas $record) =>
-                        "Terbitkan sertifikat untuk {$record->siswa->user->name} - {$record->kelas->nama_kelas}?"
+                        fn (EnrollmentKelas $record) =>
+                        'Terbitkan sertifikat untuk '.($record->siswa?->user?->nama_lengkap ?? '-').' — '.($record->kelas?->nama_kelas ?? '-').'?'
                     )
                     ->action(function (EnrollmentKelas $record) {
                         try {
@@ -108,13 +150,14 @@ class SiswaLayakSertifikatResource extends Resource
             ->bulkActions([
                 BulkActionGroup::make([
                     BulkAction::make('terbitkan_semua')
-                        ->label('Terbitkan Semua')
+                        ->label('Terbitkan Semua Terpilih')
                         ->icon('heroicon-o-academic-cap')
                         ->color('success')
                         ->requiresConfirmation()
                         ->action(function ($records) {
-                            $service = new SertifikatService();
+                            $service  = new SertifikatService();
                             $berhasil = 0;
+                            $gagal    = 0;
                             foreach ($records as $record) {
                                 try {
                                     $service->terbitkanSertifikat(
@@ -124,11 +167,11 @@ class SiswaLayakSertifikatResource extends Resource
                                     );
                                     $berhasil++;
                                 } catch (\Exception $e) {
-                                    // Error diabaikan agar proses tetap berjalan
+                                    $gagal++;
                                 }
                             }
                             Notification::make()
-                                ->title("{$berhasil} sertifikat berhasil diterbitkan!")
+                                ->title("{$berhasil} sertifikat berhasil diterbitkan".($gagal > 0 ? ", {$gagal} gagal." : '.'))
                                 ->success()
                                 ->send();
                         }),

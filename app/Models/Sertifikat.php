@@ -1,24 +1,21 @@
 <?php
+
 namespace App\Models;
 
+use Database\Factories\SertifikatFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Sertifikat extends Model
 {
+    /** @use HasFactory<SertifikatFactory> */
+    use HasFactory, HasUuids;
+
     protected $table = 'sertifikat';
     public $incrementing = false;
     protected $keyType = 'string';
-
-    protected static function boot()
-    {
-        parent::boot();
-        static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
-            }
-        });
-    }
 
     protected $fillable = [
         'id', 'siswa_id', 'kelas_id',
@@ -26,17 +23,17 @@ class Sertifikat extends Model
         'verified_url', 'tanggal_terbit', 'diterbitkan_oleh',
     ];
 
-    public function siswa()
+    public function siswa(): BelongsTo
     {
         return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
-    public function kelas()
+    public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
-    public function penerbit()
+    public function penerbit(): BelongsTo
     {
         return $this->belongsTo(User::class, 'diterbitkan_oleh');
     }

@@ -3,18 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sertifikat;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SertifikatController extends Controller
 {
-    public function verifikasi($nomor)
+    /**
+     * PBI-127: Halaman sertifikat milik siswa yang sedang login.
+     */
+    public function milikku()
     {
-        // Cari sertifikat berdasarkan nomor uniknya
-        $sertifikat = Sertifikat::with(['siswa.user', 'kelas.batch.programKursus'])
-            ->where('nomor_sertifikat', $nomor)
-            ->firstOrFail(); // Kalau tidak ketemu langsung otomatis error 404
+        $user        = Auth::user();
+        $sertifikats = collect();
+        $bukanSiswa  = false;
 
-        // Mengembalikan tampilan ke folder resources/views/sertifikat/verifikasi.blade.php
+        if ($user && $user->siswa) {
+            $sertifikats = Sertifikat::with([
+                'siswa.user',
+                'kelas.batch.program',
+                'kelas.sesiLive',
+                'penerbit',
+            ])
+                ->where('siswa_id', $user->siswa->id)
+                ->orderByDesc('tanggal_terbit')
+                ->get();
+        } elseif ($user && !$user->siswa) {
+            // User login tapi bukan siswa (admin/direktur/instruktur)
+            $bukanSiswa = true;
+        }
+
+        $sertifikat = $sertifikats->first();
+
+        return view('sertifikat.show', compact('sertifikat', 'sertifikats', 'bukanSiswa'));
+    }
+
+    /**
+     * PBI-128: Verifikasi publik sertifikat berdasarkan nomor.
+     */
+    public function verifikasi(string $nomor)
+    {
+        $sertifikat = Sertifikat::with(['siswa.user', 'kelas.batch.program', 'penerbit'])
+            ->where('nomor_sertifikat', $nomor)
+            ->firstOrFail();
+
         return view('sertifikat.verifikasi', compact('sertifikat'));
     }
 }
