@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\MateriPembelajarans\Schemas;
 
-use Filament\Schemas\Schema; // Kita pakai Schema agar sinkron dengan file lainnya
+use Filament\Schemas\Schema; // HARUS INI
 use Filament\Forms\Components\TextInput;
+// ... (hapus kalau ada "use Filament\Forms\Form;")
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use App\Models\SesiLive;
@@ -11,7 +12,7 @@ use App\Models\SesiLive;
 
 class MateriPembelajaranForm
 {
-    public static function configure(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema // HARUS SCHEMA
     {
         return $schema->schema([
             Select::make('sesi_id')
