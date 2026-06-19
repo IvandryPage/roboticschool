@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\PendaftaranController;
+use App\Http\Controllers\Admin\SiswaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,4 +39,28 @@ Route::prefix('admin')
         // PBI-066: Kirim catatan revisi (pilih dokumen bermasalah)
         Route::post('/pendaftaran/{id}/revisi', [PendaftaranController::class, 'revisi'])
             ->name('pendaftaran.revisi');
+        
+        // PBI-068 & PBI-069
+        Route::get('/siswa', [SiswaController::class, 'index'])
+            ->name('siswa.index');
+
+        // PBI-067
+        Route::get('/pendaftaran/{pendaftaranId}/buat-akun', [SiswaController::class, 'createAkun'])
+            ->name('siswa.create-akun');
+
+        Route::post('/pendaftaran/{pendaftaranId}/buat-akun', [SiswaController::class, 'storeAkun'])
+            ->name('siswa.store-akun');
+
+        // PBI-070
+        Route::get('/siswa/{id}', [SiswaController::class, 'show'])
+            ->name('siswa.show');
+
+        Route::get('/siswa/{id}/edit', [SiswaController::class, 'edit'])
+            ->name('siswa.edit');
+
+        Route::put('/siswa/{id}', [SiswaController::class, 'update'])
+            ->name('siswa.update');
+
+        
+
     });

@@ -11,12 +11,37 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
-            </flux:sidebar.nav>
+            <flux:sidebar.group :heading="__('Platform')" class="grid">
+
+            <flux:sidebar.item
+                icon="home"
+                :href="route('dashboard')"
+                :current="request()->routeIs('dashboard')"
+                wire:navigate
+        >
+            {{ __('Dashboard') }}
+            </flux:sidebar.item>
+
+            <flux:sidebar.item
+            icon="clipboard-document-check"
+            :href="route('admin.pendaftaran.index')"
+            :current="request()->routeIs('admin.pendaftaran.*')"
+            wire:navigate
+        >
+            Pendaftaran
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="users"
+            :href="route('admin.siswa.index')"
+            :current="request()->routeIs('admin.siswa.*')"
+            wire:navigate
+        >
+            Siswa Aktif
+        </flux:sidebar.item>
+
+    </flux:sidebar.group>
+</flux:sidebar.nav>
 
             <flux:spacer />
 
