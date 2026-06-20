@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,13 +13,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
+
+
+    Route::get('keluhan', [\App\Http\Controllers\KeluhanController::class, 'create'])
+        ->name('keluhan.create');
+
+    Route::post('keluhan', [\App\Http\Controllers\KeluhanController::class, 'store'])
+        ->name('keluhan.store');
+
+    Route::get('keluhan/saya', [\App\Http\Controllers\KeluhanController::class, 'index'])
+        ->name('keluhan.saya');
+
+
+
     Route::get('/forum', function () {
+
         $topiks = ForumTopik::with(['pembuat', 'komentar'])
             ->latest()
             ->get();
 
         return view('forum.index', compact('topiks'));
+
     })->name('forum.index');
+
 
     Route::post('/forum', function (Request $request) {
 
@@ -33,6 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     })->name('forum.store');
 
+
     Route::post('/forum/{topik}/reply', function (ForumTopik $topik, Request $request) {
 
         ForumKomentar::create([
@@ -45,12 +63,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     })->name('forum.reply');
 
+
     Route::get('/forum/{topik}', function (ForumTopik $topik) {
-        $topik->load(['pembuat', 'komentar.user']);
+
+        $topik->load([
+            'pembuat',
+            'komentar.user'
+        ]);
 
         return view('forum.show', compact('topik'));
+
     })->name('forum.show');
 
+
 });
+
 
 require __DIR__ . '/settings.php';
