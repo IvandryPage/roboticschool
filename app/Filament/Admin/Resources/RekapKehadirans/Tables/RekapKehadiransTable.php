@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources\RekapKehadirans\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use App\Models\Kehadiran;
+use Illuminate\Database\Eloquent\Builder; // Tambahan penting untuk fungsi pencarian
 
 class RekapKehadiransTable
 {
@@ -15,13 +16,23 @@ class RekapKehadiransTable
                 // 1. Menampilkan Nama Siswa (Melalui relasi ke tabel user)
                 TextColumn::make('user.name')
                     ->label('Nama Siswa')
-                    ->searchable()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        // Memberitahu Filament cara mencari di tabel relasi user
+                        return $query->whereHas('user', function ($q) use ($search) {
+                            $q->where('name', 'ilike', "%{$search}%");
+                        });
+                    })
                     ->sortable(),
 
                 // 2. Menampilkan Kelas Siswa (Melalui relasi ke tabel kelas)
                 TextColumn::make('kelas.nama_kelas')
                     ->label('Kelas')
-                    ->searchable()
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        // Memberitahu Filament cara mencari di tabel relasi kelas
+                        return $query->whereHas('kelas', function ($q) use ($search) {
+                            $q->where('nama_kelas', 'ilike', "%{$search}%");
+                        });
+                    })
                     ->default('Belum Masuk Kelas'),
 
                 // 3. Menghitung total seluruh sesi yang pernah dicatat untuk siswa ini
