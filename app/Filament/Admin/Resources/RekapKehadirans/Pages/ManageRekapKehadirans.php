@@ -2,7 +2,8 @@
 
 namespace App\Filament\Admin\Resources\RekapKehadirans\Pages;
 
-use App\Filament\Admin\Resources\RekapKehadiranResource;
+
+use App\Filament\Admin\Resources\RekapKehadirans\RekapKehadiranResource; 
 use Filament\Resources\Pages\ManageRecords;
 
 class ManageRekapKehadirans extends ManageRecords
@@ -11,8 +12,6 @@ class ManageRekapKehadirans extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            // Sengaja dikosongkan agar tidak ada tombol tambah data di halaman rekap
-        ];
+        return [];
     }
 }
