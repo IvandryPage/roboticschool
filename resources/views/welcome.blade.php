@@ -1505,7 +1505,89 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             </span>
                         </div>
+                        <!-- Jadwal Pendaftaran -->
+                        <div class="border-t border-slate-200 pt-6 mt-6">
 
+                            <h3 class="font-bold text-slate-900 mb-5">
+                                Jadwal Pendaftaran
+                            </h3>
+
+                            <!-- Status -->
+                            <div
+                                class="flex justify-between items-center bg-green-50 border border-green-200 rounded-2xl px-4 py-3 mb-4">
+
+                                <span class="text-slate-600">
+                                    Status
+                                </span>
+
+                                <span
+                                    class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
+                                    ● Dibuka
+                                </span>
+
+                            </div>
+
+                            <!-- Tanggal -->
+                            <div class="space-y-3 text-sm">
+
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">
+                                        Dibuka
+                                    </span>
+
+                                    <span class="font-semibold text-slate-700">
+                                        1 Juli 2026
+                                    </span>
+                                </div>
+
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">
+                                        Ditutup
+                                    </span>
+
+                                    <span class="font-semibold text-slate-700">
+                                        31 Juli 2026
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <!-- Kuota -->
+                            <div
+                                class="mt-5 bg-cyan-50 border border-cyan-200 rounded-2xl p-4 text-center">
+
+                                <p class="text-sm text-slate-500">
+                                    Sisa Kuota
+                                </p>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-2">
+                                        <span class="text-slate-500">
+                                            Kuota Terisi
+                                        </span>
+
+                                        <span class="font-semibold text-red-500">
+                                            12/20 Peserta
+                                        </span>
+                                    </div>
+
+                                    <div class="w-full bg-slate-200 rounded-full h-2">
+                                        <div
+                                            class="bg-red-500 h-2 rounded-full"
+                                            style="width:60%">
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-3xl font-extrabold text-cyan-500">
+                                    8
+                                </p>
+
+                                <p class="text-xs text-slate-400">
+                                    kursi tersedia
+                                </p>
+
+                            </div>
+
+                        </div>
                         <div class="flex justify-between">
                             <span class="text-slate-500">
                                 Syarat
