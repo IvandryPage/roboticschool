@@ -13,6 +13,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class TiketKeluhanResource extends Resource
 {
@@ -44,6 +46,29 @@ class TiketKeluhanResource extends Resource
         return [
             //
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+
+        if ($user?->role?->nama_role === 'Admin Akademik') {
+            return parent::getEloquentQuery();
+        }
+
+        return parent::getEloquentQuery()
+            ->where('pelapor_id', $user->id);
+    }
+
+    public static function canEdit($record): bool
+    {
+        $user = Auth::user();
+
+        if ($user?->role?->nama_role === 'Admin Akademik') {
+            return true;
+        }
+
+        return $record->pelapor_id === $user->id;
     }
 
     public static function getPages(): array

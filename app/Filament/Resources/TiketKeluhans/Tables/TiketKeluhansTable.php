@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\TiketKeluhans\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -20,17 +18,43 @@ class TiketKeluhansTable
 
                 TextColumn::make('kategori')
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Pembelajaran' => 'primary',
+                        'Error Sistem' => 'danger',
+                        'Pendaftaran & Pembayaran' => 'warning',
+                        'Hal Lainnya' => 'success',
+                        default => 'gray',
+                    })
                     ->searchable(),
 
                 TextColumn::make('subjek')
                     ->searchable(),
 
+                TextColumn::make('deskripsi')
+                    ->label('Detail Keluhan')
+                    ->limit(50)
+                    ->tooltip(fn ($record) => $record->deskripsi)
+                    ->searchable(),
+
                 TextColumn::make('prioritas')
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Rendah' => 'success',
+                        'Sedang' => 'warning',
+                        'Tinggi' => 'danger',
+                        default => 'gray',
+                    })
                     ->searchable(),
 
                 TextColumn::make('status')
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'Open' => 'primary',
+                        'In Progress' => 'warning',
+                        'Resolved' => 'success',
+                        'Closed' => 'gray',
+                        default => 'gray',
+                    })
                     ->searchable(),
 
                 TextColumn::make('created_at')
@@ -44,10 +68,6 @@ class TiketKeluhansTable
             ->recordActions([
                 EditAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->toolbarActions([]);
     }
 }

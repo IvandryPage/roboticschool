@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\TiketKeluhans\Schemas;
 
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 
 class TiketKeluhanForm
 {
@@ -13,16 +15,16 @@ class TiketKeluhanForm
     {
         return $schema
             ->components([
-                Select::make('pelapor_id')
-                    ->label('Pelapor')
-                    ->relationship('pelapor', 'name')
-                    ->required(),
+                Hidden::make('pelapor_id')
+                    ->default(fn () => Auth::id()),
 
                 Select::make('kategori')
                     ->label('Kategori Keluhan')
                     ->options([
-                        'Akademik' => 'Akademik',
-                        'Teknis' => 'Teknis',
+                        'Pembelajaran' => 'Pembelajaran',
+                        'Error Sistem' => 'Error Sistem',
+                        'Pendaftaran & Pembayaran' => 'Pendaftaran & Pembayaran',
+                        'Hal Lainnya' => 'Hal Lainnya',
                     ])
                     ->required(),
 
@@ -47,11 +49,16 @@ class TiketKeluhanForm
                     ->default('Sedang')
                     ->required(),
 
-                TextInput::make('status')
+                Select::make('status')
                     ->label('Status')
+                    ->options([
+                        'Open' => 'Open',
+                        'In Progress' => 'In Progress',
+                        'Resolved' => 'Resolved',
+                        'Closed' => 'Closed',
+                    ])
                     ->default('Open')
-                    ->disabled()
-                    ->dehydrated(),
+                    ->required(),
             ]);
     }
 }
