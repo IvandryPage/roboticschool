@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Resources\RekapKehadirans\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use App\Models\Kehadiran;
-use Illuminate\Database\Eloquent\Builder; // Tambahan penting untuk fungsi pencarian
+use Illuminate\Database\Eloquent\Builder;
 
 class RekapKehadiransTable
 {
@@ -13,36 +13,34 @@ class RekapKehadiransTable
     {
         return $table
             ->columns([
-                // 1. Menampilkan Nama Siswa (Melalui relasi ke tabel user)
+                // 1. Menampilkan Nama Siswa
                 TextColumn::make('user.name')
                     ->label('Nama Siswa')
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        // Memberitahu Filament cara mencari di tabel relasi user
                         return $query->whereHas('user', function ($q) use ($search) {
                             $q->where('name', 'ilike', "%{$search}%");
                         });
                     })
                     ->sortable(),
 
-                // 2. Menampilkan Kelas Siswa (Melalui relasi ke tabel kelas)
+                // 2. Menampilkan Kelas Siswa
                 TextColumn::make('kelas.nama_kelas')
                     ->label('Kelas')
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        // Memberitahu Filament cara mencari di tabel relasi kelas
                         return $query->whereHas('kelas', function ($q) use ($search) {
                             $q->where('nama_kelas', 'ilike', "%{$search}%");
                         });
                     })
                     ->default('Belum Masuk Kelas'),
 
-                // 3. Menghitung total seluruh sesi yang pernah dicatat untuk siswa ini
+                // 3. Menghitung total seluruh sesi
                 TextColumn::make('total_sesi')
                     ->label('Total Sesi')
                     ->getStateUsing(function ($record) {
                         return Kehadiran::where('siswa_id', $record->id)->count();
                     }),
 
-                // 4. Menghitung berapa kali siswa berstatus 'hadir'
+                // 4. Menghitung berapa kali siswa 'hadir'
                 TextColumn::make('total_hadir')
                     ->label('Hadir')
                     ->badge()
@@ -53,26 +51,25 @@ class RekapKehadiransTable
                             ->count();
                     }),
 
-                // 5. FITUR UTAMA PBI 115: Menghitung Persentase Kehadiran Total
+                // 5. FITUR UTAMA PBI 115: Menghitung Persentase Kehadiran Total (Format Aman)
                 TextColumn::make('persentase_kehadiran')
                     ->label('Persentase Kehadiran')
                     ->badge()
-                    ->color(fn (string $state): string => match (true) {
-                        (float)$state >= 80 => 'success', // Hijau jika rajin (>= 80%)
-                        (float)$state >= 50 => 'warning', // Kuning jika mulai jarang masuk
-                        default => 'danger',              // Merah jika kritis
-                    })
                     ->getStateUsing(function ($record) {
                         $total = Kehadiran::where('siswa_id', $record->id)->count();
                         $hadir = Kehadiran::where('siswa_id', $record->id)->where('status_hadir', 'hadir')->count();
 
                         if ($total === 0) {
-                            return '0%';
+                            return 0; // Kembalikan angka murni terlebih dahulu
                         }
 
-                        // Rumus matematika persentase total kehadiran
-                        $persentase = round(($hadir / $total) * 100, 1);
-                        return $persentase . '%';
+                        return round(($hadir / $total) * 100, 1); // Kembalikan angka murni float
+                    })
+                    ->formatStateUsing(fn ($state): string => $state . '%') // Tambah tanda % di sini khusus untuk tampilan
+                    ->color(fn ($state): string => match (true) {
+                        (float)$state >= 80 => 'success',
+                        (float)$state >= 50 => 'warning',
+                        default => 'danger',
                     }),
             ])
             ->filters([]);
