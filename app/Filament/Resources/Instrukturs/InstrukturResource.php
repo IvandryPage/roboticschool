@@ -20,9 +20,21 @@ class InstrukturResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nama_instruktur';
 
-    public static function form(Schema $schema): Schema
+   public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
-        return \App\Filament\Resources\Instrukturs\Schemas\InstrukturForm::configure($schema);
+        return $schema
+            ->components([
+                \Filament\Forms\Components\TextInput::make('nama_lengkap')
+                    ->required()
+                    ->maxLength(255),
+                
+                \Filament\Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->maxLength(255),
+                    
+                \Filament\Forms\Components\TextInput::make('spesialisasi')
+                    ->maxLength(255),
+            ]);
     }
 
     public static function table(Table $table): Table
