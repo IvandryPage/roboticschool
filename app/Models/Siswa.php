@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; // Tambahan untuk relasi
 
 class Siswa extends Model
 {
@@ -38,6 +39,12 @@ class Siswa extends Model
     public function enrollmentKelas(): HasMany
     {
         return $this->hasMany(EnrollmentKelas::class);
+    }
+
+    // TAMBAHAN BARU: Jembatan pencarian untuk relasi kelas
+    public function kelas(): BelongsToMany
+    {
+        return $this->belongsToMany(Kelas::class, 'enrollment_kelas', 'siswa_id', 'kelas_id');
     }
 
     public function kehadiran(): HasMany
