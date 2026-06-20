@@ -2,21 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-// ==========================================
-// IMPORT MODEL YANG BENAR SESUAI SCREENSHOT
-// ==========================================
-use App\Models\SesiLive; // <--- INI BIANG KEROKNYA, kita ganti jadi SesiLive
+// Import Model
+use App\Models\SesiLive;
 use App\Models\Siswa;
 use App\Models\User;
 
 class Kehadiran extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $table = 'kehadiran';
 
     protected $fillable = [
@@ -29,17 +30,35 @@ class Kehadiran extends Model
         'waktu_pencatatan',
     ];
 
-    // --- RELASI PBI 111 ---
+    // --- LOGIKA OTOMATIS (PBI 111) ---
+    protected static function booted()
+    {
+        // Setiap kali data kehadiran disimpan atau dihapus, update progress akademik siswanya
+        static::saved(function ($kehadiran) {
+            $kehadiran->siswa?->sinkronkanProgressAkademik();
+        });
+
+        static::deleted(function ($kehadiran) {
+            $kehadiran->siswa?->sinkronkanProgressAkademik();
+        });
+    }   
+
+    // --- RELASI MODEL ---
 
     public function sesi(): BelongsTo
     {
-        // Ubah Sesi::class menjadi SesiLive::class di sini
         return $this->belongsTo(SesiLive::class, 'sesi_id');
     }
 
     public function siswa(): BelongsTo
     {
         return $this->belongsTo(Siswa::class, 'siswa_id');
+    }
+
+    // Disediakan dua versi (pencatat & dicatatOleh) agar tidak merusak komponen Filament yang memanggilnya
+    public function dicatatOleh(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'dicatat_oleh');
     }
 
     public function pencatat(): BelongsTo
