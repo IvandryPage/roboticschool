@@ -13,7 +13,7 @@ class KelasForm
         return $schema
             ->components([
                 Select::make('batch_id')
-                    ->relationship('batch', 'id')
+                    ->relationship('batch', 'nama_batch')
                     ->required(),
                 TextInput::make('nama_kelas')
                     ->required(),

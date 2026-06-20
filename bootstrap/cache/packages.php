@@ -108,7 +108,7 @@
   array (
     'aliases' => 
     array (
-      'Mcp' => 'Laravel\\Mcp\\Facades\\Mcp',
+      'Mcp' => 'Laravel\\Mcp\\Server\\Facades\\Mcp',
     ),
     'providers' => 
     array (

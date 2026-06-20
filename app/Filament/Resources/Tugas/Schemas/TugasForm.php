@@ -33,7 +33,7 @@ class TugasForm
                     ->columnSpanFull(),
                     
                 FileUpload::make('file_soal')
-                    ->label('File Soal')
+                    ->label('File Soal (Opsional)')
                     ->directory('tugas_soal'),
                     
                 DateTimePicker::make('batas_waktu')
@@ -43,7 +43,8 @@ class TugasForm
                 TextInput::make('nilai_maksimum')
                     ->numeric()
                     ->default(100)
-                    ->required(),
+                    ->required()
+                    ->label('Nilai Maksimum'),
             ]);
     }
 }

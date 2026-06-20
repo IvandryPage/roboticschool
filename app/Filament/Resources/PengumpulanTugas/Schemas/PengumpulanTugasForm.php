@@ -2,83 +2,59 @@
 
 namespace App\Filament\Resources\PengumpulanTugas\Schemas;
 
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
-use Closure;
-use Filament\Forms\Get;
-use App\Models\Tugas;
-use Carbon\Carbon;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Checkbox;
 
 class PengumpulanTugasForm
 {
-    public static function configure($form)
+    public static function configure(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('tugas_id')
-                    ->required()
-                    ->label('ID Tugas'),
-                
-                TextInput::make('siswa_id')
-                    ->required()
-                    ->label('ID Siswa'),
-                
-                // --- INI ADALAH BAGIAN NOMOR 3 YANG SUDAH DIPERBARUI ---
-                FileUpload::make('file_jawaban')
-                    ->label('File Jawaban')
-                    ->directory('jawaban_tugas')
-                    ->required()
-                    ->rules([
-                        // Validasi 1: Format file (hanya menerima pdf, docx, zip)
-                        'mimes:pdf,docx,zip',
-                        
-                        // Validasi 2: Cek batas waktu tugas
-                        static function (Get $get) {
-                            return static function (string $attribute, $value, Closure $fail) use ($get) {
-                                $tugasId = $get('tugas_id');
-                                
-                                if ($tugasId) {
-                                    $tugas = Tugas::find($tugasId);
-                                    
-                                    // Jika tugas ada dan waktu sekarang melewati batas waktu
-                                    if ($tugas && $tugas->batas_waktu && now()->greaterThan($tugas->batas_waktu)) {
-                                        $waktuBatas = Carbon::parse($tugas->batas_waktu)->format('d M Y, H:i');
-                                        $fail("Gagal! Batas waktu pengumpulan sudah habis pada {$waktuBatas} WIB.");
-                                    }
-                                }
-                            };
-                        }
-                    ]),
-                // --------------------------------------------------------
+        return $schema->components([
+            
+            // Asumsi ada relasi ke tabel Tugas dan Siswa. 
+            // Ubah 'judul' dan 'nama' sesuai nama kolom di database kamu jika berbeda.
+            Select::make('tugas_id')
+                ->label('Tugas yang Dikerjakan')
+                ->relationship('tugas', 'judul') 
+                ->searchable()
+                ->required(),
 
-                Textarea::make('catatan_siswa')
-                    ->label('Catatan Siswa')
-                    ->columnSpanFull(),
-                
-                DateTimePicker::make('waktu_kumpul')
-                    ->label('Waktu Kumpul'),
-                
-                TextInput::make('nilai')
-                    ->label('Nilai Akhir')
-                    ->numeric()
-                    ->label('Nilai')
-                    ->inputMode('decimal'),
-                
-                Textarea::make('umpan_balik')
-                    ->label('Umpan Balik')
-                    ->columnSpanFull(),
-                
-                Select::make('status_penilaian')
-                    ->label('Status Penilaian')
-                    ->options([
-                        'Belum Dinilai' => 'Belum Dinilai',
-                        'Dinilai' => 'Dinilai',
-                    ])
-                    ->default('Belum Dinilai')
-                    ->required(),
-            ]);
+            Select::make('siswa_id')
+                ->label('Nama Siswa')
+                ->relationship('siswa', 'nama')
+                ->searchable()
+                ->required(),
+
+            // 1. Fitur Unggah File Jawaban
+            FileUpload::make('file_jawaban') // Sesuaikan dengan nama kolom database-mu
+                ->label('Unggah File Jawaban')
+                ->directory('pengumpulan_tugas')
+                ->acceptedFileTypes([
+                    'application/pdf', 
+                    'application/msword', 
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/zip',
+                    'application/x-rar-compressed'
+                ])
+                ->helperText('Format yang diizinkan: PDF, Word (DOC/DOCX), ZIP, atau RAR.')
+                ->required(),
+
+            // 2. Fitur Catatan Opsional
+            Textarea::make('catatan')
+                ->label('Catatan Tambahan (Opsional)')
+                ->placeholder('Tulis pesan untuk instruktur jika ada...')
+                ->nullable() // Membuatnya tidak wajib diisi
+                ->columnSpanFull(),
+
+            // 3. Fitur Konfirmasi Pengumpulan
+            Checkbox::make('konfirmasi')
+                ->label('Konfirmasi: Saya yakin file jawaban ini sudah benar dan siap dikumpulkan.')
+                ->accepted() // Memaksa sistem agar siswa WAJIB mencentang ini sebelum bisa submit
+                ->dehydrated(false) // Trik ajaib: Mencegah error database karena kolom 'konfirmasi' ini hanya untuk tampilan, tidak disimpan ke tabel
+                ->columnSpanFull(),
+        ]);
     }
 }
