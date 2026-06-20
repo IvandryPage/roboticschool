@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\MateriPembelajarans\Schemas;
 
-use Filament\Schemas\Schema; // Kita pakai Schema agar sinkron dengan file lainnya
+use Filament\Schemas\Schema; 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -12,10 +12,16 @@ class MateriPembelajaranForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->schema([
+        return $schema->components([
             Select::make('sesi_id')
                 ->label('Pilih Sesi Live')
-                ->options(SesiLive::pluck('nama', 'id'))
+                ->options(
+                    // Mengambil data dengan aman dan mengabaikan judul yang kosong (null)
+                    SesiLive::whereNotNull('judul_sesi')->get()->mapWithKeys(function ($sesi) {
+                        return [$sesi->id => "Sesi {$sesi->nomor_sesi} - {$sesi->judul_sesi}"];
+                    })
+                )
+                ->searchable()
                 ->required(),
 
             TextInput::make('judul')

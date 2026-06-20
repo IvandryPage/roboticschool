@@ -18,7 +18,8 @@ class InstrukturResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'nama_instruktur';
+    // PERBAIKAN: Ubah menjadi 'nama_lengkap' sesuai kolom di database
+    protected static ?string $recordTitleAttribute = 'nama_lengkap';
 
     public static function form(Schema $schema): Schema
     {

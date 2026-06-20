@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
 
 class InstruktursTable
 {
@@ -13,7 +14,18 @@ class InstruktursTable
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('nama_lengkap')
+                    ->label('Nama Lengkap')
+                    ->searchable()
+                    ->sortable(),
+                    
+                TextColumn::make('email')
+                    ->label('Alamat Email')
+                    ->searchable(),
+                    
+                TextColumn::make('spesialisasi')
+                    ->label('Spesialisasi')
+                    ->searchable(),
             ])
             ->filters([
                 //

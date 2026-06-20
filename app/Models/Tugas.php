@@ -12,19 +12,26 @@ class Tugas extends Model
 {
     use HasFactory, HasUuids;
 
-    public $incrementing = false;
-
+    public $incrementing = false; // Karena pakai UUID
     protected $keyType = 'string';
-
     protected $table = 'tugas';
 
-    protected $fillable = ['id', 'sesi_id', 'judul_tugas', 'deskripsi', 'file_soal', 'batas_waktu', 'nilai_maksimum'];
+    protected $fillable = [
+        'id', 
+        'sesi_id', 
+        'judul_tugas', 
+        'deskripsi', 
+        'file_soal', 
+        'batas_waktu', 
+        'nilai_maksimum'
+    ];
 
     public function sesi(): BelongsTo
     {
         return $this->belongsTo(SesiLive::class, 'sesi_id');
     }
 
+    // Relasi balik ke pengumpulan
     public function pengumpulanTugas(): HasMany
     {
         return $this->hasMany(PengumpulanTugas::class, 'tugas_id');
