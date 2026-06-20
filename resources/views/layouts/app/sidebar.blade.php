@@ -40,6 +40,19 @@
             Siswa Aktif
         </flux:sidebar.item>
 
+@auth
+    @if(auth()->user()->siswa)
+        <flux:sidebar.item
+            icon="user-circle"
+            :href="route('siswa.profil.show')"
+            :current="request()->routeIs('siswa.profil.*')"
+            wire:navigate
+        >
+            Profil Saya
+        </flux:sidebar.item>
+    @endif
+@endauth
+
     </flux:sidebar.group>
 </flux:sidebar.nav>
 

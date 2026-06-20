@@ -61,6 +61,19 @@ Route::prefix('admin')
         Route::put('/siswa/{id}', [SiswaController::class, 'update'])
             ->name('siswa.update');
 
+        // PBI-071: Nonaktifkan / Aktifkan akun siswa
+
+        // Toggle cepat dari tabel daftar siswa
+        Route::post('/siswa/{id}/toggle-status', [SiswaController::class, 'toggleStatus'])
+           ->name('siswa.toggle-status');
+
+        // Nonaktifkan dari halaman detail
+        Route::post('/siswa/{id}/nonaktifkan', [SiswaController::class, 'nonaktifkan'])
+          ->name('siswa.nonaktifkan');
+
+        // Aktifkan kembali akun siswa
+        Route::post('/siswa/{id}/aktifkan', [SiswaController::class, 'aktifkan'])
+            ->name('siswa.aktifkan');
         
 
     });
