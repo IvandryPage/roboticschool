@@ -19,4 +19,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // });
 });
 
+// Social login (Google)
+use App\Http\Controllers\Auth\SocialAuthController;
+
+Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
 require __DIR__.'/settings.php';
