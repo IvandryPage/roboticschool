@@ -216,10 +216,11 @@ class DatabaseSeeder extends Seeder
 
         // Financial and administrative: create pendaftaran for each calon and related invoice/payments
         $pendaftaranList = collect();
+        $index = 0;
         foreach ($calons as $calon) {
             // ensure we have at least one program available
             if ($programs->isEmpty()) {
-                $programs = ProgramKursus::factory()->count(1)::create();
+                $programs = ProgramKursus::factory()->count(1)->create();
             }
 
             $randProgram = $programs->random();
@@ -232,19 +233,38 @@ class DatabaseSeeder extends Seeder
             $pendaftaranList->push($pd);
 
             // create invoice for this pendaftaran
+            $totalTagihan = is_object($randProgram) ? $randProgram->biaya : ProgramKursus::find($programId)->biaya;
+
             $inv = Invoice::factory()->create([
                 'pendaftaran_id' => $pd->id,
+                'total_tagihan' => $totalTagihan,
             ]);
 
-            // create a payment for some invoices (half)
-            if (rand(0, 1)) {
+            // Assign payment state systematically to ensure we have all states:
+            if ($index < 2) {
+                // Sukses / Dibayar
                 Pembayaran::factory()->create([
                     'invoice_id' => $inv->id,
                     'nominal' => $inv->total_tagihan,
-                    'status' => 'Lunas',
+                    'status' => 'Sukses',
                     'paid_at' => now(),
+                    'bukti_file' => 'bukti_pembayaran/dummy_sukses_' . ($index + 1) . '.jpg',
                 ]);
+                $inv->update(['status_pembayaran' => 'Dibayar']);
+            } elseif ($index < 4) {
+                // Pending / Menunggu Verifikasi
+                Pembayaran::factory()->create([
+                    'invoice_id' => $inv->id,
+                    'nominal' => $inv->total_tagihan,
+                    'status' => 'Pending',
+                    'bukti_file' => 'bukti_pembayaran/dummy_pending_' . ($index - 1) . '.jpg',
+                ]);
+                $inv->update(['status_pembayaran' => 'Menunggu']);
+            } else {
+                // Belum Bayar
+                $inv->update(['status_pembayaran' => 'Menunggu']);
             }
+            $index++;
         }
 
         // Tasks, submissions and evaluations
