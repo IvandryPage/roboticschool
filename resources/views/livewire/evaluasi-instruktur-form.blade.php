@@ -84,16 +84,17 @@
                                     value="{{ $nilai }}"
                                     class="sr-only"
                                 />
-                                <div class="flex flex-col items-center gap-2 rounded-xl py-4 transition-all duration-150
-                                    {{ $selected
-                                        ? 'bg-cyan-500 shadow-[0_0_16px_rgba(6,182,212,0.35)]'
-                                        : 'bg-slate-100 hover:bg-cyan-50 dark:bg-slate-700 dark:hover:bg-cyan-900/30' }}">
-                                    <span class="text-lg font-bold leading-none
-                                        {{ $selected ? 'text-white' : 'text-slate-600 dark:text-slate-300' }}">
-                                        {{ $nilai }}
-                                    </span>
-                                    <span class="text-center text-[10px] leading-tight
-                                        {{ $selected ? 'text-cyan-100' : 'text-slate-400 dark:text-slate-500' }}">
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="flex h-10 w-10 items-center justify-center rounded-full transition-all duration-150
+                                        {{ $selected
+                                            ? 'bg-cyan-500 shadow-[0_0_16px_rgba(6,182,212,0.35)]'
+                                            : 'bg-slate-100 hover:bg-cyan-50 dark:bg-slate-700 dark:hover:bg-cyan-900/30' }}">
+                                        <span class="text-base font-bold leading-none
+                                            {{ $selected ? 'text-white' : 'text-slate-600 dark:text-slate-300' }}">
+                                            {{ $nilai }}
+                                        </span>
+                                    </div>
+                                    <span class="text-center text-[10px] leading-tight text-slate-400 dark:text-slate-500">
                                         {{ ['', 'Buruk', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'][$nilai] }}
                                     </span>
                                 </div>

@@ -44,13 +44,22 @@ class AuditLogsTable
             ->filters([
                 SelectFilter::make('user_id')
                     ->label('Pengguna')
-                    ->options(fn () => User::pluck('nama_lengkap', 'id'))
-                    ->searchable(),
+                    ->options(fn () => User::orderBy('nama_lengkap')->pluck('nama_lengkap', 'id'))
+                    ->searchable()
+                    ->native(false)
+                    ->placeholder('Semua Pengguna'),
 
                 SelectFilter::make('aksi')
                     ->label('Aksi')
-                    ->options(fn () => \App\Models\AuditLog::distinct()->pluck('aksi', 'aksi')->filter()->toArray()),
+                    ->options([
+                        'Login'       => 'Login',
+                        'Delete Data' => 'Delete Data',
+                        'Verifikasi'  => 'Verifikasi',
+                    ])
+                    ->native(false)
+                    ->placeholder('Semua Aksi'),
             ])
+            ->filtersLayout(\Filament\Tables\Enums\FiltersLayout::AboveContent)
             ->recordActions([])
             ->toolbarActions([]);
     }
