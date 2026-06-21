@@ -13,11 +13,11 @@ class KehadiranFactory extends Factory
     {
         return [
             'id' => (string) \Str::uuid(),
-            'sesi_id' => null,
-            'siswa_id' => null,
+            'sesi_id' => SesiLive::factory(),
+            'siswa_id' => Siswa::factory(),
             'status_hadir' => fake()->randomElement(['hadir', 'izin', 'alpha']),
             'catatan' => null,
-            'dicatat_oleh' => null,
+            'dicatat_oleh' => User::factory(),
             'waktu_pencatatan' => now(),
         ];
     }
