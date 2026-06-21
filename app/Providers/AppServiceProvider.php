@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Login;
 use App\Listeners\LogSuccessfulLogin;
 use App\Observers\AuditObserver;
-// use App\Models\User; // Nanti buka tanda "//" ini jika Model User sudah dibuat tim lain
-// use App\Models\Siswa; // Nanti buka tanda "//" ini jika Model Siswa sudah dibuat tim lain
+use App\Models\User; // <-- Tanda "//" sudah dihapus agar CCTV aktif untuk User
+// use App\Models\Siswa; // <-- Biarkan ditutup dulu karena belum ada
 // ===== TAMBAHAN KODE UNTUK PBI-165 (END) =====
 
 class AppServiceProvider extends ServiceProvider
@@ -44,11 +44,9 @@ class AppServiceProvider extends ServiceProvider
         );
 
         // 2. Menempelkan Observer (CCTV) ke Model
-        // (Catatan: Hapus tanda "//" di bawah ini kalau temanmu sudah mengonfirmasi nama Model mereka)
-        
-        // User::observe(AuditObserver::class);
-        // Siswa::observe(AuditObserver::class);
+        User::observe(AuditObserver::class); // <-- Tanda "//" sudah dihapus
 
+        // Siswa::observe(AuditObserver::class); // <-- Biarkan ditutup dulu
         // ===== TAMBAHAN KODE UNTUK PBI-165 (END) =====
     }
 
