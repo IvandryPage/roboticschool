@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         // 2. Menempelkan Observer (CCTV) ke Model
-        User::observe(AuditObserver::class); // <-- Tanda "//" sudah dihapus
+        //User::observe(AuditObserver::class); // <-- Tanda "//" sudah dihapus
 
         // Siswa::observe(AuditObserver::class); // <-- Biarkan ditutup dulu
         // ===== TAMBAHAN KODE UNTUK PBI-165 (END) =====
