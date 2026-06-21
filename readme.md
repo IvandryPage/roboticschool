@@ -97,6 +97,11 @@ CREATE DATABASE sekolah_robotik;
 ```bash
 php artisan migrate
 ```
+OR
+
+```bash
+php artisan migrate:fresh --seed
+```
 
 ### 6. Build Assets & Jalankan
 
