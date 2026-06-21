@@ -33,12 +33,15 @@ class UsersTable
                 TextColumn::make('role.nama_role')
                     ->label('Role')
                     ->badge()
+                    ->color('primary')
                     ->searchable()
                     ->sortable(),
 
                 IconColumn::make('status_aktif')
                     ->label('Status')
-                    ->boolean(),
+                    ->boolean()
+                    ->trueColor('success')
+                    ->falseColor('danger'),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')

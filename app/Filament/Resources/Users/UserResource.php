@@ -22,6 +22,14 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'nama_lengkap';
 
+    protected static ?string $navigationLabel = 'Manajemen Akun';
+
+    protected static ?string $modelLabel = 'Akun Pengguna';
+
+    protected static ?string $pluralModelLabel = 'Akun Pengguna';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Administrasi Sistem';
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);
@@ -46,5 +54,10 @@ class UserResource extends Resource
             'create' => CreateUser::route('/create'),
             'edit' => EditUser::route('/{record}/edit'),
         ];
+    }
+
+        public static function getNavigationLabel(): string
+    {
+        return 'Manajemen Akun';
     }
 }
