@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -95,7 +96,7 @@
             border-radius: 16px;
             padding: 28px 24px;
             margin-bottom: 20px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
         }
 
         /* Tab toggle */
@@ -163,7 +164,7 @@
 
         .form-input:focus {
             border-color: #06b6d4;
-            box-shadow: 0 0 0 3px rgba(6,182,212,0.1);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
         }
 
         .btn-primary {
@@ -249,7 +250,7 @@
             background: white;
             border-radius: 12px;
             padding: 16px 18px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
 
         .info-item .info-label {
@@ -437,211 +438,218 @@
         }
     </style>
 </head>
+
 <body>
 
-{{-- NAVBAR --}}
-<nav class="navbar">
-    <div class="brand">Robo<span>Nesia</span></div>
-    <a href="{{ url('/') }}" class="nav-back">
-        Kembali ke beranda
-    </a>
-</nav>
+    {{-- NAVBAR --}}
+    <nav class="navbar">
+        <div class="brand">Robo<span>Nesia</span></div>
+        <a href="{{ url('/') }}" class="nav-back">
+            Kembali ke beranda
+        </a>
+    </nav>
 
-{{-- HEADER --}}
-<div class="header">
-    <div class="badge">
-        Portal peserta
+    {{-- HEADER --}}
+    <div class="header">
+        <div class="badge">
+            Portal peserta
+        </div>
+        <h1>Cek status pendaftaran</h1>
+        <p>Masukkan nomor referensi atau email terdaftar untuk melihat perkembangan pendaftaran kamu.</p>
     </div>
-    <h1>Cek status pendaftaran</h1>
-    <p>Masukkan nomor referensi atau email terdaftar untuk melihat perkembangan pendaftaran kamu.</p>
-</div>
 
-{{-- MAIN --}}
-<div class="container">
+    {{-- MAIN --}}
+    <div class="container">
 
-    {{-- FORM CEK STATUS --}}
-    <div class="card">
-        <form action="{{ route('pendaftaran.cari') }}" method="POST">
-            @csrf
+        {{-- FORM CEK STATUS --}}
+        <div class="card">
+            <form action="{{ route('pendaftaran.cari') }}" method="POST">
+                @csrf
 
-            {{-- Tab toggle --}}
-            <div class="tab-row">
-                <button type="button" class="tab-btn active" onclick="switchTab('referensi', this)">
-                    <span class="tab-dot"></span> Nomor referensi
+                {{-- Tab toggle --}}
+                <div class="tab-row">
+                    <button type="button" class="tab-btn active" onclick="switchTab('referensi', this)">
+                        <span class="tab-dot"></span> Nomor referensi
+                    </button>
+                    
+                </div>
+
+                {{-- Field Nomor Referensi --}}
+                <div id="tab-referensi">
+                    <label class="form-label">Nomor referensi</label>
+                    <input type="text" name="keyword" class="form-input" placeholder="RBN-2026-00421"
+                        value="{{ old('keyword') }}">
+                </div>
+
+                
+
+                <button type="submit" class="btn-primary">
+                    Cek status sekarang
                 </button>
-                <button type="button" class="tab-btn" onclick="switchTab('email', this)">
-                    <span class="tab-dot"></span> Email
-                </button>
+            </form>
+        </div>
+
+        {{-- ERROR --}}
+        @if(session('error'))
+            <div class="alert-error">
+                {{ session('error') }}
             </div>
+        @endif
 
-            {{-- Field Nomor Referensi --}}
-            <div id="tab-referensi">
-                <label class="form-label">Nomor referensi</label>
-                <input
-                    type="text"
-                    name="keyword"
-                    class="form-input"
-                    placeholder="RBN-2026-00421"
-                    value="{{ old('keyword') }}"
-                >
-            </div>
+        {{-- HASIL PENDAFTARAN --}}
+        @if(isset($pendaftaran) && $pendaftaran)
 
-            {{-- Field Email --}}
-            <div id="tab-email" style="display:none;">
-                <label class="form-label">Email</label>
-                <input
-                    type="email"
-                    name="email"
-                    class="form-input"
-                    placeholder="nama@email.com"
-                >
-            </div>
+            {{-- Status Card --}}
+            <div class="status-card">
+                <div class="status-avatar">
 
-            <button type="submit" class="btn-primary">
-                Cek status sekarang
-            </button>
-        </form>
-    </div>
-
-    {{-- ERROR --}}
-    @if(session('error'))
-    <div class="alert-error">
-        {{ session('error') }}
-    </div>
-    @endif
-
-    {{-- HASIL PENDAFTARAN --}}
-@if(isset($pendaftaran) && $pendaftaran)
-
-    {{-- Status Card --}}
-    <div class="status-card">
-        <div class="status-avatar">
-            
-        </div>
-        <div>
-            <div class="status-badge">
-                @if($pendaftaran->status == 'diproses') SEDANG DIPROSES
-                @elseif($pendaftaran->status == 'dikonfirmasi') DIKONFIRMASI
-                @elseif($pendaftaran->status == 'ditolak') DITOLAK
-                @else {{ strtoupper($pendaftaran->status) }}
-                @endif
-            </div>
-            <div class="status-name">{{ $pendaftaran->calonPeserta->nama_lengkap }}</div>
-            <div class="status-sub">Tim kami sedang meninjau pendaftaranmu</div>
-        </div>
-    </div>
-
-    {{-- Info Grid --}}
-    <div class="info-grid">
-        <div class="info-item">
-            <div class="info-label"><span class="dot"></span> Program</div>
-            <div class="info-value">{{ $pendaftaran->program->nama_program }}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label"><span class="dot"></span> Level</div>
-            <div class="info-value">{{ $pendaftaran->program->level ?? 'Pemula' }}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label"><span class="dot"></span> Biaya</div>
-            <div class="info-value">Rp {{ number_format($pendaftaran->program->biaya ?? 0, 0, ',', '.') }}</div>
-        </div>
-        <div class="info-item">
-            <div class="info-label"><span class="dot"></span> Tanggal daftar</div>
-            <div class="info-value">{{ \Carbon\Carbon::parse($pendaftaran->created_at)->translatedFormat('d F Y') }}</div>
-        </div>
-    </div>
-
-    {{-- Catatan Admin --}}
-    @if($pendaftaran->catatan_admin)
-    <div class="admin-note">
-        <div class="note-label">
-            CATATAN DARI ADMIN
-        </div>
-        <p>{{ $pendaftaran->catatan_admin }}</p>
-    </div>
-    @endif
-
-    {{-- Timeline --}}
-    <div class="card">
-        <div class="timeline-title">
-            Riwayat proses
-        </div>
-        <ul class="timeline">
-            <li>
-                <div class="tl-dot"></div>
-                <div class="tl-title">Pendaftaran diterima</div>
-                <div class="tl-time">{{ \Carbon\Carbon::parse($pendaftaran->created_at)->translatedFormat('d M Y, H.i') }}</div>
-            </li>
-            <li>
-                <div class="tl-dot {{ in_array($pendaftaran->status, ['verifikasi','diproses','dikonfirmasi']) ? '' : 'pending' }}"></div>
-                <div class="tl-title {{ in_array($pendaftaran->status, ['verifikasi','diproses','dikonfirmasi']) ? '' : 'pending-text' }}">Dokumen diverifikasi</div>
-                <div class="tl-time">
-                    @if($pendaftaran->tanggal_verifikasi)
-                        {{ \Carbon\Carbon::parse($pendaftaran->tanggal_verifikasi)->translatedFormat('d M Y, H.i') }}
-                    @else
-                        Dalam proses
-                    @endif
                 </div>
-            </li>
-            <li>
-                <div class="tl-dot {{ in_array($pendaftaran->status, ['diproses','dikonfirmasi']) ? '' : 'pending' }}"></div>
-                <div class="tl-title {{ in_array($pendaftaran->status, ['diproses','dikonfirmasi']) ? '' : 'pending-text' }}">Menunggu konfirmasi pembayaran</div>
-                <div class="tl-time">
-                    @if($pendaftaran->tanggal_bayar)
-                        {{ \Carbon\Carbon::parse($pendaftaran->tanggal_bayar)->translatedFormat('d M Y, H.i') }}
-                    @else
-                        Dalam proses
-                    @endif
+                <div>
+                    <div class="status-badge">
+                        @if($pendaftaran->status == 'diproses') SEDANG DIPROSES
+                        @elseif($pendaftaran->status == 'dikonfirmasi') DIKONFIRMASI
+                        @elseif($pendaftaran->status == 'ditolak') DITOLAK
+                        @else {{ strtoupper($pendaftaran->status) }}
+                        @endif
+                    </div>
+                    <div class="status-name">{{ $pendaftaran->calonPeserta->nama_lengkap }}</div>
+                    <div class="status-sub">Tim kami sedang meninjau pendaftaranmu</div>
                 </div>
-            </li>
-            <li>
-                <div class="tl-dot {{ $pendaftaran->status == 'dikonfirmasi' ? '' : 'pending' }}"></div>
-                <div class="tl-title {{ $pendaftaran->status == 'dikonfirmasi' ? '' : 'pending-text' }}">Pendaftaran dikonfirmasi</div>
-                <div class="tl-time">
-                    @if($pendaftaran->status == 'dikonfirmasi' && $pendaftaran->tanggal_konfirmasi)
-                        {{ \Carbon\Carbon::parse($pendaftaran->tanggal_konfirmasi)->translatedFormat('d M Y, H.i') }}
-                    @else
-                        Dalam proses
-                    @endif
-                </div>
-            </li>
-        </ul>
+            </div>
 
-        {{-- Tombol Aksi --}}
-        <div class="btn-row">
-            <!--<a href="https://wa.me/6281234567890" class="btn-outline" target="_blank">
-                🗓 Tanya admin ↗
-            </a>//-->
-            <a href="{{ url('/daftar') }}" class="btn-outline">
-                Daftar program lain
-            </a>
+            {{-- Info Grid --}}
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label"><span class="dot"></span> Program</div>
+                    <div class="info-value">{{ $pendaftaran->program->nama_program }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><span class="dot"></span> Level</div>
+                    <div class="info-value">{{ $pendaftaran->program->level ?? 'Pemula' }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><span class="dot"></span> Biaya</div>
+                    <div class="info-value">Rp {{ number_format($pendaftaran->program->biaya ?? 0, 0, ',', '.') }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label"><span class="dot"></span> Tanggal daftar</div>
+                    <div class="info-value">{{ \Carbon\Carbon::parse($pendaftaran->created_at)->translatedFormat('d F Y') }}
+                    </div>
+                </div>
+            </div>
+
+            {{-- Catatan Admin --}}
+            @if($pendaftaran->catatan_admin)
+                <div class="admin-note">
+                    <div class="note-label">
+                        CATATAN DARI ADMIN
+                    </div>
+                    <p>{{ $pendaftaran->catatan_admin }}</p>
+                </div>
+            @endif
+
+            {{-- Timeline --}}
+            <div class="card">
+                <div class="timeline-title">
+                    Riwayat proses
+                </div>
+                <ul class="timeline">
+                    <li>
+                        <div class="tl-dot"></div>
+                        <div class="tl-title">Pendaftaran diterima</div>
+                        <div class="tl-time">
+                            {{ \Carbon\Carbon::parse($pendaftaran->created_at)->translatedFormat('d M Y, H.i') }}
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tl-dot"></div>
+                        <div class="tl-title">Dokumen diverifikasi</div>
+                        <div class="tl-time"></div>
+
+                        @if($pendaftaran->status == 'Revisi')
+                            <div style="margin-top: 10px;">
+                                <a href="{{ route('pendaftaran.revisi', $pendaftaran->id) }}"
+                                    style="color: #06b6d4; font-size: 0.8rem; font-weight: 600; text-decoration: none; font-family: 'Segoe UI', Arial, sans-serif;">
+                                    Perbarui Berkas Pendaftaran
+                                </a>
+                            </div>
+                        @endif
+
+                    </li>
+                    <div class="tl-time">
+                        @if($pendaftaran->tanggal_verifikasi)
+                            {{ \Carbon\Carbon::parse($pendaftaran->tanggal_verifikasi)->translatedFormat('d M Y, H.i') }}
+                        @else
+                            Dalam proses
+                        @endif
+                    </div>
+                    </li>
+                    <li>
+                        <div
+                            class="tl-dot {{ in_array($pendaftaran->status, ['diproses', 'dikonfirmasi']) ? '' : 'pending' }}">
+                        </div>
+                        <div
+                            class="tl-title {{ in_array($pendaftaran->status, ['diproses', 'dikonfirmasi']) ? '' : 'pending-text' }}">
+                            Menunggu konfirmasi pembayaran</div>
+                        <div class="tl-time">
+                            @if($pendaftaran->tanggal_bayar)
+                                {{ \Carbon\Carbon::parse($pendaftaran->tanggal_bayar)->translatedFormat('d M Y, H.i') }}
+                            @else
+                                Dalam proses
+                            @endif
+                        </div>
+                    </li>
+                    <li>
+                        <div class="tl-dot {{ $pendaftaran->status == 'dikonfirmasi' ? '' : 'pending' }}"></div>
+                        <div class="tl-title {{ $pendaftaran->status == 'dikonfirmasi' ? '' : 'pending-text' }}">Pendaftaran
+                            dikonfirmasi</div>
+                        <div class="tl-time">
+                            @if($pendaftaran->status == 'dikonfirmasi' && $pendaftaran->tanggal_konfirmasi)
+                                {{ \Carbon\Carbon::parse($pendaftaran->tanggal_konfirmasi)->translatedFormat('d M Y, H.i') }}
+                            @else
+                                Dalam proses
+                            @endif
+                        </div>
+                    </li>
+                </ul>
+
+
+                {{-- Tombol Aksi --}}
+                <div class="btn-row">
+                    <!--<a href="https://wa.me/6281234567890" class="btn-outline" target="_blank">
+                                            🗓 Tanya admin ↗
+                                        </a>//-->
+                    <a href="{{ url('/daftar') }}" class="btn-outline">
+                        Daftar program lain
+                    </a>
+                </div>
+            </div>
+
+        @endif
+
+    </div>
+
+    {{-- FOOTER --}}
+    <div class="footer">
+        <div class="footer-left">
+            Data kamu aman dan terenkripsi
+        </div>
+        <div class="footer-right">
+            <a href="#">Butuh bantuan?</a>
         </div>
     </div>
 
-    @endif
+    <script>
+        function switchTab(tab, btn) {
+            document.getElementById('tab-referensi').style.display = 'none';
+            document.getElementById('tab-email').style.display = 'none';
+            document.getElementById('tab-' + tab).style.display = 'block';
 
-</div>
-
-{{-- FOOTER --}}
-<div class="footer">
-    <div class="footer-left">
-        Data kamu aman dan terenkripsi
-    </div>
-    <div class="footer-right">
-        <a href="#">Butuh bantuan? ↗</a>
-    </div>
-</div>
-
-<script>
-    function switchTab(tab, btn) {
-        document.getElementById('tab-referensi').style.display = 'none';
-        document.getElementById('tab-email').style.display = 'none';
-        document.getElementById('tab-' + tab).style.display = 'block';
-
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-</script>
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
 
 </body>
+
 </html>

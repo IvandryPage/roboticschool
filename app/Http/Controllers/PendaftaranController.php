@@ -176,6 +176,38 @@ public function cariStatus(Request $request)
     return view('pendaftaran.status', compact('pendaftaran'));
 }
 
+public function revisi(Pendaftaran $pendaftaran)
+{
+    return view('pendaftaran.revisi', compact('pendaftaran'));
+}
+
+// STEP 7 - REVISI DOKUMEN
+public function storeRevisi(
+    Request $request,
+    Pendaftaran $pendaftaran
+)
+{
+    $request->validate([
+        'dokumen' => 'required|file|mimes:pdf,jpg,jpeg,png'
+    ]);
+
+    // simpan file revisi
+    $path = $request
+        ->file('dokumen')
+        ->store('revisi-dokumen', 'public');
+
+    // ubah status pendaftaran
+    $pendaftaran->update([
+        'status' => 'Verifikasi'
+    ]);
+
+    return redirect()
+        ->route('pendaftaran.status')
+        ->with(
+            'success',
+            'Dokumen revisi berhasil dikirim'
+        );
+}
 
 }
 

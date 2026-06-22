@@ -85,6 +85,37 @@ Route::post('/cek-status', [PendaftaranController::class, 'cariStatus'])
 
 /*
 |--------------------------------------------------------------------------
+| HALAMAN REVISI
+|--------------------------------------------------------------------------
+*/
+    Route::get('/pendaftaran/{pendaftaran}/revisi', 
+    [PendaftaranController::class, 'formRevisi']
+)->name('pendaftaran.revisi');
+
+/*
+|--------------------------------------------------------------------------
+| REVISI DOKUMEN
+|--------------------------------------------------------------------------
+*/
+Route::get('/pendaftaran/{pendaftaran}/revisi', [PendaftaranController::class, 'revisi'])
+    ->name('pendaftaran.revisi');
+
+Route::post('/pendaftaran/{pendaftaran}/revisi', [PendaftaranController::class, 'storeRevisi'])
+    ->name('pendaftaran.revisi.store');
+
+   
+    Route::get(
+    '/pendaftaran/{pendaftaran}/revisi',
+    [PendaftaranController::class, 'revisi']
+)->name('pendaftaran.revisi');
+
+Route::post(
+    '/pendaftaran/{pendaftaran}/revisi',
+    [PendaftaranController::class, 'storeRevisi']
+)->name('pendaftaran.revisi.store');
+
+/*
+|--------------------------------------------------------------------------
 | LEGACY SUCCESS (boleh dihapus nanti)
 |--------------------------------------------------------------------------
 */
