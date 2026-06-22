@@ -11,8 +11,10 @@ class AuditObserver
     // Fungsi ini akan otomatis mencatat kalau ada data yang diverifikasi/diupdate
     public function updated($model)
     {
+        if (! Auth::check()) return;
+
         AuditLog::create([
-            'user_id'      => Auth::check() ? Auth::id() : null,
+            'user_id'      => Auth::id(),
             'aksi'         => 'Update / Verifikasi',
             'entity_type'  => get_class($model),
             'entity_id'    => $model->id,
@@ -25,8 +27,10 @@ class AuditObserver
     // Fungsi ini akan otomatis mencatat kalau ada data yang dihapus
     public function deleted($model)
     {
+        if (! Auth::check()) return;
+
         AuditLog::create([
-            'user_id'      => Auth::check() ? Auth::id() : null,
+            'user_id'      => Auth::id(),
             'aksi'         => 'Delete Data',
             'entity_type'  => get_class($model),
             'entity_id'    => $model->id,
