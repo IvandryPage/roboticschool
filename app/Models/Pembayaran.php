@@ -17,7 +17,7 @@ class Pembayaran extends Model
 
     protected $table = 'pembayaran';
 
-    protected $fillable = ['id', 'invoice_id', 'nominal', 'metode_pembayaran', 'provider', 'provider_reference', 'status', 'paid_at', 'callback_payload'];
+    protected $fillable = ['id', 'invoice_id', 'nominal', 'metode_pembayaran', 'provider', 'provider_reference', 'status', 'paid_at', 'callback_payload', 'bukti_file', 'diverifikasi_oleh', 'catatan_penolakan'];
 
     protected static function booted()
     {
@@ -34,5 +34,10 @@ class Pembayaran extends Model
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class, 'invoice_id');
+    }
+
+    public function verifikator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'diverifikasi_oleh');
     }
 }
