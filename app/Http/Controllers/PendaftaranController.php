@@ -67,7 +67,7 @@ class PendaftaranController extends Controller
         return view('pendaftaran.dokumen', compact('pendaftaran'));
     }
 
-    // STEP 2 - SIMPAN DOKUMEN
+    // STEP 3 - SIMPAN DOKUMEN
     public function storeDokumen(Request $request, Pendaftaran $pendaftaran)
 {
         $validated = $request->validate([
@@ -116,11 +116,52 @@ public function selesai(Pendaftaran $pendaftaran)
     );
 }
 
-// STEP 4 - SELESAI (lama)
+// STEP 5 - SELESAI (lama)
 public function success()
 {
     return view('pendaftaran.sukses');
 }
+
+// STEP 6 - CEK STATUS
+
+public function cekStatus()
+{
+    return view('pendaftaran.status');
+}
+
+
+// STEP 6 - CARI STATUS
+public function cariStatus(Request $request)
+{
+
+    $request->validate([
+        'keyword'=>'required'
+    ]);
+
+
+    $pendaftaran = Pendaftaran::with([
+        'calonPeserta',
+        'program',
+        'riwayatStatus'
+    ])
+    ->where('no_referensi',$request->keyword)
+    ->orWhereHas('calonPeserta', function($q) use ($request){
+
+        $q->where('email',$request->keyword);
+
+    })
+    ->latest()
+    ->first();
+
+    if(!$pendaftaran){
+    return back()->with('error','Data pendaftaran tidak ditemukan');
+}
+
+
+    return view('pendaftaran.status', compact('pendaftaran'));
+}
+
+
 }
 
 

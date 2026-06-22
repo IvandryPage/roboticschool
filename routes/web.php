@@ -61,6 +61,18 @@ Route::get(
 
 /*
 |--------------------------------------------------------------------------
+| CEK STATUS
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/cek-status', [PendaftaranController::class, 'cekStatus'])
+    ->name('pendaftaran.status');
+
+Route::post('/cek-status', [PendaftaranController::class, 'cariStatus'])
+    ->name('pendaftaran.cari');
+
+/*
+|--------------------------------------------------------------------------
 | LEGACY SUCCESS (boleh dihapus nanti)
 |--------------------------------------------------------------------------
 */

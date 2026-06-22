@@ -190,9 +190,9 @@
         </div>
     </div>
 
-    <a href="{{ route('dashboard') }}" class="btn-dashboard">
+    <a href="{{ route('pendaftaran.status') }}" class="btn-dashboard">
 
-        Lanjut ke Dashboard
+        Cek Status Pendaftaran
 
         <svg fill="none"
              stroke="currentColor"
