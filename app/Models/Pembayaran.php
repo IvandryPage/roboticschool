@@ -19,6 +19,18 @@ class Pembayaran extends Model
 
     protected $fillable = ['id', 'invoice_id', 'nominal', 'metode_pembayaran', 'provider', 'provider_reference', 'status', 'paid_at', 'callback_payload'];
 
+    protected static function booted()
+    {
+        static::updated(function ($pembayaran) {
+            
+            if ($pembayaran->isDirty('status') && $pembayaran->status === 'Sukses') {
+                
+                app(\App\Listeners\ProsesAktivasiSiswaOtomatis::class)->handle($pembayaran);
+                
+            }
+        });
+    }
+
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class, 'invoice_id');
