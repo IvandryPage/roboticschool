@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Listeners\LogSuccessfulLogin;
 use App\Livewire\EvaluasiInstrukturForm;
+use App\Models\User;
+use App\Observers\AuditObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
@@ -30,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
             Login::class,
             LogSuccessfulLogin::class,
         );
+
+        // PBI-165: mencatat log saat data diupdate atau dihapus
+        User::observe(AuditObserver::class);
     }
 
     protected function registerRoutes(): void
