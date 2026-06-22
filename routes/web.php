@@ -48,6 +48,18 @@ Route::post(
     [PembayaranController::class, 'store']
 )->name('pembayaran.store');
 
+Route::get(
+    '/syarat-ketentuan/{pendaftaran}',
+    function (\App\Models\Pendaftaran $pendaftaran) {
+        return view('legal.syarat', compact('pendaftaran'));
+    }
+)->name('syarat');
+Route::get(
+    '/kebijakan-refund/{pendaftaran}',
+    function (\App\Models\Pendaftaran $pendaftaran) {
+        return view('legal.refund', compact('pendaftaran'));
+    }
+)->name('refund');
 /*
 |--------------------------------------------------------------------------
 | SELESAI

@@ -293,6 +293,25 @@ body{
 
 </style>
 </head>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const methods = document.querySelectorAll('.method');
+
+    methods.forEach(method => {
+        method.addEventListener('click', function () {
+
+            methods.forEach(m => m.classList.remove('active-method'));
+
+            this.classList.add('active-method');
+
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+        });
+    });
+
+});
+</script>
 <body>
 
 <div class="container">
@@ -397,8 +416,8 @@ action="{{ route('pembayaran.store',$pendaftaran->id) }}">
 
 @csrf
 
-<label class="method active-method">
-<input type="radio" checked name="metode">
+<label class="method">
+<input type="radio" name="metode" value="transfer" required>
 
 <div class="method-wrap">
 
@@ -413,7 +432,7 @@ action="{{ route('pembayaran.store',$pendaftaran->id) }}">
 </label>
 
 <label class="method">
-<input type="radio" name="metode">
+<input type="radio" name="metode" value="virtual_account">
 
 <div class="method-wrap">
 
@@ -428,7 +447,7 @@ action="{{ route('pembayaran.store',$pendaftaran->id) }}">
 </label>
 
 <label class="method">
-<input type="radio" name="metode">
+<input type="radio" name="metode" value="ewallet">
 
 <div class="method-wrap">
 
@@ -448,9 +467,9 @@ action="{{ route('pembayaran.store',$pendaftaran->id) }}">
 <input type="checkbox" required>
 
 Saya menyetujui
-<a href="#">Syarat & Ketentuan</a>
+<a href="{{ route('syarat', $pendaftaran) }}">Syarat & Ketentuan</a>
 dan
-<a href="#">Kebijakan Refund</a>
+<a href="{{ route('refund', $pendaftaran) }}">Kebijakan Refund</a>
 
 </label>
 
