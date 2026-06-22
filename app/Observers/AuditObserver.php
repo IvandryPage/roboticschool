@@ -24,6 +24,12 @@ class AuditObserver
         ]);
     }
 
+    // Hapus audit logs terkait sebelum user dihapus (cegah FK constraint error)
+    public function deleting($model)
+    {
+        AuditLog::where('user_id', $model->id)->delete();
+    }
+
     // Fungsi ini akan otomatis mencatat kalau ada data yang dihapus
     public function deleted($model)
     {
