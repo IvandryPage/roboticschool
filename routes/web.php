@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PendaftaranController;
+use App\Http\Controllers\PembayaranController;
 
 Route::view('/', 'welcome')->name('home');
 
@@ -8,7 +10,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
 
-use App\Http\Controllers\PendaftaranController;
+/*
+|--------------------------------------------------------------------------
+| PENDAFTARAN
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/daftar', [PendaftaranController::class, 'create'])
     ->name('pendaftaran.create');
@@ -25,6 +31,39 @@ Route::post(
     '/pendaftaran/{pendaftaran}/dokumen',
     [PendaftaranController::class, 'storeDokumen']
 )->name('pendaftaran.dokumen.store');
+
+/*
+|--------------------------------------------------------------------------
+| PEMBAYARAN
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/pembayaran/{pendaftaran}',
+    [PembayaranController::class, 'index']
+)->name('pembayaran.index');
+
+Route::post(
+    '/pembayaran/{pendaftaran}',
+    [PembayaranController::class, 'store']
+)->name('pembayaran.store');
+
+/*
+|--------------------------------------------------------------------------
+| SELESAI
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/pendaftaran/{pendaftaran}/selesai',
+    [PendaftaranController::class, 'selesai']
+)->name('pendaftaran.selesai');
+
+/*
+|--------------------------------------------------------------------------
+| LEGACY SUCCESS (boleh dihapus nanti)
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/daftar/sukses', [PendaftaranController::class, 'success'])
     ->name('pendaftaran.success');

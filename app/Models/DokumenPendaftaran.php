@@ -17,10 +17,18 @@ class DokumenPendaftaran extends Model
 
     protected $table = 'dokumen_pendaftaran';
 
-    protected $fillable = ['id', 'pendaftaran_id', 'jenis_dokumen', 'nama_file', 'file_path', 'versi', 'status_verifikasi', 'catatan', 'uploaded_at', 'updated_at'];
+    public $timestamps = false; // TAMBAHKAN INI
 
-    public function pendaftaran(): BelongsTo
-    {
-        return $this->belongsTo(Pendaftaran::class);
-    }
+    protected $fillable = [
+        'id',
+        'pendaftaran_id',
+        'jenis_dokumen',
+        'nama_file',
+        'file_path',
+        'versi',
+        'status_verifikasi',
+        'catatan',
+        'uploaded_at',
+        'updated_at'
+    ];
 }

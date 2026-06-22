@@ -19,37 +19,47 @@ class PendaftaranController extends Controller
     }
 
     // STEP 1 - DATA DIRI
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'email' => 'required|email',
-            'no_hp' => 'required|regex:/^(08|\+628)[0-9]{8,13}$/',
-            'asal_sekolah_atau_instansi' => 'required|string|max:255',
-            'jenjang_pendidikan' => 'required|string|max:255',
-            'program_id' => 'required|exists:program_kursus,id',
-        ]);
+        public function store(Request $request)
+        {
+            $validated = $request->validate([
+                'nama_lengkap' => 'required|string|max:255',
+                'email' => 'required|email',
+                'no_hp' => 'required|string|max:20',
 
-        $calonPeserta = CalonPeserta::create([
-            'nama_lengkap' => $validated['nama_lengkap'],
-            'email' => $validated['email'],
-            'no_hp' => $validated['no_hp'],
-            'asal_sekolah_atau_instansi' => $validated['asal_sekolah_atau_instansi'],
-            'jenjang_pendidikan' => $validated['jenjang_pendidikan'],
-        ]);
+                'tanggal_lahir' => 'required|date',
+                'jenis_kelamin' => 'required|string',
+                'domisili' => 'required|string|max:255',
+                'alamat' => 'required|string',
 
-        $noReferensi = 'REG-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+                'pendidikan' => 'required|string',
+                'institusi' => 'nullable|string|max:255',
 
-        $pendaftaran = Pendaftaran::create([
-            'calon_peserta_id' => $calonPeserta->id,
-            'program_id' => $validated['program_id'],
-            'no_referensi' => $noReferensi,
-            'tanggal_daftar' => now(),
-            'status' => 'Menunggu',
-        ]);
+                'motivasi' => 'nullable|string',
+                'format_kelas' => 'required|string',
 
-        return redirect()->route('pendaftaran.dokumen', $pendaftaran->id);
-    }
+                'program_id' => 'required|exists:program_kursus,id',
+            ]);
+
+            $calonPeserta = CalonPeserta::create([
+                'nama_lengkap' => $validated['nama_lengkap'],
+                'email' => $validated['email'],
+                'no_hp' => $validated['no_hp'],
+                'asal_sekolah_atau_instansi' => $validated['institusi'] ?? '-',
+                'jenjang_pendidikan' => $validated['pendidikan'],
+            ]);
+
+            $noReferensi = 'REG-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6));
+
+            $pendaftaran = Pendaftaran::create([
+                'calon_peserta_id' => $calonPeserta->id,
+                'program_id' => $validated['program_id'],
+                'no_referensi' => $noReferensi,
+                'tanggal_daftar' => now(),
+                'status' => 'Menunggu',
+            ]);
+
+            return redirect()->route('pendaftaran.dokumen', $pendaftaran->id);
+        }
 
     // STEP 2 - FORM DOKUMEN
     public function dokumen(Pendaftaran $pendaftaran)
@@ -59,13 +69,11 @@ class PendaftaranController extends Controller
 
     // STEP 2 - SIMPAN DOKUMEN
     public function storeDokumen(Request $request, Pendaftaran $pendaftaran)
-    {
+{
         $validated = $request->validate([
-            'dokumen_identitas' =>
-                'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-
-            'pas_foto' =>
-                'required|image|mimes:jpg,jpeg,png|max:2048',
+            'dokumen_identitas' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'pas_foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'dokumen_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ]);
 
         $pathIdentitas = $request
@@ -96,13 +104,23 @@ class PendaftaranController extends Controller
 
         // sementara ke halaman sukses dulu
         return redirect()
-            ->route('pendaftaran.success')
-            ->with('no_referensi', $pendaftaran->no_referensi);
+    ->route('pembayaran.index', $pendaftaran->id);
     }
 
-    // STEP 4 - SELESAI
-    public function success()
-    {
-        return view('pendaftaran.sukses');
-    }
+  // STEP 4 - HALAMAN SELESAI
+public function selesai(Pendaftaran $pendaftaran)
+{
+    return view(
+        'pendaftaran.selesai',
+        compact('pendaftaran')
+    );
 }
+
+// STEP 4 - SELESAI (lama)
+public function success()
+{
+    return view('pendaftaran.sukses');
+}
+}
+
+
