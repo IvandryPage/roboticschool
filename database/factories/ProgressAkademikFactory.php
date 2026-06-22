@@ -14,11 +14,10 @@ class ProgressAkademikFactory extends Factory
         return [
             'id' => (string) \Str::uuid(),
             'siswa_id' => null,
-            'program_id' => null,
             'kelas_id' => null,
             'status' => 'active',
-            'nilai_rata_rata' => fake()->randomFloat(2, 60, 100),
-            'catatan' => null,
+            'rata_nilai_tugas' => fake()->randomFloat(2, 60, 100),
+            // 'catatan' => null,
         ];
     }
 }

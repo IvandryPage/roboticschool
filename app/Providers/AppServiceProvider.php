@@ -2,31 +2,34 @@
 
 namespace App\Providers;
 
+use App\Listeners\LogSuccessfulLogin;
 use App\Livewire\EvaluasiInstrukturForm;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         $this->configureDefaults();
         $this->registerRoutes();
+
+        // PBI-165: mencatat log saat login
+        Event::listen(
+            Login::class,
+            LogSuccessfulLogin::class,
+        );
     }
 
     protected function registerRoutes(): void
@@ -36,9 +39,6 @@ class AppServiceProvider extends ServiceProvider
             ->name('evaluasi.instruktur');
     }
 
-    /**
-     * Configure default behaviors for production-ready applications.
-     */
     protected function configureDefaults(): void
     {
         Date::use(CarbonImmutable::class);
