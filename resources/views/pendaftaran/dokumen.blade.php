@@ -360,6 +360,7 @@ enctype="multipart/form-data">
 <input
 type="file"
 name="dokumen_identitas"
+id="dokumen_identitas"
 required>
 
 <div class="upload-content">
@@ -368,11 +369,21 @@ required>
 
 <div>
 <h3>KTP / Kartu Pelajar *</h3>
-<small>JPG / PNG / PDF • Maks 5 MB</small>
+<small id=identitasText>
+JPG / PNG / PDF • Maks 5 MB
+</small>
 </div>
 
 </div>
-
+<img
+id="previewIdentitas"
+style="
+display:none;
+width:100%;
+max-height:220px;
+object-fit:contain;
+margin-top:15px;
+border-radius:10px;">
 </div>
 
 </label>
@@ -384,6 +395,7 @@ required>
 <input
 type="file"
 name="pas_foto"
+id="pas_foto"
 required>
 
 <div class="upload-content">
@@ -392,11 +404,21 @@ required>
 
 <div>
 <h3>Pas Foto 3x4 *</h3>
-<small>JPG / PNG • Maks 2 MB</small>
+<small id="fotoText">
+JPG / PNG • Maks 5 MB
+</small>
 </div>
 
 </div>
-
+<img
+id="previewFoto"
+style="
+display:none;
+width:150px;
+height:180px;
+object-fit:cover;
+margin-top:15px;
+border-radius:10px;">
 </div>
 
 </label>
@@ -407,19 +429,29 @@ required>
 
 <input
 type="file"
-name="dokumen_pendukung">
-
+name="dokumen_pendukung"
+id="dokumen_pendukung">
 <div class="upload-content">
 
 <div class="upload-icon">⬆</div>
 
 <div>
 <h3>Bukti Status (Opsional)</h3>
-<small>Kartu Mahasiswa / Surat Kerja / dll</small>
+<small id="pendukungText">
+Kartu Mahasiswa / Surat Kerja / dll
+</small>
 </div>
 
 </div>
-
+<img
+id="previewPendukung"
+style="
+display:none;
+width:100%;
+max-height:220px;
+object-fit:contain;
+margin-top:15px;
+border-radius:10px;">
 </div>
 
 </label>
@@ -467,6 +499,89 @@ Lanjutkan →
 </div>
 
 </div>
+<script>
 
+document.getElementById('dokumen_identitas')
+.addEventListener('change', function(){
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    document.getElementById('identitasText')
+        .innerText = file.name;
+
+    if(file.type.startsWith('image/')){
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            const preview =
+                document.getElementById('previewIdentitas');
+
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+});
+
+document.getElementById('pas_foto')
+.addEventListener('change', function(){
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    document.getElementById('fotoText')
+        .innerText = file.name;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const preview =
+            document.getElementById('previewFoto');
+
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+    };
+
+    reader.readAsDataURL(file);
+
+});
+
+document.getElementById('dokumen_pendukung')
+.addEventListener('change', function(){
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    document.getElementById('pendukungText')
+        .innerText = file.name;
+
+    if(file.type.startsWith('image/')){
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            const preview =
+                document.getElementById('previewPendukung');
+
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+});
+
+</script>
 </body>
 </html>

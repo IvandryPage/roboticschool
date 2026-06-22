@@ -291,7 +291,29 @@
         }
     </style>
 </head>
+<<<<<<< HEAD
 
+=======
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const methods = document.querySelectorAll('.method');
+
+    methods.forEach(method => {
+        method.addEventListener('click', function () {
+
+            methods.forEach(m => m.classList.remove('active-method'));
+
+            this.classList.add('active-method');
+
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+        });
+    });
+
+});
+</script>
+>>>>>>> 8a75dc455d1be3e29c9372bbfafb87453645237b
 <body>
 
     <div class="container">
@@ -394,8 +416,13 @@
 
                 @csrf
 
+<<<<<<< HEAD
                 <label class="method active-method">
                     <input type="radio" checked name="metode">
+=======
+<label class="method">
+<input type="radio" name="metode" value="transfer" required>
+>>>>>>> 8a75dc455d1be3e29c9372bbfafb87453645237b
 
                     <div class="method-wrap">
 
@@ -409,8 +436,13 @@
                     </div>
                 </label>
 
+<<<<<<< HEAD
                 <label class="method">
                     <input type="radio" name="metode">
+=======
+<label class="method">
+<input type="radio" name="metode" value="virtual_account">
+>>>>>>> 8a75dc455d1be3e29c9372bbfafb87453645237b
 
                     <div class="method-wrap">
 
@@ -424,8 +456,13 @@
                     </div>
                 </label>
 
+<<<<<<< HEAD
                 <label class="method">
                     <input type="radio" name="metode">
+=======
+<label class="method">
+<input type="radio" name="metode" value="ewallet">
+>>>>>>> 8a75dc455d1be3e29c9372bbfafb87453645237b
 
                     <div class="method-wrap">
 
@@ -444,10 +481,17 @@
                     <label>
                         <input type="checkbox" required>
 
+<<<<<<< HEAD
                         Saya menyetujui
                         <a href="#">Syarat & Ketentuan</a>
                         dan
                         <a href="#">Kebijakan Refund</a>
+=======
+Saya menyetujui
+<a href="{{ route('syarat', $pendaftaran) }}">Syarat & Ketentuan</a>
+dan
+<a href="{{ route('refund', $pendaftaran) }}">Kebijakan Refund</a>
+>>>>>>> 8a75dc455d1be3e29c9372bbfafb87453645237b
 
                     </label>
 
