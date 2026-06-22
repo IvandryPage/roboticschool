@@ -70,42 +70,57 @@ class PendaftaranController extends Controller
     // STEP 2 - SIMPAN DOKUMEN
     public function storeDokumen(Request $request, Pendaftaran $pendaftaran)
 {
-        $validated = $request->validate([
-            'dokumen_identitas' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'pas_foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'dokumen_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-        ]);
+    $request->validate([
+        'dokumen_identitas' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        'pas_foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        'dokumen_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+    ]);
 
-        $pathIdentitas = $request
-            ->file('dokumen_identitas')
-            ->store('dokumen-pendaftaran', 'public');
+    // Identitas
+    $pathIdentitas = $request->file('dokumen_identitas')
+        ->store('dokumen-pendaftaran', 'public');
 
-        $pathPasFoto = $request
-            ->file('pas_foto')
+    DokumenPendaftaran::create([
+        'pendaftaran_id' => $pendaftaran->id,
+        'jenis_dokumen' => 'Identitas',
+        'nama_file' => $request->file('dokumen_identitas')->getClientOriginalName(),
+        'file_path' => $pathIdentitas,
+        'status_verifikasi' => 'Menunggu',
+        'uploaded_at' => now(),
+    ]);
+
+    // Pas Foto
+    $pathPasFoto = $request->file('pas_foto')
+        ->store('dokumen-pendaftaran', 'public');
+
+    DokumenPendaftaran::create([
+        'pendaftaran_id' => $pendaftaran->id,
+        'jenis_dokumen' => 'Pas Foto',
+        'nama_file' => $request->file('pas_foto')->getClientOriginalName(),
+        'file_path' => $pathPasFoto,
+        'status_verifikasi' => 'Menunggu',
+        'uploaded_at' => now(),
+    ]);
+
+    // Dokumen Pendukung (Opsional)
+    if ($request->hasFile('dokumen_pendukung')) {
+
+        $pathPendukung = $request->file('dokumen_pendukung')
             ->store('dokumen-pendaftaran', 'public');
 
         DokumenPendaftaran::create([
             'pendaftaran_id' => $pendaftaran->id,
-            'jenis_dokumen' => 'Identitas',
-            'nama_file' => $request->file('dokumen_identitas')->getClientOriginalName(),
-            'file_path' => $pathIdentitas,
+            'jenis_dokumen' => 'Dokumen Pendukung',
+            'nama_file' => $request->file('dokumen_pendukung')->getClientOriginalName(),
+            'file_path' => $pathPendukung,
             'status_verifikasi' => 'Menunggu',
             'uploaded_at' => now(),
         ]);
-
-        DokumenPendaftaran::create([
-            'pendaftaran_id' => $pendaftaran->id,
-            'jenis_dokumen' => 'Pas Foto',
-            'nama_file' => $request->file('pas_foto')->getClientOriginalName(),
-            'file_path' => $pathPasFoto,
-            'status_verifikasi' => 'Menunggu',
-            'uploaded_at' => now(),
-        ]);
-
-        // sementara ke halaman sukses dulu
-        return redirect()
-    ->route('pembayaran.index', $pendaftaran->id);
     }
+
+    return redirect()
+        ->route('pembayaran.index', $pendaftaran->id);
+}
 
   // STEP 4 - HALAMAN SELESAI
 public function selesai(Pendaftaran $pendaftaran)
