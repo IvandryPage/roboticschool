@@ -429,19 +429,29 @@ border-radius:10px;">
 
 <input
 type="file"
-name="dokumen_pendukung">
-
+name="dokumen_pendukung"
+id="dokumen_pendukung">
 <div class="upload-content">
 
 <div class="upload-icon">⬆</div>
 
 <div>
 <h3>Bukti Status (Opsional)</h3>
-<small>Kartu Mahasiswa / Surat Kerja / dll</small>
+<small id="pendukungText">
+Kartu Mahasiswa / Surat Kerja / dll
+</small>
 </div>
 
 </div>
-
+<img
+id="previewPendukung"
+style="
+display:none;
+width:100%;
+max-height:220px;
+object-fit:contain;
+margin-top:15px;
+border-radius:10px;">
 </div>
 
 </label>
@@ -541,6 +551,34 @@ document.getElementById('pas_foto')
     };
 
     reader.readAsDataURL(file);
+
+});
+
+document.getElementById('dokumen_pendukung')
+.addEventListener('change', function(){
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    document.getElementById('pendukungText')
+        .innerText = file.name;
+
+    if(file.type.startsWith('image/')){
+
+        const reader = new FileReader();
+
+        reader.onload = function(e){
+
+            const preview =
+                document.getElementById('previewPendukung');
+
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+
+        reader.readAsDataURL(file);
+    }
 
 });
 
