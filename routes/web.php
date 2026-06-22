@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SertifikatController;
+use App\Http\Controllers\SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman utama
@@ -20,8 +21,13 @@ Route::get('/dashboard', function () {
 // Hanya bisa diakses oleh user dengan role Siswa
 // ============================================================
 Route::middleware(['auth'])->group(function () {
+    // PBI-127: Halaman sertifikat milik siswa
     Route::get('/sertifikat/saya', [SertifikatController::class, 'milikku'])
         ->name('sertifikat.saya');
+
+    // Dashboard Siswa — portal dengan sidebar modern
+    Route::get('/siswa/dashboard', [SiswaDashboardController::class, 'index'])
+        ->name('siswa.dashboard');
 });
 
 // PBI-128: Halaman verifikasi sertifikat (publik, tanpa login)
