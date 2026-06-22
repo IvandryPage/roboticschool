@@ -54,8 +54,7 @@ class ProgramKursusForm
                         TextInput::make('nomor_urut')
                             ->label('Nomor Urut')
                             ->numeric()
-                            ->required()
-                            ->default(1),
+                            ->required(),
                         TextInput::make('judul_materi')
                             ->required(),
                         Textarea::make('deskripsi_materi'),
