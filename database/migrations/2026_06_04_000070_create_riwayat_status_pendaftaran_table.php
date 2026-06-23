@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('status_lama')->nullable();
             $table->string('status_baru')->nullable();
             $table->text('catatan')->nullable();
-            $table->foreignUuid('diubah_oleh')->constrained('users');
+            $table->foreignUuid('diubah_oleh')->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AuditLog extends Model
 {
@@ -14,7 +15,17 @@ class AuditLog extends Model
 
     protected $keyType = 'string';
 
-    protected $table = 'audit_log';
+    protected $table = 'audit_logs';
 
-    protected $fillable = ['id', 'user_id', 'aksi', 'model', 'model_id', 'perubahan', 'ip_address', 'user_agent', 'created_at'];
+    protected $fillable = ['id', 'user_id', 'aksi', 'entity_type', 'entity_id', 'data_sebelum', 'data_sesudah', 'ip_address'];
+
+    protected $casts = [
+        'data_sebelum' => 'array',
+        'data_sesudah' => 'array',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

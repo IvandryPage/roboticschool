@@ -6,14 +6,102 @@
     <body class="min-h-screen bg-white dark:bg-zinc-800">
         <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
+            <flux:sidebar.group :heading="__('Platform')" class="grid">
+
+            <flux:sidebar.item
+                icon="home"
+                :href="route('dashboard')"
+                :current="request()->routeIs('dashboard')"
+                wire:navigate
+        >
+            {{ __('Dashboard') }}
+            </flux:sidebar.item>
+
+            <flux:sidebar.item
+            icon="clipboard-document-check"
+            :href="route('admin.pendaftaran.index')"
+            :current="request()->routeIs('admin.pendaftaran.*')"
+            wire:navigate
+        >
+            Pendaftaran
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="users"
+            :href="route('admin.siswa.index')"
+            :current="request()->routeIs('admin.siswa.*')"
+            wire:navigate
+        >
+            Siswa Aktif
+        </flux:sidebar.item>
+
+@auth
+    @if(auth()->user()->siswa)
+        <flux:sidebar.item
+            icon="user-circle"
+            :href="route('siswa.profil.show')"
+            :current="request()->routeIs('siswa.profil.*')"
+            wire:navigate
+        >
+            Profil Saya
+        </flux:sidebar.item>
+    @endif
+@endauth
+
+    </flux:sidebar.group>
+</flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
+                    @if (auth()->user()->role && auth()->user()->role->nama_role === 'Admin Akademik')
+                        <flux:sidebar.item icon="layout-grid" href="/admin" :current="request()->is('admin*')">
+                            {{ __('Filament Admin') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="wrench" :href="route('admin.aset.index')" :current="request()->routeIs('admin.aset.*')">
+                            {{ __('Kelola Aset') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="clipboard" :href="route('admin.peminjaman.index')" :current="request()->routeIs('admin.peminjaman.index')">
+                            {{ __('Persetujuan Peminjaman') }}
+                        </flux:sidebar.item>
+                    @elseif (auth()->user()->role && auth()->user()->role->nama_role === 'Siswa')
+                        <flux:sidebar.item icon="home" :href="route('siswa.dashboard')" :current="request()->routeIs('siswa.dashboard')">
+                            {{ __('Dashboard Siswa') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="trophy" :href="route('sertifikat.saya')" :current="request()->routeIs('sertifikat.saya')">
+                            {{ __('Sertifikat Saya') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="clipboard" :href="route('peminjaman.index')" :current="request()->routeIs('peminjaman.index')">
+                            {{ __('Peminjaman Aset') }}
+                        </flux:sidebar.item>
+                    @elseif (auth()->user()->role && in_array(auth()->user()->role->nama_role, ['Instruktur', 'Tim Publikasi', 'Direktur']))
+                        <flux:sidebar.item icon="layout-grid" href="/admin" :current="request()->is('admin*')">
+                            {{ __('Filament Admin') }}
+                        </flux:sidebar.item>
+                    @else
+                        <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="clipboard" :href="route('peminjaman.index')" :current="request()->routeIs('peminjaman.index')">
+                            {{ __('Peminjaman Aset') }}
+                        </flux:sidebar.item>
+                    @endif
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Diskusi')" class="grid mt-4">
+                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('forum.index')" :current="request()->routeIs('forum.*')" wire:navigate>
+                        {{ __('Forum Diskusi') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Helpdesk')" class="grid mt-4">
+                    <flux:sidebar.item icon="ticket" :href="route('keluhan.create')" :current="request()->routeIs('keluhan.create')" wire:navigate>
+                        {{ __('Kirim Keluhan') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="clock" :href="route('keluhan.saya')" :current="request()->routeIs('keluhan.saya')" wire:navigate>
+                        {{ __('Riwayat Keluhan') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
@@ -21,12 +109,12 @@
             <flux:spacer />
 
             <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
+                <flux:sidebar.item icon="computer-desktop" href="https://robonesia.com" target="_blank">
+                    {{ __('Website RoboNesia') }}
                 </flux:sidebar.item>
 
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
+                <flux:sidebar.item icon="book-open-text" href="https://robonesia.com/docs" target="_blank">
+                    {{ __('Dokumentasi') }}
                 </flux:sidebar.item>
             </flux:sidebar.nav>
 
@@ -65,7 +153,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
+                        <flux:menu.item :href="route('profile.edit')" icon="cog">
                             {{ __('Settings') }}
                         </flux:menu.item>
                     </flux:menu.radio.group>
