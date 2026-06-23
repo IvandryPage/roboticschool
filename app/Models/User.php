@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,14 +19,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements PasskeyUser, FilamentUser
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, HasUuids, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'nama_lengkap',
         'name',
@@ -39,11 +32,6 @@ class User extends Authenticatable implements PasskeyUser, FilamentUser
         'status_aktif',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'two_factor_secret',
@@ -51,11 +39,6 @@ class User extends Authenticatable implements PasskeyUser, FilamentUser
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
@@ -63,8 +46,21 @@ class User extends Authenticatable implements PasskeyUser, FilamentUser
     ];
 
     /**
-     * Get the user's initials
+     * LOGIKA TAMBAHAN:
+     * Menangani constraint NOT NULL pada database saat pembuatan user baru
      */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            // Jika nama_lengkap kosong, isi otomatis dengan 'name'
+            if (empty($user->nama_lengkap)) {
+                $user->nama_lengkap = $user->name ?? 'User Baru';
+            }
+        });
+    }
+
     public function initials(): string
     {
         $source = $this->nama_lengkap = $this->name ?? '';
