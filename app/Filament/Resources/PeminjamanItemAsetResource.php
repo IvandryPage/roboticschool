@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Tables;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class PeminjamanItemAsetResource extends Resource
 {
@@ -36,12 +37,12 @@ class PeminjamanItemAsetResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
+        return Auth::check() && Auth::user()->role?->nama_role === 'Admin Akademik';
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
+        return false;
     }
 
     public static function form(Schema $schema): Schema
@@ -140,7 +141,7 @@ class PeminjamanItemAsetResource extends Resource
 
                         $record->status = 'Dipinjam';
                         $record->tanggal_pinjam = now();
-                        $record->diverifikasi_oleh = auth()->id();
+                        $record->diverifikasi_oleh = Auth::id();
                         $record->save();
 
                         Notification::make()
@@ -156,7 +157,7 @@ class PeminjamanItemAsetResource extends Resource
                     ->requiresConfirmation()
                     ->action(function (PeminjamanItemAset $record) {
                         $record->status = 'Ditolak';
-                        $record->diverifikasi_oleh = auth()->id();
+                        $record->diverifikasi_oleh = Auth::id();
                         $record->save();
 
                         Notification::make()

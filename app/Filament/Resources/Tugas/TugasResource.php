@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class TugasResource extends Resource
 {
@@ -24,9 +25,35 @@ class TugasResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Tugas';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
     protected static ?string $recordTitleAttribute = 'yes';
+
+    protected static ?string $navigationLabel = 'Penugasan';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    /** Admin dan Instruktur dapat melihat tugas */
+    public static function canViewAny(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+    }
+
+    /** Instruktur yang bisa tambah/edit/hapus tugas */
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Instruktur';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Instruktur';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Instruktur';
+    }
 
     public static function form(Schema $schema): Schema
     {

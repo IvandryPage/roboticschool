@@ -7,7 +7,7 @@ use App\Filament\Resources\Kehadirans\Pages\EditKehadiran;
 use App\Filament\Resources\Kehadirans\Pages\ListKehadirans;
 use App\Filament\Resources\Kehadirans\Tables\KehadiransTable;
 use App\Models\Kehadiran;
-use App\Models\Siswa; // <-- Tambahan import Siswa
+use App\Models\Siswa;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -15,12 +15,39 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Auth;
 
 class KehadiranResource extends Resource
 {
     protected static ?string $model = Kehadiran::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
+
+    protected static ?string $navigationLabel = 'Absensi';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    /** Admin, Instruktur, dan Direktur dapat melihat absensi */
+    public static function canViewAny(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+    }
+
+    /** Admin dan Instruktur dapat input/edit absensi */
+    public static function canCreate(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+    }
+
+    public static function canEdit($record): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
 
     public static function form(Schema $schema): Schema
     {

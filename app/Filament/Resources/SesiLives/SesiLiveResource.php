@@ -15,14 +15,41 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class SesiLiveResource extends Resource
 {
     protected static ?string $model = SesiLive::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
     protected static ?string $recordTitleAttribute = 'robotic';
+
+    protected static ?string $navigationLabel = 'Jadwal Sesi Live';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    /** Admin, Instruktur, dan Direktur dapat melihat sesi */
+    public static function canViewAny(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+    }
+
+    /** Admin dan Instruktur dapat mengelola sesi */
+    public static function canCreate(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+    }
+
+    public static function canEdit($record): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -13,14 +13,41 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class KelasResource extends Resource
 {
     protected static ?string $model = Kelas::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAcademicCap;
 
     protected static ?string $recordTitleAttribute = 'nama_kelas';
+
+    protected static ?string $navigationLabel = 'Manajemen Kelas';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    /** Admin, Instruktur, dan Direktur dapat melihat kelas */
+    public static function canViewAny(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+    }
+
+    /** Hanya Admin yang bisa tambah/edit/hapus kelas */
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
 
     public static function form(Schema $schema): Schema
     {

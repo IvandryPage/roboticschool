@@ -206,7 +206,8 @@
                                         src="{{ asset('storage/' . $dok->file_path) }}"
                                         alt="{{ $dok->jenis_dokumen }}"
                                         class="w-full max-h-96 object-contain"
-                                        onerror="this.parentElement.innerHTML='<p class=\'p-4 text-sm text-zinc-400 text-center\'>Gagal memuat gambar. <a href=\'{{ asset(\'storage/\' . $dok->file_path) }}\' target=\'_blank\' class=\'underline\'>Buka di tab baru</a></p>'"
+                                        data-fallback-url="{{ asset('storage/' . $dok->file_path) }}"
+                                        onerror="this.parentElement.innerHTML='<p class=\'p-4 text-sm text-zinc-400 text-center\'>Gagal memuat gambar. <a href=\'' + this.getAttribute('data-fallback-url') + '\' target=\'_blank\' class=\'underline\'>Buka di tab baru</a></p>'"
                                     />
                                 @elseif($isPdf)
                                     <iframe

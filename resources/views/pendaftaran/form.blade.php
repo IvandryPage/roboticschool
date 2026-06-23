@@ -543,7 +543,8 @@
         <option value="">Pilih Program</option>
 
         @foreach($programs as $program)
-            <option value="{{ $program->id }}">
+            <option value="{{ $program->id }}"
+                {{ (request('program') && stripos($program->nama_program, request('program')) !== false) || (old('program_id') == $program->id) ? 'selected' : '' }}>
                 {{ $program->nama_program }}
             </option>
         @endforeach

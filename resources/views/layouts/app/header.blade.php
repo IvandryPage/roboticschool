@@ -60,8 +60,17 @@
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')">
                     @if (auth()->user()->role && auth()->user()->role->nama_role === 'Admin Akademik')
+                        <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </flux:sidebar.item>
                         <flux:sidebar.item icon="layout-grid" href="/admin" :current="request()->is('admin*')">
                             {{ __('Filament Admin') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="clipboard-document-check" :href="route('admin.pendaftaran.index')" :current="request()->routeIs('admin.pendaftaran.*')" wire:navigate>
+                            Pendaftaran
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="users" :href="route('admin.siswa.index')" :current="request()->routeIs('admin.siswa.*')" wire:navigate>
+                            Siswa Aktif
                         </flux:sidebar.item>
                         <flux:sidebar.item icon="wrench" :href="route('admin.aset.index')" :current="request()->routeIs('admin.aset.*')">
                             {{ __('Kelola Aset') }}
@@ -73,6 +82,9 @@
                         <flux:sidebar.item icon="home" :href="route('siswa.dashboard')" :current="request()->routeIs('siswa.dashboard')">
                             {{ __('Dashboard Siswa') }}
                         </flux:sidebar.item>
+                        <flux:sidebar.item icon="user-circle" :href="route('siswa.profil.show')" :current="request()->routeIs('siswa.profil.*')" wire:navigate>
+                            Profil Saya
+                        </flux:sidebar.item>
                         <flux:sidebar.item icon="trophy" :href="route('sertifikat.saya')" :current="request()->routeIs('sertifikat.saya')">
                             {{ __('Sertifikat Saya') }}
                         </flux:sidebar.item>
@@ -80,6 +92,9 @@
                             {{ __('Peminjaman Aset') }}
                         </flux:sidebar.item>
                     @elseif (auth()->user()->role && in_array(auth()->user()->role->nama_role, ['Instruktur', 'Tim Publikasi', 'Direktur']))
+                        <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')">
+                            {{ __('Dashboard') }}
+                        </flux:sidebar.item>
                         <flux:sidebar.item icon="layout-grid" href="/admin" :current="request()->is('admin*')">
                             {{ __('Filament Admin') }}
                         </flux:sidebar.item>

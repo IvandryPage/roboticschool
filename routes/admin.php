@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\PendaftaranController;
 use App\Http\Controllers\Admin\SiswaController;
+use App\Http\Controllers\Admin\AdminAsetController;
+use App\Http\Controllers\Admin\AdminPeminjamanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -75,5 +77,21 @@ Route::prefix('admin')
         Route::post('/siswa/{id}/aktifkan', [SiswaController::class, 'aktifkan'])
             ->name('siswa.aktifkan');
         
+        // Aset Robotik
+        Route::get('/aset', [AdminAsetController::class, 'index'])->name('aset.index');
+        Route::get('/aset/create', [AdminAsetController::class, 'create'])->name('aset.create');
+        Route::post('/aset', [AdminAsetController::class, 'store'])->name('aset.store');
+        Route::get('/aset/{aset}/edit', [AdminAsetController::class, 'edit'])->name('aset.edit');
+        Route::put('/aset/{aset}', [AdminAsetController::class, 'update'])->name('aset.update');
+        Route::delete('/aset/{aset}', [AdminAsetController::class, 'destroy'])->name('aset.destroy');
+        Route::post('/aset/{aset}/item-kit', [AdminAsetController::class, 'storeItemKit'])->name('aset.item-kit.store');
+        Route::post('/item-kit/{itemKit}/update-condition', [AdminAsetController::class, 'updateItemKitCondition'])->name('item-kit.update-condition');
+        Route::delete('/item-kit/{itemKit}', [AdminAsetController::class, 'destroyItemKit'])->name('item-kit.destroy');
+
+        // Peminjaman Aset
+        Route::get('/peminjaman-aset', [AdminPeminjamanController::class, 'index'])->name('peminjaman.index');
+        Route::post('/peminjaman-aset/{peminjaman}/approve', [AdminPeminjamanController::class, 'approve'])->name('peminjaman.approve');
+        Route::post('/peminjaman-aset/{peminjaman}/reject', [AdminPeminjamanController::class, 'reject'])->name('peminjaman.reject');
+        Route::post('/peminjaman-aset/{peminjaman}/confirm-return', [AdminPeminjamanController::class, 'confirmReturn'])->name('peminjaman.return');
 
     });

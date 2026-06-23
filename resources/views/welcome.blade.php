@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
 <head>
@@ -65,15 +65,24 @@
                 </nav>
 
                 <div class="flex items-center gap-4">
-                    <a href="#"
-                        class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Masuk</a>
-                    <a href="#"
-                        class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md flex items-center gap-1.5">
-                        Daftar
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </svg>
-                    </a>
+                    @auth
+                        <a href="{{ route('dashboard') }}"
+                            class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Dashboard</a>
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-sm font-semibold text-red-600 hover:text-red-900 transition-colors cursor-pointer">Keluar</button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}"
+                            class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Masuk</a>
+                        <a href="{{ route('register') }}"
+                            class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md flex items-center gap-1.5">
+                            Daftar
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    @endauth
                 </div>
             </div>
         </header>
@@ -1211,7 +1220,7 @@
                         Diselenggarakan terbatas hanya 2 kali dalam setahun (Januari & Juli). Program intensif untuk
                         lompatan karir optimal di bidang otomasi industri dan Internet of Things.
                     </p>
-                    <a href="#"
+                    <a href="{{ route('pendaftaran.create') }}"
                         class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold text-sm px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/10 inline-flex items-center gap-2">
                         Daftar Kuota Batch #1 &rarr;
                     </a>
@@ -1333,7 +1342,7 @@
                         </ul>
 
                         <!-- Tombol Kirim Keluhan -->
-                        <a href="#"
+                        <a href="{{ route('keluhan.create') }}"
                             class="inline-flex items-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition mb-5">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -1746,10 +1755,10 @@
 
                             </div>
 
-                            <button
-                                class="w-full mt-8 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-4 rounded-2xl transition">
+                            <a href="{{ route('pendaftaran.create', ['program' => $program]) }}"
+                                class="w-full block text-center mt-8 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-4 rounded-2xl transition">
                                 Daftar Sekarang
-                            </button>
+                            </a>
 
                         </div>
 

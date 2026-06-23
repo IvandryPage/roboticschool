@@ -4,11 +4,12 @@ namespace App\Filament\Resources\MateriPembelajarans;
 
 use App\Models\MateriPembelajaran;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema; // UBAH INI: Dari Form ke Schema
+use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Support\Icons\Heroicon; // Tambahkan untuk ikon
-use BackedEnum; // Tambahkan untuk kompatibilitas PHP 8.4
+use Filament\Support\Icons\Heroicon;
+use BackedEnum;
+use Illuminate\Support\Facades\Auth;
 
 // Memanggil class form materi
 use App\Filament\Resources\MateriPembelajarans\Schemas\MateriPembelajaranForm;
@@ -20,9 +21,35 @@ class MateriPembelajaranResource extends Resource
 {
     protected static ?string $model = MateriPembelajaran::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
     protected static ?string $slug = 'materi-pembelajarans';
+
+    protected static ?string $navigationLabel = 'Materi Pembelajaran';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    /** Admin dan Instruktur dapat melihat materi */
+    public static function canViewAny(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+    }
+
+    /** Instruktur yang bisa tambah/edit/hapus materi */
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Instruktur';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Instruktur';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Instruktur';
+    }
 
     // UBAH INI: Method form sekarang pakai tipe Schema
     public static function form(Schema $schema): Schema

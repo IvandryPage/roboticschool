@@ -14,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables;
+use Illuminate\Support\Facades\Auth;
 
 class AsetRobotikResource extends Resource
 {
@@ -38,12 +39,12 @@ class AsetRobotikResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
+        return Auth::check() && Auth::user()->role?->nama_role === 'Admin Akademik';
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->check() && auth()->user()->role?->nama_role === 'Admin Akademik';
+        return false;
     }
 
     public static function form(Schema $schema): Schema

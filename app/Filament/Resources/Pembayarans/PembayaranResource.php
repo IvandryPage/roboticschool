@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class PembayaranResource extends Resource
 {
@@ -30,6 +31,28 @@ class PembayaranResource extends Resource
     protected static ?string $pluralModelLabel = 'Pembayaran';
 
     protected static ?string $slug = 'pembayaran';
+
+    /** Admin dan Direktur dapat melihat data pembayaran */
+    public static function canViewAny(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
+    }
+
+    /** Hanya Admin yang bisa verifikasi/edit pembayaran */
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
 
     public static function form(Schema $schema): Schema
     {

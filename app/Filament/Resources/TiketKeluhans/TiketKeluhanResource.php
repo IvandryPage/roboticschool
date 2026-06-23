@@ -52,10 +52,12 @@ class TiketKeluhanResource extends Resource
     {
         $user = Auth::user();
 
-        if ($user?->role?->nama_role === 'Admin Akademik') {
+        // Admin dan Direktur bisa lihat semua tiket
+        if (in_array($user?->role?->nama_role, ['Admin Akademik', 'Direktur'])) {
             return parent::getEloquentQuery();
         }
 
+        // User lain (Siswa, Instruktur) hanya lihat milik sendiri
         return parent::getEloquentQuery()
             ->where('pelapor_id', $user->id);
     }
@@ -64,11 +66,24 @@ class TiketKeluhanResource extends Resource
     {
         $user = Auth::user();
 
+        // Hanya Admin yang bisa mengubah status tiket
         if ($user?->role?->nama_role === 'Admin Akademik') {
             return true;
         }
 
-        return $record->pelapor_id === $user->id;
+        // Pelapor tidak bisa edit setelah tiket dikirim
+        return false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canViewAny(): bool
+    {
+        // Admin dan Direktur dapat mengakses manajemen tiket
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
     }
 
     public static function getPages(): array

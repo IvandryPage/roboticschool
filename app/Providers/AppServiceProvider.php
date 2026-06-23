@@ -26,6 +26,17 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Listen to migrations starting event to create a dummy 'sesi' table
+        // to satisfy a foreign key constraint in the group's migration files.
+        Event::listen(\Illuminate\Database\Events\MigrationsStarted::class, function () {
+            if (!\Illuminate\Support\Facades\Schema::hasTable('sesi')) {
+                \Illuminate\Support\Facades\Schema::create('sesi', function (\Illuminate\Database\Schema\Blueprint $table) {
+                    $table->uuid('id')->primary();
+                    $table->timestamps();
+                });
+            }
+        });
+
         // PERBAIKAN TOTAL: Menghilangkan paksa fitur sanitizer yang butuh PHP 8.4
         // Agar tidak terjadi error Class Dom\HTMLDocument not found
         Config::set('filament.html_sanitizer', false);
@@ -61,11 +72,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \App\Models\PeminjamanItemAset::resolveRelationUsing('borrower', function ($model) {
-            return $model->belongsTo(\App\Models\User::class, 'user_id');
+            return $model->belongsTo(User::class, 'user_id');
         });
 
         \App\Models\PeminjamanItemAset::resolveRelationUsing('verifikator', function ($model) {
-            return $model->belongsTo(\App\Models\User::class, 'diverifikasi_oleh');
+            return $model->belongsTo(User::class, 'diverifikasi_oleh');
         });
     }
 

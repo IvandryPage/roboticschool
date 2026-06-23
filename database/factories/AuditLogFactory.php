@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\AuditLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class AuditLogFactory extends Factory
 {
@@ -12,7 +13,7 @@ class AuditLogFactory extends Factory
     public function definition()
     {
         return [
-            'id' => (string) \Str::uuid(),
+            'id' => (string) Str::uuid(),
             'user_id' => null,
             'aksi' => fake()->randomElement(['Login', 'Create', 'Update', 'Delete', 'Verify']),
             'model' => null,

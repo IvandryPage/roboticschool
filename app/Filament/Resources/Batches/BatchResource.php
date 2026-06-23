@@ -8,19 +8,45 @@ use App\Filament\Resources\Batches\Pages\ListBatches;
 use App\Filament\Resources\Batches\Schemas\BatchForm;
 use App\Filament\Resources\Batches\Tables\BatchesTable;
 use App\Models\Batch;
-use BackedEnum; // <--- INI WAJIB ADA
+use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class BatchResource extends Resource
 {
     protected static ?string $model = Batch::class;
 
-    // INI YANG TADI BIKIN ERROR, KITA UBAH SESUAI STANDAR FILAMENT TERBARU
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $recordTitleAttribute = 'nama_batch';
+
+    protected static ?string $navigationLabel = 'Batch';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    /** Admin, Instruktur, dan Direktur dapat melihat batch */
+    public static function canViewAny(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+    }
+
+    /** Hanya Admin yang bisa kelola batch */
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -11,14 +11,41 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class ProgramResource extends Resource
 {
     protected static ?string $model = ProgramKursus::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
 
     protected static ?string $recordTitleAttribute = 'nama_program';
+
+    protected static ?string $navigationLabel = 'Program Kursus';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Konten';
+
+    /** Semua role dalam panel bisa melihat program kursus */
+    public static function canViewAny(): bool
+    {
+        return Auth::check();
+    }
+
+    /** Hanya Tim Publikasi dan Admin yang bisa tambah program */
+    public static function canCreate(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Tim Publikasi', 'Admin Akademik']);
+    }
+
+    public static function canEdit($record): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Tim Publikasi', 'Admin Akademik']);
+    }
+
+    public static function canDelete($record): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Tim Publikasi', 'Admin Akademik']);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -33,9 +60,9 @@ class ProgramResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPrograms::route('/'),
+            'index'  => ListPrograms::route('/'),
             'create' => CreateProgram::route('/create'),
-            'edit' => EditProgram::route('/{record}/edit'),
+            'edit'   => EditProgram::route('/{record}/edit'),
         ];
     }
 }
