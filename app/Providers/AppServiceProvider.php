@@ -24,6 +24,27 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+
+        // Dynamic relations to avoid modifying model files
+        \App\Models\AsetRobotik::resolveRelationUsing('itemKits', function ($model) {
+            return $model->hasMany(\App\Models\ItemKitRobotik::class, 'aset_id');
+        });
+
+        \App\Models\ItemKitRobotik::resolveRelationUsing('aset', function ($model) {
+            return $model->belongsTo(\App\Models\AsetRobotik::class, 'aset_id');
+        });
+
+        \App\Models\ItemKitRobotik::resolveRelationUsing('peminjamans', function ($model) {
+            return $model->hasMany(\App\Models\PeminjamanItemAset::class, 'item_kit_id');
+        });
+
+        \App\Models\PeminjamanItemAset::resolveRelationUsing('borrower', function ($model) {
+            return $model->belongsTo(\App\Models\User::class, 'user_id');
+        });
+
+        \App\Models\PeminjamanItemAset::resolveRelationUsing('verifikator', function ($model) {
+            return $model->belongsTo(\App\Models\User::class, 'diverifikasi_oleh');
+        });
     }
 
     /**
