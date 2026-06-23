@@ -19,7 +19,7 @@
                     </p>
                 </div>
                 <div class="mt-6">
-                    <flux:button href="{{ route('peminjaman.index') }}" variant="primary" class="w-full justify-center">
+                    <flux:button href="{{ Route::has('peminjaman.index') ? route('peminjaman.index') : '#' }}" variant="primary" class="w-full justify-center">
                         Ajukan Peminjaman
                     </flux:button>
                 </div>
