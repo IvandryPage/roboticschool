@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\MaintenanceAset;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class MaintenanceAsetFactory extends Factory
 {
@@ -12,14 +13,15 @@ class MaintenanceAsetFactory extends Factory
     public function definition()
     {
         return [
-            'id' => (string) \Str::uuid(),
+            'id' => (string) Str::uuid(),
             'item_kit_id' => null,
             'dilaporkan_oleh' => null,
             'ditangani_oleh' => null,
             'tanggal_lapor' => now(),
-            'jenis_pemeliharaan' => fake()->randomElement(['inspeksi', 'perbaikan', 'kalibrasi']),
-            'hasil_pemeriksaan' => null,
-            'catatan' => null,
+            'deskripsi_kerusakan' => fake()->sentence(),
+            'status' => 'Diajukan',
+            'biaya' => null,
+            'selesai_pada' => null,
         ];
     }
 }

@@ -14,6 +14,10 @@ use App\Models\ProgramKursus;
 use App\Models\Role;
 use App\Models\Siswa;
 use App\Models\User;
+use App\Models\CalonPeserta;
+use App\Models\Pendaftaran;
+use App\Models\Invoice;
+use App\Models\Pembayaran;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -37,11 +41,11 @@ class DatabaseSeeder extends Seeder
             Role::firstOrCreate(['nama_role' => $r['nama_role']], $r);
         }
 
-        $adminRole = Role::where('nama_role', 'Admin Akademik')->first();
-        $instrukturRole = Role::where('nama_role', 'Instruktur')->first();
-        $siswaRole = Role::where('nama_role', 'Siswa')->first();
-        $publikasiRole = Role::where('nama_role', 'Tim Publikasi')->first();
-        $direkturRole = Role::where('nama_role', 'Direktur')->first();
+        $adminRole = Role::where(['nama_role' => 'Admin Akademik'])->first();
+        $instrukturRole = Role::where(['nama_role' => 'Instruktur'])->first();
+        $siswaRole = Role::where(['nama_role' => 'Siswa'])->first();
+        $publikasiRole = Role::where(['nama_role' => 'Tim Publikasi'])->first();
+        $direkturRole = Role::where(['nama_role' => 'Direktur'])->first();
 
         // 2) Users (admin, instructors, director, publikasi)
         $admin = User::firstOrCreate(
@@ -277,15 +281,21 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        $progressDataKelas2 = [
+            [95.0, 91.0, 100.0, 'Lulus'],
+            [80.0, 80.0, 80.0, 'Lulus'],
+            [80.0, 80.0, 80.0, 'Lulus'],
+            [80.0, 80.0, 80.0, 'Lulus'],
+        ];
         foreach ($next4->values() as $idx => $p) {
-            $pd = [95.0,91.0,100.0,'Lulus'][$idx] ?? [80,80,80,'Lulus'];
+            $pd = $progressDataKelas2[$idx] ?? [80, 80, 80, 'Lulus'];
             ProgressAkademik::firstOrCreate(
                 ['siswa_id' => $p->id, 'kelas_id' => $kelas2->id],
                 [
-                    'persentase_kehadiran' => $pd[0] ?? 80,
-                    'rata_nilai_tugas' => $pd[1] ?? 80,
-                    'persentase_penyelesaian' => $pd[2] ?? 100,
-                    'status' => $pd[3] ?? 'Lulus',
+                    'persentase_kehadiran' => $pd[0],
+                    'rata_nilai_tugas' => $pd[1],
+                    'persentase_penyelesaian' => $pd[2],
+                    'status' => $pd[3],
                 ]
             );
         }
@@ -328,6 +338,70 @@ class DatabaseSeeder extends Seeder
             'status_kondisi' => 'Bagus',
             'lokasi_rak' => 'RAK-A1',
         ]);
+
+        // Calon peserta and related docs (dari PB-11)
+        $programs = collect([$programRobot, $programIoT]);
+        $calons = CalonPeserta::factory()->count(5)->create();
+        $index = 0;
+        foreach ($calons as $calon) {
+            $randProgram = $programs->random();
+            
+            $pd = Pendaftaran::firstOrCreate(
+                ['calon_peserta_id' => $calon->id, 'program_id' => $randProgram->id],
+                [
+                    'id' => (string) Str::uuid(),
+                    'no_referensi' => 'REF-' . strtoupper(Str::random(8)),
+                    'tanggal_daftar' => now(),
+                    'status' => 'Menunggu Verifikasi',
+                ]
+            );
+
+            $inv = Invoice::firstOrCreate(
+                ['pendaftaran_id' => $pd->id],
+                [
+                    'id' => (string) Str::uuid(),
+                    'no_invoice' => 'INV-' . strtoupper(Str::random(8)),
+                    'total_tagihan' => $randProgram->biaya,
+                    'tanggal_terbit' => now(),
+                    'tanggal_jatuh_tempo' => now()->addDays(7),
+                    'status_pembayaran' => 'Menunggu',
+                    'payment_reference' => 'PAY-' . strtoupper(Str::random(8)),
+                ]
+            );
+
+            if ($index < 2) {
+                // Sukses / Dibayar
+                Pembayaran::firstOrCreate(
+                    ['invoice_id' => $inv->id],
+                    [
+                        'id' => (string) Str::uuid(),
+                        'nominal' => $inv->total_tagihan,
+                        'status' => 'Sukses',
+                        'paid_at' => now(),
+                        'bukti_file' => 'bukti_pembayaran/dummy_sukses_' . ($index + 1) . '.jpg',
+                        'metode_pembayaran' => 'Transfer',
+                    ]
+                );
+                $inv->update(['status_pembayaran' => 'Dibayar']);
+            } elseif ($index < 4) {
+                // Pending / Menunggu Verifikasi
+                Pembayaran::firstOrCreate(
+                    ['invoice_id' => $inv->id],
+                    [
+                        'id' => (string) Str::uuid(),
+                        'nominal' => $inv->total_tagihan,
+                        'status' => 'Pending',
+                        'bukti_file' => 'bukti_pembayaran/dummy_pending_' . ($index - 1) . '.jpg',
+                        'metode_pembayaran' => 'Transfer',
+                    ]
+                );
+                $inv->update(['status_pembayaran' => 'Menunggu']);
+            } else {
+                // Belum Bayar
+                $inv->update(['status_pembayaran' => 'Menunggu']);
+            }
+            $index++;
+        }
 
         $this->command->info('✅ Seeder selesai. Akun admin: admin@robonesia.test / admin123');
     }

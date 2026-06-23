@@ -17,7 +17,17 @@ class MaintenanceAset extends Model
 
     protected $table = 'maintenance_aset';
 
-    protected $fillable = ['id', 'item_kit_id', 'dilaporkan_oleh', 'ditangani_oleh', 'tanggal_lapor', 'jenis_pemeliharaan', 'hasil_pemeriksaan', 'catatan'];
+    protected $fillable = [
+        'id',
+        'item_kit_id',
+        'dilaporkan_oleh',
+        'ditangani_oleh',
+        'tanggal_lapor',
+        'deskripsi_kerusakan',
+        'status',
+        'biaya',
+        'selesai_pada',
+    ];
 
     public function itemKit(): BelongsTo
     {
