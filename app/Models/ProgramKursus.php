@@ -21,6 +21,13 @@ class ProgramKursus extends Model
         'id', 'nama_program', 'deskripsi', 'level', 'biaya', 'durasi_minggu', 'gambar', 'status_tampil',
     ];
 
+    protected static function booted(): void
+    {
+    static::deleting(function ($program) {
+        $program->materiProgram()->delete();
+    });
+    }
+
     public function materiProgram(): HasMany
     {
         return $this->hasMany(MateriProgram::class, 'program_id');
