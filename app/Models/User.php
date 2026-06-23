@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -15,7 +17,7 @@ use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-class User extends Authenticatable implements PasskeyUser
+class User extends Authenticatable implements PasskeyUser, FilamentUser
 {
     use HasFactory, HasUuids, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
@@ -61,7 +63,7 @@ class User extends Authenticatable implements PasskeyUser
 
     public function initials(): string
     {
-        $source = $this->nama_lengkap ?? $this->name ?? '';
+        $source = $this->nama_lengkap = $this->name ?? '';
 
         return Str::of($source)
             ->explode(' ')
@@ -70,7 +72,15 @@ class User extends Authenticatable implements PasskeyUser
             ->implode('');
     }
 
-    // --- RELASI ---
+    /**
+     * Tentukan apakah user bisa mengakses Filament panel.
+     * Semua user yang status_aktif = true boleh masuk ke admin panel.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return (bool) $this->status_aktif;
+    }
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
