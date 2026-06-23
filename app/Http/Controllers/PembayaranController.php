@@ -46,6 +46,9 @@ class PembayaranController extends Controller
         ]);
 
         // 5. lanjut ke halaman success
-        return redirect()->route('pendaftaran.success');
+         return redirect()->route(
+            'pendaftaran.success',
+            $pendaftaran->id
+        );
     }
 }

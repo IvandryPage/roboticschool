@@ -132,9 +132,9 @@ public function selesai(Pendaftaran $pendaftaran)
 }
 
 // STEP 5 - SELESAI (lama)
-public function success()
+public function success(Pendaftaran $pendaftaran)
 {
-    return view('pendaftaran.sukses');
+    return view('pendaftaran.sukses', compact('pendaftaran'));
 }
 
 // STEP 6 - CEK STATUS
