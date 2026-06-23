@@ -17,6 +17,7 @@
         </div>
 
         <div class="mt-10">
+            @if (Route::has('auth.google.redirect'))
             <a href="{{ route('auth.google.redirect') }}" class="btn-google">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22 12.24c0-.82-.07-1.61-.2-2.38H12v4.52h5.43c-.23 1.24-.92 2.28-1.97 2.99v2.48h3.18c1.86-1.71 2.93-4.26 2.93-7.61z" fill="#4285F4"/>
@@ -26,6 +27,7 @@
                 </svg>
                 Lanjutkan dengan Google
             </a>
+            @endif
 
             <div class="my-8 flex items-center gap-3">
                 <div class="flex-1 h-px bg-slate-200"></div>
