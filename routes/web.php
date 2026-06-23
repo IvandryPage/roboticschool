@@ -4,10 +4,6 @@ use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
 
-<<<<<<< HEAD
-// --- RUTE ASLI KELOMPOK ---
-Route::view('/', 'welcome')->name('home');
-=======
 use App\Http\Controllers\Admin\UserController;
 
 // Halaman utama
@@ -16,7 +12,6 @@ Route::get('/', function () {
 })->name('home');
 
 use Illuminate\Support\Facades\Auth;
->>>>>>> main
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
