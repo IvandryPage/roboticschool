@@ -11,6 +11,50 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
+            <flux:sidebar.group :heading="__('Platform')" class="grid">
+
+            <flux:sidebar.item
+                icon="home"
+                :href="route('dashboard')"
+                :current="request()->routeIs('dashboard')"
+                wire:navigate
+        >
+            {{ __('Dashboard') }}
+            </flux:sidebar.item>
+
+            <flux:sidebar.item
+            icon="clipboard-document-check"
+            :href="route('admin.pendaftaran.index')"
+            :current="request()->routeIs('admin.pendaftaran.*')"
+            wire:navigate
+        >
+            Pendaftaran
+        </flux:sidebar.item>
+
+        <flux:sidebar.item
+            icon="users"
+            :href="route('admin.siswa.index')"
+            :current="request()->routeIs('admin.siswa.*')"
+            wire:navigate
+        >
+            Siswa Aktif
+        </flux:sidebar.item>
+
+@auth
+    @if(auth()->user()->siswa)
+        <flux:sidebar.item
+            icon="user-circle"
+            :href="route('siswa.profil.show')"
+            :current="request()->routeIs('siswa.profil.*')"
+            wire:navigate
+        >
+            Profil Saya
+        </flux:sidebar.item>
+    @endif
+@endauth
+
+    </flux:sidebar.group>
+</flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
                     @if (auth()->user()->role && auth()->user()->role->nama_role === 'Admin Akademik')
                         <flux:sidebar.item icon="layout-grid" href="/admin" :current="request()->is('admin*')">

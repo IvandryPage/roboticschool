@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\UserController;
 
-// Halaman utama
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
