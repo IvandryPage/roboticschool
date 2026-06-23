@@ -18,7 +18,7 @@ uses(RefreshDatabase::class);
 // ============================================================
 
 beforeEach(function () {
-    $roleAdmin  = Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
+    $roleAdmin  = Role::create(['nama_role' => 'Admin Akademik']);
     $this->admin = User::factory()->create(['role_id' => $roleAdmin->id]);
     $this->service = new SertifikatService();
 });
