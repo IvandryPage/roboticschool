@@ -3,6 +3,9 @@
 use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Models\ProgramKursus; // Tambahkan ini
+use App\Http\Controllers\Siswa\MateriController;
+
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\PembayaranController;
 use Illuminate\Http\Request;
@@ -14,6 +17,7 @@ use App\Models\Kelas;
 
 require __DIR__ . '/settings.php';
 
+Route::get('/siswa/materi', [MateriController::class, 'index'])->name('siswa.materi.index');
 // Route dasar PB-14
 // Route::view('/', 'welcome')->name('home');
 
@@ -112,6 +116,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 });
 
+<<<<<<< HEAD
+Route::get('/bypass-program', function () {
+    // Kita cek dulu apa tabelnya beneran kosong
+    if (ProgramKursus::count() == 0) {
+        ProgramKursus::create([
+            'nama_program' => 'Robotik Dasar (Dummy)',
+            'deskripsi'    => 'Data otomatis untuk testing',
+            'biaya'        => 0,
+            'status_tampil'=> true,
+        ]);
+        return "Berhasil! Data dummy sudah dimasukkan. Silakan buka halaman Create Batch.";
+    }
+    return "Data sudah ada di database, tidak perlu ditambah lagi.";
+});
+
+require __DIR__.'/settings.php';
+=======
 /*
 |--------------------------------------------------------------------------
 | PENDAFTARAN
@@ -236,3 +257,4 @@ require __DIR__.'/settings.php';
 // PBI-128: Halaman verifikasi sertifikat (publik, tanpa login)
 Route::get('/sertifikat/verifikasi/{nomor}', [SertifikatController::class, 'verifikasi'])
     ->name('sertifikat.verifikasi');
+>>>>>>> main

@@ -11,9 +11,10 @@ class ListPengumpulanTugas extends ListRecords
     protected static string $resource = PengumpulanTugasResource::class;
 
     protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
+{
+    return [
+        \Filament\Actions\CreateAction::make()
+            ->createAnother(false), // 👈 Misi utamamu ada di baris ini
+    ];
+}
 }

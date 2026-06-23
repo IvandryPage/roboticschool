@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUuids; // WAJIB DITAMBAHKAN 1
 
 class MateriPembelajaran extends Model
 {
+    use HasUuids; // WAJIB DITAMBAHKAN 2
+
     // Memaksa Laravel agar menggunakan nama tabel tanpa imbuhan 's'
     protected $table = 'materi_pembelajaran';
 
@@ -25,6 +28,7 @@ class MateriPembelajaran extends Model
      */
     public function sesi()
     {
-        return $this->belongsTo(Sesi::class, 'sesi_id');
+        // Ubah Sesi::class menjadi SesiLive::class
+        return $this->belongsTo(SesiLive::class, 'sesi_id'); 
     }
 }

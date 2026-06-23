@@ -2,77 +2,59 @@
 
 namespace App\Filament\Resources\PengumpulanTugasResource\Schemas;
 
-use Filament\Forms\Components\FileUpload;
+use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
-use Illuminate\Support\Carbon;
-use Closure;
+use Filament\Forms\Components\Checkbox;
 
 class PengumpulanTugasForm
 {
-    public static function configure($form)
+    public static function configure(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                // 1. Informasi Dasar (Tanpa Section untuk menghindari error class)
-                Select::make('tugas_id')
-                    ->label('Pilih Tugas')
-                    ->relationship('tugas', 'id')
-                    ->required(),
+        return $schema->components([
+            
+            // Asumsi ada relasi ke tabel Tugas dan Siswa. 
+            // Ubah 'judul' dan 'nama' sesuai nama kolom di database kamu jika berbeda.
+            Select::make('tugas_id')
+                ->label('Tugas yang Dikerjakan')
+                ->relationship('tugas', 'judul') 
+                ->searchable()
+                ->required(),
 
-                Select::make('siswa_id')
-                    ->label('Nama Siswa')
-                    ->relationship('siswa', 'id')
-                    ->required(),
+            Select::make('siswa_id')
+                ->label('Nama Siswa')
+                ->relationship('siswa', 'nama')
+                ->searchable()
+                ->required(),
 
-                // 2. PBI-104: Validasi File
-                FileUpload::make('file_jawaban')
-                    ->label('Unggah File Jawaban')
-                    ->required()
-                    ->maxSize(5120)
-                    ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
-                    ->rules([
-                        fn (): Closure => function (string $attribute, $value, Closure $fail) {
-                            $batasWaktu = Carbon::parse('2026-06-20 23:59:00');
-                            if (now()->greaterThan($batasWaktu)) {
-                                $fail('Maaf, waktu pengumpulan tugas sudah ditutup.');
-                            }
-                        },
-                    ]),
+            // 1. Fitur Unggah File Jawaban
+            FileUpload::make('file_jawaban') // Sesuaikan dengan nama kolom database-mu
+                ->label('Unggah File Jawaban')
+                ->directory('pengumpulan_tugas')
+                ->acceptedFileTypes([
+                    'application/pdf', 
+                    'application/msword', 
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/zip',
+                    'application/x-rar-compressed'
+                ])
+                ->helperText('Format yang diizinkan: PDF, Word (DOC/DOCX), ZIP, atau RAR.')
+                ->required(),
 
-                // 3. PB-106: Penilaian Instruktur
-                TextInput::make('nilai')
-                    ->label('Nilai Akhir')
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->suffix('/100')
-                    // Logic otomatis: Update status jika nilai diisi
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function (Get $get, Set $set, $state) {
-                        if (!empty($state)) {
-                            $set('status_penilaian', 'Dinilai');
-                        } else {
-                            $set('status_penilaian', 'Belum Dinilai');
-                        }
-                    }),
+            // 2. Fitur Catatan Opsional
+            Textarea::make('catatan')
+                ->label('Catatan Tambahan (Opsional)')
+                ->placeholder('Tulis pesan untuk instruktur jika ada...')
+                ->nullable() // Membuatnya tidak wajib diisi
+                ->columnSpanFull(),
 
-                Textarea::make('umpan_balik')
-                    ->label('Umpan Balik')
-                    ->rows(3),
-
-                Select::make('status_penilaian')
-                    ->label('Status Penilaian')
-                    ->options([
-                        'Belum Dinilai' => 'Belum Dinilai',
-                        'Dinilai' => 'Dinilai',
-                    ])
-                    ->default('Belum Dinilai')
-                    ->required(),
-            ]);
+            // 3. Fitur Konfirmasi Pengumpulan
+            Checkbox::make('konfirmasi')
+                ->label('Konfirmasi: Saya yakin file jawaban ini sudah benar dan siap dikumpulkan.')
+                ->accepted() // Memaksa sistem agar siswa WAJIB mencentang ini sebelum bisa submit
+                ->dehydrated(false) // Trik ajaib: Mencegah error database karena kolom 'konfirmasi' ini hanya untuk tampilan, tidak disimpan ke tabel
+                ->columnSpanFull(),
+        ]);
     }
 }
