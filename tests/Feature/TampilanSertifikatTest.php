@@ -14,8 +14,8 @@ uses(RefreshDatabase::class);
 // ============================================================
 
 beforeEach(function () {
-    $roleSiswa   = Role::create(['nama_role' => 'Siswa']);
-    $roleAdmin   = Role::create(['nama_role' => 'Admin Akademik']);
+    $roleSiswa   = Role::firstOrCreate(['nama_role' => 'Siswa']);
+    $roleAdmin   = Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
     $this->admin = User::factory()->create(['role_id' => $roleAdmin->id]);
     $this->user  = User::factory()->create(['role_id' => $roleSiswa->id]);
     $this->siswa = Siswa::factory()->create(['user_id' => $this->user->id]);

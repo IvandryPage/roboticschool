@@ -14,15 +14,15 @@ use Illuminate\Support\Str;
 
 beforeEach(function () {
     // Setup roles
-    $this->adminRole = Role::create([
-        'id' => (string) Str::uuid(),
-        'nama_role' => 'Admin Akademik',
-    ]);
+    $this->adminRole = Role::firstOrCreate(
+        ['nama_role' => 'Admin Akademik'],
+        ['id' => (string) Str::uuid()]
+    );
     
-    $this->siswaRole = Role::create([
-        'id' => (string) Str::uuid(),
-        'nama_role' => 'Siswa',
-    ]);
+    $this->siswaRole = Role::firstOrCreate(
+        ['nama_role' => 'Siswa'],
+        ['id' => (string) Str::uuid()]
+    );
 
     // Setup admin user
     $this->adminUser = User::create([
