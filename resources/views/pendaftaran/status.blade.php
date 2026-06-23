@@ -101,13 +101,10 @@
 
         /* Tab toggle */
         .tab-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            /* garis bawah tab, bukan tengah */
+            margin-bottom: 1rem;
         }
 
         .tab-btn {
@@ -122,6 +119,10 @@
             justify-content: center;
             gap: 6px;
             transition: background 0.15s, color 0.15s;
+            width: 100%;
+            /* tambahkan ini */
+            text-align: center;
+            /* tambahkan ini */
         }
 
         .tab-btn.active {
@@ -131,17 +132,10 @@
         }
 
         .tab-btn:first-child {
-            border-right: 1px solid #e5e7eb;
+            border-right: none;
+            /* ubah dari 1px solid #e5e7eb */
         }
 
-        .tab-dot {
-            width: 8px;
-            height: 8px;
-            border: 2px solid currentColor;
-            border-radius: 2px;
-            display: inline-block;
-            opacity: 0.5;
-        }
 
         /* Form fields */
         .form-label {
@@ -469,9 +463,9 @@
                 {{-- Tab toggle --}}
                 <div class="tab-row">
                     <button type="button" class="tab-btn active" onclick="switchTab('referensi', this)">
-                        <span class="tab-dot"></span> Nomor referensi
+                        Masukkan Nomor referensi
                     </button>
-                    
+
                 </div>
 
                 {{-- Field Nomor Referensi --}}
@@ -481,7 +475,7 @@
                         value="{{ old('keyword') }}">
                 </div>
 
-                
+
 
                 <button type="submit" class="btn-primary">
                     Cek status sekarang
@@ -520,19 +514,19 @@
             {{-- Info Grid --}}
             <div class="info-grid">
                 <div class="info-item">
-                    <div class="info-label"><span class="dot"></span> Program</div>
+                    <div class="info-label">Program</div>
                     <div class="info-value">{{ $pendaftaran->program->nama_program }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><span class="dot"></span> Level</div>
+                    <div class="info-label">Level</div>
                     <div class="info-value">{{ $pendaftaran->program->level ?? 'Pemula' }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><span class="dot"></span> Biaya</div>
+                    <div class="info-label">Biaya</div>
                     <div class="info-value">Rp {{ number_format($pendaftaran->program->biaya ?? 0, 0, ',', '.') }}</div>
                 </div>
                 <div class="info-item">
-                    <div class="info-label"><span class="dot"></span> Tanggal daftar</div>
+                    <div class="info-label">Tanggal daftar</div>
                     <div class="info-value">{{ \Carbon\Carbon::parse($pendaftaran->created_at)->translatedFormat('d F Y') }}
                     </div>
                 </div>
@@ -574,15 +568,15 @@
                                 </a>
                             </div>
                         @endif
-
+                        <div class="tl-time">
+                            @if($pendaftaran->tanggal_verifikasi)
+                                {{ \Carbon\Carbon::parse($pendaftaran->tanggal_verifikasi)->translatedFormat('d M Y, H.i') }}
+                            @else
+                                Dalam proses
+                            @endif
+                        </div>
                     </li>
-                    <div class="tl-time">
-                        @if($pendaftaran->tanggal_verifikasi)
-                            {{ \Carbon\Carbon::parse($pendaftaran->tanggal_verifikasi)->translatedFormat('d M Y, H.i') }}
-                        @else
-                            Dalam proses
-                        @endif
-                    </div>
+
                     </li>
                     <li>
                         <div
@@ -617,8 +611,8 @@
                 {{-- Tombol Aksi --}}
                 <div class="btn-row">
                     <!--<a href="https://wa.me/6281234567890" class="btn-outline" target="_blank">
-                                            🗓 Tanya admin ↗
-                                        </a>//-->
+                                                            🗓 Tanya admin ↗
+                                                        </a>//-->
                     <a href="{{ url('/daftar') }}" class="btn-outline">
                         Daftar program lain
                     </a>

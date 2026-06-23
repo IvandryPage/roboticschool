@@ -145,7 +145,7 @@ public function cekStatus()
 }
 
 
-// STEP 6 - CARI STATUS
+// STEP 7 - CARI STATUS
 public function cariStatus(Request $request)
 {
 
@@ -181,7 +181,7 @@ public function revisi(Pendaftaran $pendaftaran)
     return view('pendaftaran.revisi', compact('pendaftaran'));
 }
 
-// STEP 7 - REVISI DOKUMEN
+// STEP 8 - REVISI DOKUMEN
 public function storeRevisi(
     Request $request,
     Pendaftaran $pendaftaran

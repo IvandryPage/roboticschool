@@ -1,4 +1,3 @@
-index.blade.php:
 
 <!DOCTYPE html>
 <html lang="id">
