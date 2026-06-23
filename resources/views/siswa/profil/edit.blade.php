@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Edit Profil'">
+<x-layouts::app :title="'Edit Profil'">
 
     {{-- Breadcrumb --}}
     <div class="mb-5 flex items-center gap-2 text-sm text-zinc-400">
@@ -26,7 +26,7 @@
                         name="nama_lengkap"
                         type="text"
                         value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}"
-                        class="mt-1 @error('nama_lengkap') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('nama_lengkap') ? 'border-red-400' : '' }}"
                         autofocus
                     />
                     @error('nama_lengkap')
@@ -42,7 +42,7 @@
                         name="no_hp"
                         type="text"
                         value="{{ old('no_hp', $siswa->no_hp) }}"
-                        class="mt-1 @error('no_hp') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('no_hp') ? 'border-red-400' : '' }}"
                         placeholder="Contoh: 08123456789"
                     />
                     @error('no_hp')
@@ -58,7 +58,7 @@
                         name="asal_sekolah"
                         type="text"
                         value="{{ old('asal_sekolah', $siswa->asal_sekolah) }}"
-                        class="mt-1 @error('asal_sekolah') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('asal_sekolah') ? 'border-red-400' : '' }}"
                     />
                     @error('asal_sekolah')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -87,4 +87,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

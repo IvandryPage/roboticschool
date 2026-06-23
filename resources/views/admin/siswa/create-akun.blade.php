@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Buat Akun Siswa'">
+<x-layouts::app :title="'Buat Akun Siswa'">
 
     {{-- Breadcrumb --}}
     <div class="mb-5 flex items-center gap-2 text-sm text-zinc-400">
@@ -72,7 +72,7 @@
                             type="text"
                             value="{{ old('username') }}"
                             placeholder="Contoh: budi.santoso"
-                            class="mt-1 @error('username') border-red-400 @enderror"
+                            class="mt-1 {{ $errors->has('username') ? 'border-red-400' : '' }}"
                             autofocus
                         />
                         @error('username')
@@ -89,7 +89,7 @@
                             name="password"
                             type="password"
                             placeholder="Minimal 8 karakter"
-                            class="mt-1 @error('password') border-red-400 @enderror"
+                            class="mt-1 {{ $errors->has('password') ? 'border-red-400' : '' }}"
                         />
                         @error('password')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -132,4 +132,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

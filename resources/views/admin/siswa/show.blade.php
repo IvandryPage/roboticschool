@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Detail Siswa'">
+<x-layouts::app :title="'Detail Siswa'">
 
     {{-- Breadcrumb --}}
     <div class="mb-5 flex items-center gap-2 text-sm text-zinc-400">
@@ -115,4 +115,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

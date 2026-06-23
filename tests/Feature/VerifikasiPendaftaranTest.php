@@ -29,10 +29,13 @@ class VerifikasiPendaftaranTest extends TestCase
     {
         parent::setUp();
 
+        $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
+
         // Buat admin untuk semua test
         $this->admin = User::factory()->create([
             'name'  => 'Admin Test',
             'email' => 'admin@test.com',
+            'role_id' => $role->id,
         ]);
 
         // Buat program kursus
@@ -68,7 +71,7 @@ class VerifikasiPendaftaranTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_melihat_daftar_pendaftaran()
+    public function test_admin_dapat_melihat_daftar_pendaftaran()
     {
         $this->buatPendaftaran('pending');
         $this->buatPendaftaran('disetujui');
@@ -82,7 +85,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_melihat_detail_pendaftaran()
+    public function test_admin_dapat_melihat_detail_pendaftaran()
     {
         $pendaftaran = $this->buatPendaftaran('pending');
 
@@ -95,7 +98,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function tamu_tidak_dapat_mengakses_halaman_pendaftaran()
+    public function test_tamu_tidak_dapat_mengakses_halaman_pendaftaran()
     {
         $response = $this->get(route('admin.pendaftaran.index'));
 
@@ -107,7 +110,7 @@ class VerifikasiPendaftaranTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_menyetujui_pendaftaran_pending()
+    public function test_admin_dapat_menyetujui_pendaftaran_pending()
     {
         $pendaftaran = $this->buatPendaftaran('pending');
 
@@ -124,7 +127,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_menyetujui_pendaftaran_yang_sedang_revisi()
+    public function test_admin_dapat_menyetujui_pendaftaran_yang_sedang_revisi()
     {
         $pendaftaran = $this->buatPendaftaran('revisi');
 
@@ -140,7 +143,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function pendaftaran_yang_sudah_disetujui_tidak_bisa_disetujui_ulang()
+    public function test_pendaftaran_yang_sudah_disetujui_tidak_bisa_disetujui_ulang()
     {
         $pendaftaran = $this->buatPendaftaran('disetujui');
 
@@ -158,7 +161,7 @@ class VerifikasiPendaftaranTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_meminta_revisi_pendaftaran_pending()
+    public function test_admin_dapat_meminta_revisi_pendaftaran_pending()
     {
         $pendaftaran = $this->buatPendaftaran('pending');
 
@@ -177,7 +180,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function permintaan_revisi_membutuhkan_catatan()
+    public function test_permintaan_revisi_membutuhkan_catatan()
     {
         $pendaftaran = $this->buatPendaftaran('pending');
 
@@ -200,7 +203,7 @@ class VerifikasiPendaftaranTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_menolak_pendaftaran_pending()
+    public function test_admin_dapat_menolak_pendaftaran_pending()
     {
         $pendaftaran = $this->buatPendaftaran('pending');
 
@@ -219,7 +222,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_menolak_pendaftaran_revisi()
+    public function test_admin_dapat_menolak_pendaftaran_revisi()
     {
         $pendaftaran = $this->buatPendaftaran('revisi');
 
@@ -237,7 +240,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function penolakan_membutuhkan_alasan()
+    public function test_penolakan_membutuhkan_alasan()
     {
         $pendaftaran = $this->buatPendaftaran('pending');
 
@@ -254,7 +257,7 @@ class VerifikasiPendaftaranTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function pendaftaran_ditolak_tidak_bisa_disetujui()
+    public function test_pendaftaran_ditolak_tidak_bisa_disetujui()
     {
         $pendaftaran = $this->buatPendaftaran('ditolak');
 
@@ -272,7 +275,7 @@ class VerifikasiPendaftaranTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function halaman_detail_pendaftaran_disetujui_menampilkan_tombol_buat_akun()
+    public function test_halaman_detail_pendaftaran_disetujui_menampilkan_tombol_buat_akun()
     {
         $pendaftaran = $this->buatPendaftaran('disetujui');
 
@@ -284,7 +287,7 @@ class VerifikasiPendaftaranTest extends TestCase
     }
 
     /** @test */
-    public function halaman_detail_pendaftaran_pending_tidak_menampilkan_tombol_buat_akun()
+    public function test_halaman_detail_pendaftaran_pending_tidak_menampilkan_tombol_buat_akun()
     {
         $pendaftaran = $this->buatPendaftaran('pending');
 

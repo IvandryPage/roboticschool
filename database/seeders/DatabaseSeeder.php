@@ -60,6 +60,9 @@ class DatabaseSeeder extends Seeder
                 'status_aktif' => true,
             ]
         );
+        if (!$admin->role_id) {
+            $admin->update(['role_id' => $adminRole?->id]);
+        }
 
         $instruktur1 = User::firstOrCreate(
             ['email' => 'instruktur1@robonesia.test'],
@@ -73,6 +76,9 @@ class DatabaseSeeder extends Seeder
                 'status_aktif' => true,
             ]
         );
+        if (!$instruktur1->role_id) {
+            $instruktur1->update(['role_id' => $instrukturRole?->id]);
+        }
 
         $instruktur2 = User::firstOrCreate(
             ['email' => 'instruktur2@robonesia.test'],
@@ -86,6 +92,9 @@ class DatabaseSeeder extends Seeder
                 'status_aktif' => true,
             ]
         );
+        if (!$instruktur2->role_id) {
+            $instruktur2->update(['role_id' => $instrukturRole?->id]);
+        }
 
         $publikasi = User::firstOrCreate(
             ['email' => 'publikasi@robonesia.test'],
@@ -99,6 +108,9 @@ class DatabaseSeeder extends Seeder
                 'status_aktif' => true,
             ]
         );
+        if (!$publikasi->role_id) {
+            $publikasi->update(['role_id' => $publikasiRole?->id]);
+        }
 
         $direktur = User::firstOrCreate(
             ['email' => 'direktur@robonesia.test'],
@@ -112,6 +124,9 @@ class DatabaseSeeder extends Seeder
                 'status_aktif' => true,
             ]
         );
+        if (!$direktur->role_id) {
+            $direktur->update(['role_id' => $direkturRole?->id]);
+        }
 
         // 3) Students (users + profiles)
         $dataSiswa = [
@@ -139,6 +154,9 @@ class DatabaseSeeder extends Seeder
                     'status_aktif' => true,
                 ]
             );
+            if (!$u->role_id) {
+                $u->update(['role_id' => $siswaRole?->id]);
+            }
             $usersSiswa[] = $u;
 
             // create Siswa profile

@@ -13,6 +13,9 @@
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Platform')" class="grid">
                     @if (auth()->user()->role && auth()->user()->role->nama_role === 'Admin Akademik')
+                        <flux:sidebar.item icon="home" href="/admin" :current="request()->is('admin') || request()->is('admin/')">
+                            {{ __('Dashboard Admin') }}
+                        </flux:sidebar.item>
                         <flux:sidebar.item icon="clipboard-document-check" :href="route('admin.pendaftaran.index')" :current="request()->routeIs('admin.pendaftaran.*')" wire:navigate>
                             Pendaftaran
                         </flux:sidebar.item>
@@ -22,11 +25,8 @@
                         <flux:sidebar.item icon="wrench" :href="route('admin.aset.index')" :current="request()->routeIs('admin.aset.*')">
                             {{ __('Kelola Aset') }}
                         </flux:sidebar.item>
-                        <flux:sidebar.item icon="clipboard" :href="route('admin.peminjaman.index')" :current="request()->requestIs('admin.peminjaman.index')">
+                        <flux:sidebar.item icon="clipboard" :href="route('admin.peminjaman.index')" :current="request()->routeIs('admin.peminjaman.index')">
                             {{ __('Persetujuan Peminjaman') }}
-                        </flux:sidebar.item>
-                        <flux:sidebar.item icon="layout-grid" href="/admin" :current="request()->is('admin') || request()->is('admin/')">
-                            {{ __('Filament Panel') }}
                         </flux:sidebar.item>
                     @elseif (auth()->user()->role && auth()->user()->role->nama_role === 'Siswa')
                         <flux:sidebar.item icon="home" :href="route('siswa.dashboard')" :current="request()->routeIs('siswa.dashboard')">

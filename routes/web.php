@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $role = Auth::user()?->role?->nama_role;
 
         if ($role === 'Admin Akademik') {
-            return redirect()->route('admin.pendaftaran.index');
+            return redirect('/admin');
         }
 
         if ($role === 'Siswa') {

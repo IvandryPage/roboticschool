@@ -33,12 +33,10 @@ class SiswaController extends Controller
 
         $siswaList = Siswa::with(['user', 'pendaftaran.program'])
             ->when($search, fn($q) =>
-                $q->where(fn($q2) =>
+                $q->whereHas('user', fn($q2) =>
                     $q2->where('nama_lengkap', 'like', "%{$search}%")
                        ->orWhere('email', 'like', "%{$search}%")
-                       ->orWhereHas('user', fn($q3) =>
-                           $q3->where('name', 'like', "%{$search}%")
-                       )
+                       ->orWhere('name', 'like', "%{$search}%")
                 )
             )
             ->when($program, fn($q) =>
@@ -47,9 +45,11 @@ class SiswaController extends Controller
                 )
             )
             ->when($status, fn($q) =>
-                $q->where('status_akun', $status)
+                $q->whereHas('user', fn($q2) =>
+                    $q2->where('status_aktif', $status === 'aktif')
+                )
             )
-            ->orderByDesc('tanggal_bergabung')
+            ->orderByDesc('created_at')
             ->paginate(10)
             ->withQueryString();
 
@@ -57,8 +57,8 @@ class SiswaController extends Controller
 
         $stats = [
             'total'    => Siswa::count(),
-            'aktif'    => Siswa::where('status_akun', 'aktif')->count(),
-            'nonaktif' => Siswa::where('status_akun', 'nonaktif')->count(),
+            'aktif'    => Siswa::whereHas('user', fn($q) => $q->where('status_aktif', true))->count(),
+            'nonaktif' => Siswa::whereHas('user', fn($q) => $q->where('status_aktif', false))->count(),
         ];
 
         return view('admin.siswa.index', compact(
@@ -116,22 +116,22 @@ class SiswaController extends Controller
 
         DB::transaction(function () use ($request, $pendaftaran) {
             $cp = $pendaftaran->calonPeserta;
+            $siswaRole = \App\Models\Role::where('nama_role', 'Siswa')->first();
 
             $user = User::create([
-                'name'     => $request->username,
-                'email'    => $cp->email,
-                'password' => Hash::make($request->password),
+                'name'         => $request->username,
+                'email'        => $cp->email,
+                'password'     => Hash::make($request->password),
+                'nama_lengkap' => $cp->nama_lengkap,
+                'no_hp'        => $cp->no_hp,
+                'role_id'      => $siswaRole?->id,
+                'status_aktif' => true,
             ]);
 
             Siswa::create([
-                'user_id'           => $user->id,
-                'pendaftaran_id'    => $pendaftaran->id,
-                'nama_lengkap'      => $cp->nama_lengkap,
-                'email'             => $cp->email,
-                'no_hp'             => $cp->no_hp,
-                'asal_sekolah'      => $cp->asal_sekolah_atau_instansi,
-                'tanggal_bergabung' => now(),
-                'status_akun'       => 'aktif',
+                'user_id'        => $user->id,
+                'pendaftaran_id' => $pendaftaran->id,
+                'alamat'         => $cp->alamat,
             ]);
         });
 
@@ -165,7 +165,7 @@ class SiswaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $siswa = Siswa::with('user')->findOrFail($id);
+        $siswa = Siswa::with(['user', 'pendaftaran.calonPeserta'])->findOrFail($id);
 
         $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
@@ -184,18 +184,23 @@ class SiswaController extends Controller
         ]);
 
         DB::transaction(function () use ($request, $siswa) {
-            $siswa->update([
+            $userUpdates = [
                 'nama_lengkap' => $request->nama_lengkap,
                 'email'        => $request->email,
                 'no_hp'        => $request->no_hp,
-                'asal_sekolah' => $request->asal_sekolah,
-                'status_akun'  => $request->status_akun,
-            ]);
-
-            $siswa->user->update(['email' => $request->email]);
+                'status_aktif' => $request->status_akun === 'aktif',
+            ];
 
             if ($request->filled('password')) {
-                $siswa->user->update(['password' => Hash::make($request->password)]);
+                $userUpdates['password'] = Hash::make($request->password);
+            }
+
+            $siswa->user->update($userUpdates);
+
+            if ($siswa->pendaftaran && $siswa->pendaftaran->calonPeserta) {
+                $siswa->pendaftaran->calonPeserta->update([
+                    'asal_sekolah_atau_instansi' => $request->asal_sekolah,
+                ]);
             }
         });
 
@@ -215,12 +220,13 @@ class SiswaController extends Controller
      */
     public function toggleStatus(string $id)
     {
-        $siswa = Siswa::findOrFail($id);
+        $siswa = Siswa::with('user')->findOrFail($id);
+        $user = $siswa->user;
 
-        $statusBaru = $siswa->status_akun === 'aktif' ? 'nonaktif' : 'aktif';
-        $siswa->update(['status_akun' => $statusBaru]);
+        $user->status_aktif = !$user->status_aktif;
+        $user->save();
 
-        $pesan = $statusBaru === 'nonaktif'
+        $pesan = !$user->status_aktif
             ? "Akun {$siswa->nama_lengkap} berhasil dinonaktifkan."
             : "Akun {$siswa->nama_lengkap} berhasil diaktifkan kembali.";
 
@@ -233,11 +239,13 @@ class SiswaController extends Controller
      */
     public function nonaktifkan(string $id)
     {
-        $siswa = Siswa::findOrFail($id);
+        $siswa = Siswa::with('user')->findOrFail($id);
+        $user = $siswa->user;
 
-        abort_if($siswa->status_akun === 'nonaktif', 422, 'Akun siswa sudah nonaktif.');
+        abort_if(!$user->status_aktif, 422, 'Akun siswa sudah nonaktif.');
 
-        $siswa->update(['status_akun' => 'nonaktif']);
+        $user->status_aktif = false;
+        $user->save();
 
         return redirect()
             ->route('admin.siswa.show', $siswa->id)
@@ -250,11 +258,13 @@ class SiswaController extends Controller
      */
     public function aktifkan(string $id)
     {
-        $siswa = Siswa::findOrFail($id);
+        $siswa = Siswa::with('user')->findOrFail($id);
+        $user = $siswa->user;
 
-        abort_if($siswa->status_akun === 'aktif', 422, 'Akun siswa sudah aktif.');
+        abort_if($user->status_aktif, 422, 'Akun siswa sudah aktif.');
 
-        $siswa->update(['status_akun' => 'aktif']);
+        $user->status_aktif = true;
+        $user->save();
 
         return redirect()
             ->route('admin.siswa.show', $siswa->id)

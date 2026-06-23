@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Ganti Password'">
+<x-layouts::app :title="'Ganti Password'">
 
     {{-- Breadcrumb --}}
     <div class="mb-5 flex items-center gap-2 text-sm text-zinc-400">
@@ -26,7 +26,7 @@
                         name="password_lama"
                         type="password"
                         placeholder="Masukkan password saat ini"
-                        class="mt-1 @error('password_lama') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('password_lama') ? 'border-red-400' : '' }}"
                         autofocus
                     />
                     @error('password_lama')
@@ -44,7 +44,7 @@
                         name="password"
                         type="password"
                         placeholder="Minimal 8 karakter"
-                        class="mt-1 @error('password') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('password') ? 'border-red-400' : '' }}"
                     />
                     @error('password')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -82,4 +82,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

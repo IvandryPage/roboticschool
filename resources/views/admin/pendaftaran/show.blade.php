@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Review Pendaftaran'">
+<x-layouts::app :title="'Review Pendaftaran'">
 
     {{-- Breadcrumb --}}
     <div class="mb-5 flex items-center gap-2 text-sm text-zinc-400">
@@ -453,7 +453,7 @@
                                         name="catatan_admin"
                                         placeholder="Jelaskan apa yang perlu diperbaiki oleh pendaftar..."
                                         rows="3"
-                                        class="@error('catatan_admin') border-red-400 @enderror"
+                                        :class="$errors->has('catatan_admin') ? 'border-red-400' : ''"
                                     >{{ old('catatan_admin') }}</flux:textarea>
                                     @error('catatan_admin')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -495,7 +495,7 @@
                                         name="catatan_admin"
                                         placeholder="Tuliskan alasan penolakan yang jelas untuk calon peserta..."
                                         rows="3"
-                                        class="@error('catatan_admin') border-red-400 @enderror"
+                                        :class="$errors->has('catatan_admin') ? 'border-red-400' : ''"
                                     >{{ old('catatan_admin') }}</flux:textarea>
                                     @error('catatan_admin')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -534,4 +534,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

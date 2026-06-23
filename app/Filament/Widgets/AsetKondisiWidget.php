@@ -8,6 +8,11 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AsetKondisiWidget extends BaseWidget
 {
+    public static function canView(): bool
+    {
+        return in_array(auth()->user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
+    }
+
     protected ?string $heading = 'Rekap Kondisi Aset Robotik';
 
     protected static ?int $sort = 2;

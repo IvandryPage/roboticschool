@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Daftar Pendaftaran'">
+<x-layouts::app :title="'Daftar Pendaftaran'">
 
     {{-- ===== HEADER ===== --}}
     <div class="mb-6">
@@ -83,45 +83,45 @@
             </div>
         @else
             <flux:table>
-                <flux:columns>
-                    <flux:column class="w-8">#</flux:column>
-                    <flux:column>Calon Peserta</flux:column>
-                    <flux:column>Program</flux:column>
-                    <flux:column>Tgl. Daftar</flux:column>
-                    <flux:column>Dokumen</flux:column>
-                    <flux:column>Status</flux:column>
-                    <flux:column class="text-center">Aksi</flux:column>
-                </flux:columns>
+                <flux:table.columns>
+                    <flux:table.column class="w-8">#</flux:table.column>
+                    <flux:table.column>Calon Peserta</flux:table.column>
+                    <flux:table.column>Program</flux:table.column>
+                    <flux:table.column>Tgl. Daftar</flux:table.column>
+                    <flux:table.column>Dokumen</flux:table.column>
+                    <flux:table.column>Status</flux:table.column>
+                    <flux:table.column class="text-center">Aksi</flux:table.column>
+                </flux:table.columns>
 
-                <flux:rows>
+                <flux:table.rows>
                     @foreach($pendaftaranList as $i => $item)
-                        <flux:row>
-                            <flux:cell class="text-zinc-400 text-sm">
+                        <flux:table.row>
+                            <flux:table.cell class="text-zinc-400 text-sm">
                                 {{ $pendaftaranList->firstItem() + $i }}
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 <div class="font-medium text-sm">
                                     {{ $item->calonPeserta->nama_lengkap ?? '-' }}
                                 </div>
                                 <div class="text-xs text-zinc-400">
                                     {{ $item->calonPeserta->email ?? '-' }}
                                 </div>
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell class="text-sm">
+                            <flux:table.cell class="text-sm">
                                 {{ $item->program->nama_program ?? '-' }}
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell class="text-sm text-zinc-500">
+                            <flux:table.cell class="text-sm text-zinc-500">
                                 {{ \Carbon\Carbon::parse($item->tanggal_daftar)->translatedFormat('d M Y') }}
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell class="text-sm text-zinc-500">
+                            <flux:table.cell class="text-sm text-zinc-500">
                                 {{ $item->dokumenPendaftaran->count() }} file
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell>
+                            <flux:table.cell>
                                 @php
                                     $badge = match($item->status) {
                                         'disetujui' => 'green',
@@ -138,9 +138,9 @@
                                     };
                                 @endphp
                                 <flux:badge color="{{ $badge }}" size="sm">{{ $label }}</flux:badge>
-                            </flux:cell>
+                            </flux:table.cell>
 
-                            <flux:cell class="text-center">
+                            <flux:table.cell class="text-center">
                                 <flux:button
                                     href="{{ route('admin.pendaftaran.show', $item->id) }}"
                                     size="sm"
@@ -149,10 +149,10 @@
                                 >
                                     Review
                                 </flux:button>
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
 
             {{-- Pagination --}}
@@ -164,4 +164,4 @@
         @endif
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

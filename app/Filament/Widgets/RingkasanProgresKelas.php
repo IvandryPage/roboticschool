@@ -9,6 +9,10 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class RingkasanProgresKelas extends BaseWidget
 {
+    public static function canView(): bool
+    {
+        return in_array(auth()->user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+    }
     protected int | string | array $columnSpan = 'full';
     
     protected static ?string $heading = 'Ringkasan Progres Kelas';
@@ -25,21 +29,25 @@ class RingkasanProgresKelas extends BaseWidget
                     ->sortable()
                     ->weight('bold'),
 
-                // Kolom Jumlah Siswa (Di-mock dulu agar UI aman dan bisa tampil)
+                // Kolom Jumlah Siswa
                 Tables\Columns\TextColumn::make('jumlah_siswa_aktif')
                     ->label('Jumlah Siswa Aktif')
                     ->getStateUsing(function (Kelas $record) {
-                        // Sementara menampilkan angka acak 10-35 agar kelihatan beneran
-                        return rand(10, 35) . ' Siswa'; 
+                        $count = \App\Models\EnrollmentKelas::where('kelas_id', $record->id)
+                            ->where('status', 'Aktif')
+                            ->count();
+                        return $count . ' Siswa'; 
                     })
                     ->badge()
                     ->color('success'),
 
-                // Kolom Rata-rata Kehadiran (Di-mock dulu)
+                // Kolom Rata-rata Kehadiran
                 Tables\Columns\TextColumn::make('rata_kehadiran')
                     ->label('Rata-rata Kehadiran')
                     ->getStateUsing(function (Kelas $record) {
-                        return rand(75, 100) . '%'; 
+                        $avg = \App\Models\ProgressAkademik::where('kelas_id', $record->id)
+                            ->avg('persentase_kehadiran');
+                        return $avg ? round($avg, 1) . '%' : '0%';
                     })
                     ->badge()
                     ->color('warning'),

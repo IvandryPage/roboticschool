@@ -72,7 +72,8 @@ test('user cannot borrow when no item kit is available', function () {
 });
 
 test('admin can approve borrowing request', function () {
-    $admin = User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
+    $admin = User::factory()->create(['role_id' => $role->id]);
     $user = User::factory()->create();
     $asset = AsetRobotik::factory()->create();
     $item = ItemKitRobotik::factory()->create([
@@ -100,7 +101,8 @@ test('admin can approve borrowing request', function () {
 });
 
 test('admin can reject borrowing request', function () {
-    $admin = User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
+    $admin = User::factory()->create(['role_id' => $role->id]);
     $user = User::factory()->create();
     $asset = AsetRobotik::factory()->create();
     $item = ItemKitRobotik::factory()->create([
@@ -127,7 +129,8 @@ test('admin can reject borrowing request', function () {
 });
 
 test('admin can confirm return of kit in good condition', function () {
-    $admin = User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
+    $admin = User::factory()->create(['role_id' => $role->id]);
     $user = User::factory()->create();
     $asset = AsetRobotik::factory()->create();
     $item = ItemKitRobotik::factory()->create([
@@ -159,7 +162,8 @@ test('admin can confirm return of kit in good condition', function () {
 });
 
 test('admin can confirm return of kit in broken condition', function () {
-    $admin = User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
+    $admin = User::factory()->create(['role_id' => $role->id]);
     $user = User::factory()->create();
     $asset = AsetRobotik::factory()->create();
     $item = ItemKitRobotik::factory()->create([
@@ -205,5 +209,5 @@ test('admin user accessing dashboard is redirected to admin panel', function () 
     $this->actingAs($admin);
 
     $response = $this->get(route('dashboard'));
-    $response->assertRedirect(route('admin.aset.index'));
+    $response->assertRedirect('/admin');
 });

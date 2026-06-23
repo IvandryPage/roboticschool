@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Profil Saya'">
+<x-layouts::app :title="'Profil Saya'">
 
     {{-- ===== HEADER ===== --}}
     <div class="mb-6">
@@ -194,4 +194,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

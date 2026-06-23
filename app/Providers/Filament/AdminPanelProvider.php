@@ -7,6 +7,10 @@ use App\Filament\Widgets\DashboardInstrukturWidget;
 use App\Filament\Widgets\RekapKelulusanWidget;
 use App\Filament\Widgets\SertifikatSiswaWidget;
 use App\Filament\Widgets\StatistikDirekturWidget;
+use App\Filament\Widgets\StatistikAdminWidget;
+use App\Filament\Widgets\AsetKondisiWidget;
+use App\Filament\Widgets\ClassProgressOverview;
+use App\Filament\Widgets\RingkasanProgresKelas;
 use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -32,7 +36,6 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
             ->defaultThemeMode(ThemeMode::Light)
             ->colors([
                 'primary' => [
@@ -127,10 +130,14 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 StatistikDirekturWidget::class,
+                StatistikAdminWidget::class,
                 RekapKelulusanWidget::class,
                 DashboardInstrukturWidget::class,
                 ArsipLaporanWidget::class,
                 SertifikatSiswaWidget::class,
+                AsetKondisiWidget::class,
+                ClassProgressOverview::class,
+                RingkasanProgresKelas::class,
             ])
             ->navigationItems([
                  \Filament\Navigation\NavigationItem::make('Pendaftaran')

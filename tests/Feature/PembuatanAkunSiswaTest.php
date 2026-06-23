@@ -34,9 +34,12 @@ class PembuatanAkunSiswaTest extends TestCase
     {
         parent::setUp();
 
+        $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Admin Akademik']);
+
         $this->admin = User::factory()->create([
-            'name'  => 'Admin Test',
-            'email' => 'admin@test.com',
+            'name'    => 'Admin Test',
+            'email'   => 'admin@test.com',
+            'role_id' => $role->id,
         ]);
 
         $this->program = ProgramKursus::factory()->create([
@@ -50,9 +53,10 @@ class PembuatanAkunSiswaTest extends TestCase
 
     private function buatPendaftaranDisetujui(): Pendaftaran
     {
+        $unique = uniqid();
         $cp = CalonPeserta::factory()->create([
-            'nama_lengkap'              => 'Siti Rahayu',
-            'email'                     => 'siti@example.com',
+            'nama_lengkap'              => 'Siti Rahayu ' . $unique,
+            'email'                     => 'siti_' . $unique . '@example.com',
             'no_hp'                     => '08129876543',
             'asal_sekolah_atau_instansi'=> 'SMA Negeri 1',
         ]);
@@ -67,8 +71,9 @@ class PembuatanAkunSiswaTest extends TestCase
     private function buatSiswaAktif(): Siswa
     {
         $pendaftaran = $this->buatPendaftaranDisetujui();
+        $unique = uniqid();
         $user = User::factory()->create([
-            'name'  => 'sitiuser',
+            'name'  => 'sitiuser_' . $unique,
             'email' => $pendaftaran->calonPeserta->email,
         ]);
 
@@ -89,7 +94,7 @@ class PembuatanAkunSiswaTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_mengakses_form_buat_akun_siswa()
+    public function test_admin_dapat_mengakses_form_buat_akun_siswa()
     {
         $pendaftaran = $this->buatPendaftaranDisetujui();
 
@@ -102,7 +107,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function admin_tidak_bisa_buat_akun_untuk_pendaftaran_yang_belum_disetujui()
+    public function test_admin_tidak_bisa_buat_akun_untuk_pendaftaran_yang_belum_disetujui()
     {
         $cp = CalonPeserta::factory()->create();
         $pendaftaran = Pendaftaran::factory()->create([
@@ -118,7 +123,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_membuat_akun_siswa_baru()
+    public function test_admin_dapat_membuat_akun_siswa_baru()
     {
         $pendaftaran = $this->buatPendaftaranDisetujui();
 
@@ -135,20 +140,22 @@ class PembuatanAkunSiswaTest extends TestCase
         // User login terbuat
         $this->assertDatabaseHas('users', [
             'name'  => 'sitirahayuuser',
-            'email' => 'siti@example.com',
+            'email' => $pendaftaran->calonPeserta->email,
         ]);
 
         // Record siswa terbuat & terhubung
         $this->assertDatabaseHas('siswa', [
             'pendaftaran_id' => $pendaftaran->id,
-            'nama_lengkap'   => 'Siti Rahayu',
-            'email'          => 'siti@example.com',
-            'status_akun'    => 'aktif',
+        ]);
+        $this->assertDatabaseHas('users', [
+            'email'          => $pendaftaran->calonPeserta->email,
+            'nama_lengkap'   => $pendaftaran->calonPeserta->nama_lengkap,
+            'status_aktif'   => true,
         ]);
     }
 
     /** @test */
-    public function pembuatan_akun_gagal_jika_username_duplikat()
+    public function test_pembuatan_akun_gagal_jika_username_duplikat()
     {
         User::factory()->create(['name' => 'duplikatuser']);
         $pendaftaran = $this->buatPendaftaranDisetujui();
@@ -165,7 +172,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function pembuatan_akun_gagal_jika_password_terlalu_pendek()
+    public function test_pembuatan_akun_gagal_jika_password_terlalu_pendek()
     {
         $pendaftaran = $this->buatPendaftaranDisetujui();
 
@@ -180,7 +187,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function pembuatan_akun_gagal_jika_konfirmasi_password_tidak_cocok()
+    public function test_pembuatan_akun_gagal_jika_konfirmasi_password_tidak_cocok()
     {
         $pendaftaran = $this->buatPendaftaranDisetujui();
 
@@ -195,7 +202,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function akun_tidak_bisa_dibuat_dua_kali_untuk_pendaftaran_yang_sama()
+    public function test_akun_tidak_bisa_dibuat_dua_kali_untuk_pendaftaran_yang_sama()
     {
         $siswa       = $this->buatSiswaAktif();
         $pendaftaran = $siswa->pendaftaran;
@@ -217,7 +224,7 @@ class PembuatanAkunSiswaTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_melihat_daftar_siswa()
+    public function test_admin_dapat_melihat_daftar_siswa()
     {
         $this->buatSiswaAktif();
 
@@ -230,7 +237,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_mencari_siswa_berdasarkan_nama()
+    public function test_admin_dapat_mencari_siswa_berdasarkan_nama()
     {
         $this->buatSiswaAktif(); // nama: Siti Rahayu
 
@@ -242,7 +249,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function pencarian_dengan_nama_tidak_ada_mengembalikan_hasil_kosong()
+    public function test_pencarian_dengan_nama_tidak_ada_mengembalikan_hasil_kosong()
     {
         $this->buatSiswaAktif();
 
@@ -254,7 +261,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_filter_siswa_berdasarkan_status()
+    public function test_admin_dapat_filter_siswa_berdasarkan_status()
     {
         $siswaAktif = $this->buatSiswaAktif();
 
@@ -278,7 +285,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function statistik_pada_daftar_siswa_akurat()
+    public function test_statistik_pada_daftar_siswa_akurat()
     {
         $s1 = $this->buatSiswaAktif();
         $s2 = $this->buatSiswaAktif();
@@ -299,7 +306,7 @@ class PembuatanAkunSiswaTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_melihat_form_edit_siswa()
+    public function test_admin_dapat_melihat_form_edit_siswa()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -312,7 +319,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function admin_dapat_memperbarui_profil_siswa()
+    public function test_admin_dapat_memperbarui_profil_siswa()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -330,14 +337,20 @@ class PembuatanAkunSiswaTest extends TestCase
 
         $this->assertDatabaseHas('siswa', [
             'id'           => $siswa->id,
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id'           => $siswa->user_id,
             'nama_lengkap' => 'Siti Rahayu Diperbarui',
             'no_hp'        => '0812000000',
-            'asal_sekolah' => 'Universitas Gajah Mada',
+        ]);
+        $this->assertDatabaseHas('calon_peserta', [
+            'id'                         => $siswa->pendaftaran->calon_peserta_id,
+            'asal_sekolah_atau_instansi' => 'Universitas Gajah Mada',
         ]);
     }
 
     /** @test */
-    public function admin_dapat_mengubah_status_akun_dari_form_edit()
+    public function test_admin_dapat_mengubah_status_akun_dari_form_edit()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -350,7 +363,10 @@ class PembuatanAkunSiswaTest extends TestCase
 
         $this->assertDatabaseHas('siswa', [
             'id'          => $siswa->id,
-            'status_akun' => 'nonaktif',
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id'          => $siswa->user_id,
+            'status_aktif' => false,
         ]);
     }
 
@@ -359,7 +375,7 @@ class PembuatanAkunSiswaTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function admin_dapat_nonaktifkan_akun_siswa()
+    public function test_admin_dapat_nonaktifkan_akun_siswa()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -371,12 +387,15 @@ class PembuatanAkunSiswaTest extends TestCase
 
         $this->assertDatabaseHas('siswa', [
             'id'          => $siswa->id,
-            'status_akun' => 'nonaktif',
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id'          => $siswa->user_id,
+            'status_aktif' => false,
         ]);
     }
 
     /** @test */
-    public function admin_dapat_aktifkan_kembali_akun_siswa_nonaktif()
+    public function test_admin_dapat_aktifkan_kembali_akun_siswa_nonaktif()
     {
         $siswa = $this->buatSiswaAktif();
         $siswa->update(['status_akun' => 'nonaktif']);
@@ -389,12 +408,15 @@ class PembuatanAkunSiswaTest extends TestCase
 
         $this->assertDatabaseHas('siswa', [
             'id'          => $siswa->id,
-            'status_akun' => 'aktif',
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id'          => $siswa->user_id,
+            'status_aktif' => true,
         ]);
     }
 
     /** @test */
-    public function nonaktifkan_akun_yang_sudah_nonaktif_mengembalikan_error()
+    public function test_nonaktifkan_akun_yang_sudah_nonaktif_mengembalikan_error()
     {
         $siswa = $this->buatSiswaAktif();
         $siswa->update(['status_akun' => 'nonaktif']);
@@ -406,7 +428,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function aktifkan_akun_yang_sudah_aktif_mengembalikan_error()
+    public function test_aktifkan_akun_yang_sudah_aktif_mengembalikan_error()
     {
         $siswa = $this->buatSiswaAktif(); // sudah aktif
 
@@ -417,7 +439,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function toggle_status_mengubah_aktif_menjadi_nonaktif()
+    public function test_toggle_status_mengubah_aktif_menjadi_nonaktif()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -426,12 +448,15 @@ class PembuatanAkunSiswaTest extends TestCase
 
         $this->assertDatabaseHas('siswa', [
             'id'          => $siswa->id,
-            'status_akun' => 'nonaktif',
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id'          => $siswa->user_id,
+            'status_aktif' => false,
         ]);
     }
 
     /** @test */
-    public function toggle_status_mengubah_nonaktif_menjadi_aktif()
+    public function test_toggle_status_mengubah_nonaktif_menjadi_aktif()
     {
         $siswa = $this->buatSiswaAktif();
         $siswa->update(['status_akun' => 'nonaktif']);
@@ -441,7 +466,10 @@ class PembuatanAkunSiswaTest extends TestCase
 
         $this->assertDatabaseHas('siswa', [
             'id'          => $siswa->id,
-            'status_akun' => 'aktif',
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id'          => $siswa->user_id,
+            'status_aktif' => true,
         ]);
     }
 
@@ -450,7 +478,7 @@ class PembuatanAkunSiswaTest extends TestCase
     // =========================================================================
 
     /** @test */
-    public function siswa_dapat_melihat_halaman_profil_sendiri()
+    public function test_siswa_dapat_melihat_halaman_profil_sendiri()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -464,7 +492,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function tamu_tidak_bisa_mengakses_halaman_profil_siswa()
+    public function test_tamu_tidak_bisa_mengakses_halaman_profil_siswa()
     {
         $response = $this->get(route('siswa.profil.show'));
 
@@ -472,7 +500,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function siswa_dapat_memperbarui_profil_sendiri()
+    public function test_siswa_dapat_memperbarui_profil_sendiri()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -488,13 +516,16 @@ class PembuatanAkunSiswaTest extends TestCase
 
         $this->assertDatabaseHas('siswa', [
             'id'           => $siswa->id,
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id'           => $siswa->user_id,
             'nama_lengkap' => 'Siti Rahayu Updated',
             'no_hp'        => '0819999999',
         ]);
     }
 
     /** @test */
-    public function siswa_tidak_bisa_memperbarui_email_sendiri()
+    public function test_siswa_tidak_bisa_memperbarui_email_sendiri()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -505,14 +536,14 @@ class PembuatanAkunSiswaTest extends TestCase
             ]);
 
         // Email di database tidak berubah
-        $this->assertDatabaseHas('siswa', [
-            'id'    => $siswa->id,
+        $this->assertDatabaseHas('users', [
+            'id'    => $siswa->user_id,
             'email' => $siswa->email,
         ]);
     }
 
     /** @test */
-    public function siswa_dapat_mengganti_password_dengan_password_lama_yang_benar()
+    public function test_siswa_dapat_mengganti_password_dengan_password_lama_yang_benar()
     {
         $siswa = $this->buatSiswaAktif();
 
@@ -531,7 +562,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function ganti_password_gagal_jika_password_lama_salah()
+    public function test_ganti_password_gagal_jika_password_lama_salah()
     {
         $siswa = $this->buatSiswaAktif();
         $siswa->user->update(['password' => bcrypt('PasswordLama123!')]);
@@ -547,7 +578,7 @@ class PembuatanAkunSiswaTest extends TestCase
     }
 
     /** @test */
-    public function siswa_tidak_bisa_mengakses_profil_siswa_lain()
+    public function test_siswa_tidak_bisa_mengakses_profil_siswa_lain()
     {
         $siswa1 = $this->buatSiswaAktif();
         $siswa2 = $this->buatSiswaAktif();
@@ -557,8 +588,7 @@ class PembuatanAkunSiswaTest extends TestCase
             ->get(route('admin.siswa.show', $siswa2->id));
 
         // Harus ditolak (redirect ke login atau 403)
-        $response->assertStatus(302)->orElse(
-            fn() => $response->assertForbidden()
-        );
+        $status = $response->getStatusCode();
+        $this->assertTrue(in_array($status, [302, 403]));
     }
 }

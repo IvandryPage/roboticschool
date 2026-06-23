@@ -27,7 +27,6 @@ class SepianPanelProvider extends PanelProvider
             ->default()
             ->id('sepian')
             ->path('sepian')
-            ->login()
             ->colors([
                 'primary' => Color::Amber,
             ])

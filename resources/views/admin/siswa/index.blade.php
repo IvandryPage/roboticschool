@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Daftar Siswa Aktif'">
+<x-layouts::app :title="'Daftar Siswa Aktif'">
 
     {{-- ===== HEADER ===== --}}
     <div class="mb-6">
@@ -76,52 +76,52 @@
             </div>
         @else
             <flux:table>
-                <flux:columns>
-                    <flux:column class="w-8">#</flux:column>
-                    <flux:column>Nama Siswa</flux:column>
-                    <flux:column>Program</flux:column>
-                    <flux:column>Tgl. Bergabung</flux:column>
-                    <flux:column>Status Akun</flux:column>
-                    <flux:column class="text-center">Aksi</flux:column>
-                </flux:columns>
+                <flux:table.columns>
+                    <flux:table.column class="w-8">#</flux:table.column>
+                    <flux:table.column>Nama Siswa</flux:table.column>
+                    <flux:table.column>Program</flux:table.column>
+                    <flux:table.column>Tgl. Bergabung</flux:table.column>
+                    <flux:table.column>Status Akun</flux:table.column>
+                    <flux:table.column class="text-center">Aksi</flux:table.column>
+                </flux:table.columns>
 
-                <flux:rows>
+                <flux:table.rows>
                     @foreach($siswaList as $i => $siswa)
-                        <flux:row>
-                            <flux:cell class="text-zinc-400 text-sm">
+                        <flux:table.row>
+                            <flux:table.cell class="text-zinc-400 text-sm">
                                 {{ $siswaList->firstItem() + $i }}
-                            </flux:cell>
+                            </flux:table.cell>
 
                             {{-- Nama + Email --}}
-                            <flux:cell>
+                            <flux:table.cell>
                                 <div class="font-medium text-sm">{{ $siswa->nama_lengkap }}</div>
                                 <div class="text-xs text-zinc-400">{{ $siswa->email }}</div>
-                            </flux:cell>
+                            </flux:table.cell>
 
                             {{-- Program --}}
-                            <flux:cell class="text-sm text-zinc-600 dark:text-zinc-300">
+                            <flux:table.cell class="text-sm text-zinc-600 dark:text-zinc-300">
                                 {{ $siswa->pendaftaran->program->nama_program ?? '-' }}
-                            </flux:cell>
+                            </flux:table.cell>
 
                             {{-- Tanggal Bergabung --}}
-                            <flux:cell class="text-sm text-zinc-500">
+                            <flux:table.cell class="text-sm text-zinc-500">
                                 {{ $siswa->tanggal_bergabung
                                     ? \Carbon\Carbon::parse($siswa->tanggal_bergabung)->translatedFormat('d M Y')
                                     : '-' }}
-                            </flux:cell>
+                            </flux:table.cell>
 
                             {{-- Status Akun --}}
-                            <flux:cell>
+                            <flux:table.cell>
                                 <flux:badge
                                     color="{{ $siswa->status_akun === 'aktif' ? 'green' : 'red' }}"
                                     size="sm"
                                 >
                                     {{ ucfirst($siswa->status_akun) }}
                                 </flux:badge>
-                            </flux:cell>
+                            </flux:table.cell>
 
                             {{-- Aksi --}}
-                            <flux:cell class="text-center">
+                            <flux:table.cell class="text-center">
                                 <div class="flex items-center justify-center gap-2">
                                     <flux:button
                                         href="{{ route('admin.siswa.show', $siswa->id) }}"
@@ -140,10 +140,10 @@
                                         Edit
                                     </flux:button>
                                 </div>
-                            </flux:cell>
-                        </flux:row>
+                            </flux:table.cell>
+                        </flux:table.row>
                     @endforeach
-                </flux:rows>
+                </flux:table.rows>
             </flux:table>
 
             {{-- Pagination --}}
@@ -155,4 +155,4 @@
         @endif
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

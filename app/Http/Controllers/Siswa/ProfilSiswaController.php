@@ -59,7 +59,9 @@ class ProfilSiswaController extends Controller
     public function update(Request $request)
     {
         $user  = Auth::user();
-        $siswa = Siswa::where('user_id', $user->id)->firstOrFail();
+        $siswa = Siswa::with(['user', 'pendaftaran.calonPeserta'])
+            ->where('user_id', $user->id)
+            ->firstOrFail();
 
         $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:255'],
@@ -69,11 +71,16 @@ class ProfilSiswaController extends Controller
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
         ]);
 
-        $siswa->update([
+        $siswa->user->update([
             'nama_lengkap' => $request->nama_lengkap,
             'no_hp'        => $request->no_hp,
-            'asal_sekolah' => $request->asal_sekolah,
         ]);
+
+        if ($siswa->pendaftaran && $siswa->pendaftaran->calonPeserta) {
+            $siswa->pendaftaran->calonPeserta->update([
+                'asal_sekolah_atau_instansi' => $request->asal_sekolah,
+            ]);
+        }
 
         return redirect()
             ->route('siswa.profil.show')

@@ -1,4 +1,4 @@
-<x-layouts.app :title="'Edit Profil Siswa'">
+<x-layouts::app :title="'Edit Profil Siswa'">
 
     {{-- Breadcrumb --}}
     <div class="mb-5 flex items-center gap-2 text-sm text-zinc-400">
@@ -30,7 +30,7 @@
                         name="nama_lengkap"
                         type="text"
                         value="{{ old('nama_lengkap', $siswa->nama_lengkap) }}"
-                        class="mt-1 @error('nama_lengkap') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('nama_lengkap') ? 'border-red-400' : '' }}"
                         autofocus
                     />
                     @error('nama_lengkap')
@@ -46,7 +46,7 @@
                         name="email"
                         type="email"
                         value="{{ old('email', $siswa->email) }}"
-                        class="mt-1 @error('email') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('email') ? 'border-red-400' : '' }}"
                     />
                     @error('email')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -62,7 +62,7 @@
                         name="no_hp"
                         type="text"
                         value="{{ old('no_hp', $siswa->no_hp) }}"
-                        class="mt-1 @error('no_hp') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('no_hp') ? 'border-red-400' : '' }}"
                         placeholder="Contoh: 08123456789"
                     />
                     @error('no_hp')
@@ -78,7 +78,7 @@
                         name="asal_sekolah"
                         type="text"
                         value="{{ old('asal_sekolah', $siswa->asal_sekolah) }}"
-                        class="mt-1 @error('asal_sekolah') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('asal_sekolah') ? 'border-red-400' : '' }}"
                     />
                     @error('asal_sekolah')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -91,7 +91,7 @@
                     <flux:select
                         id="status_akun"
                         name="status_akun"
-                        class="mt-1 @error('status_akun') border-red-400 @enderror"
+                        class="mt-1 {{ $errors->has('status_akun') ? 'border-red-400' : '' }}"
                     >
                         <option value="aktif"    {{ old('status_akun', $siswa->status_akun) === 'aktif'    ? 'selected' : '' }}>Aktif</option>
                         <option value="nonaktif" {{ old('status_akun', $siswa->status_akun) === 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
@@ -116,7 +116,7 @@
                                 name="password"
                                 type="password"
                                 placeholder="Minimal 8 karakter"
-                                class="mt-1 @error('password') border-red-400 @enderror"
+                                class="mt-1 {{ $errors->has('password') ? 'border-red-400' : '' }}"
                             />
                             @error('password')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -149,4 +149,4 @@
         </div>
     </div>
 
-</x-layouts.app>
+</x-layouts::app>

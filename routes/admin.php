@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role.admin'])
     ->group(function () {
 
         // PBI-060 & PBI-061: Daftar pendaftaran + filter + search
