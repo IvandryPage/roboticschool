@@ -19,9 +19,6 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Pages;
-use Filament\Panel;
-use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -142,6 +139,25 @@ class AdminPanelProvider extends PanelProvider
                 DashboardInstrukturWidget::class,
                 ArsipLaporanWidget::class,
                 SertifikatSiswaWidget::class,
+            ])
+            ->navigationItems([
+                \Filament\Navigation\NavigationItem::make('Portal Utama')
+                    ->url(fn (): string => route('dashboard'))
+                    ->icon('heroicon-o-arrow-left-on-rectangle')
+                    ->visible(fn () => auth()->user()?->role?->nama_role !== 'Siswa')
+                    ->sort(0),
+                \Filament\Navigation\NavigationItem::make('Dashboard Siswa')
+                    ->url(fn (): string => route('siswa.dashboard'))
+                    ->icon('heroicon-o-home')
+                    ->isActiveWhen(fn () => request()->routeIs('siswa.dashboard'))
+                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Siswa')
+                    ->sort(0),
+                \Filament\Navigation\NavigationItem::make('Sertifikat Saya')
+                    ->url(fn (): string => route('sertifikat.saya'))
+                    ->icon('heroicon-o-academic-cap')
+                    ->isActiveWhen(fn () => request()->routeIs('sertifikat.saya'))
+                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Siswa')
+                    ->sort(1),
             ])
             ->middleware([
                 EncryptCookies::class,
