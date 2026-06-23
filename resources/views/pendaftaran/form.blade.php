@@ -405,29 +405,38 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('pendaftaran.store') }}">
-                @csrf
+        <form method="POST" action="{{ route('pendaftaran.store') }}">
 
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nama Lengkap *</label>
-                        <input type="text" name="nama_lengkap" placeholder="Sesuai KTP/Kartu Pelajar">
-                    </div>
+            @csrf
 
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" name="email" placeholder="email@contoh.com">
-                    </div>
+            <div class="form-grid">
 
-                    <div class="form-group">
-                        <label>Nomor HP / WhatsApp *</label>
-                        <input type="text" name="no_hp" placeholder="08xx-xxxx-xxxx">
-                    </div>
+    <div class="form-group">
+        <label>Nama Lengkap *</label>
+        <input type="text"
+               name="nama_lengkap"
+               placeholder="Sesuai KTP/Kartu Pelajar">
+    </div>
 
-                    <div class="form-group">
-                        <label>Tanggal Lahir *</label>
-                        <input type="date" name="tanggal_lahir">
-                    </div>
+    <div class="form-group">
+        <label>Email *</label>
+        <input type="email"
+               name="email"
+               placeholder="email@contoh.com">
+    </div>
+
+    <div class="form-group">
+        <label>Nomor HP / WhatsApp *</label>
+        <input type="text"
+               name="no_hp"
+               placeholder="08xx-xxxx-xxxx">
+    </div>
+
+    <div class="form-group">
+        <label>Tanggal Lahir *</label>
+        <input type="date"
+               name="tanggal_lahir">
+    </div>
 
                     <div class="form-group">
                         <label>Jenis Kelamin *</label>
@@ -437,31 +446,42 @@
                         <label>&nbsp;</label>
                     </div>
 
-                    <div class="form-group">
-                        <label class="gender-card">
-                            <input type="radio" name="jenis_kelamin" value="Laki-laki">
-                            <span>Laki-laki</span>
-                        </label>
-                    </div>
+<div class="form-group">
+    <label class="gender-card">
+        <input type="radio"
+               name="jenis_kelamin"
+               value="Laki-laki">
 
-                    <div class="form-group">
-                        <label class="gender-card">
-                            <input type="radio" name="jenis_kelamin" value="Perempuan">
-                            <span>Perempuan</span>
-                        </label>
-                    </div>
+        <span>Laki-laki</span>
+    </label>
+</div>
+
+<div class="form-group">
+    <label class="gender-card">
+        <input type="radio"
+               name="jenis_kelamin"
+               value="Perempuan">
+
+        <span>Perempuan</span>
+    </label>
+</div>
 
                     <div></div>
 
-                    <div class="form-group full">
-                        <label>Domisili (Kota) *</label>
-                        <input type="text" name="domisili" placeholder="Bandung, Jawa Barat">
-                    </div>
+    <div class="form-group full">
+        <label>Domisili (Kota) *</label>
+        <input type="text"
+               name="domisili"
+               placeholder="Bandung, Jawa Barat">
+    </div>
 
-                    <div class="form-group full">
-                        <label>Alamat Lengkap *</label>
-                        <textarea name="alamat" placeholder="Jalan, RT/RW, Kelurahan, Kecamatan"></textarea>
-                    </div>
+    <div class="form-group full">
+        <label>Alamat Lengkap *</label>
+
+        <textarea
+            name="alamat"
+            placeholder="Jalan, RT/RW, Kelurahan, Kecamatan"></textarea>
+    </div>
 
                     <div class="form-group">
                         <label>Pendidikan / Pekerjaan *</label>
@@ -481,11 +501,13 @@
                         <input type="text" name="institusi" placeholder="Nama institusi">
                     </div>
 
-                    <div class="form-group full">
-                        <label>Motivasi Mengikuti Program</label>
-                        <textarea name="motivasi" placeholder="Ceritakan motivasi dan target setelah lulus"></textarea>
-                    </div>
-                </div>
+    <div class="form-group full">
+        <label>Motivasi Mengikuti Program</label>
+
+        <textarea
+            name="motivasi"
+            placeholder="Ceritakan motivasi dan target setelah lulus"></textarea>
+    </div>
 
                 <!-- ============ PILIH FORMAT KELAS ============ -->
                 <div class="format-section">
@@ -514,17 +536,20 @@
                     </div>
                 </div>
 
-                <div class="form-group full" style="margin-top:30px;">
-                    <label>Program Kursus *</label>
-                    <select name="program_id" required>
-                        <option value="">Pilih Program</option>
-                        @foreach($programs as $program)
-                        <option value="{{ $program->id }}">
-                            {{ $program->nama_program }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
+        <div class="form-group full" style="margin-top:30px;">
+    <label>Program Kursus *</label>
+
+    <select name="program_id" required>
+        <option value="">Pilih Program</option>
+
+        @foreach($programs as $program)
+            <option value="{{ $program->id }}">
+                {{ $program->nama_program }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
 
                 <div class="btn-area">
                     <button type="submit" class="btn">

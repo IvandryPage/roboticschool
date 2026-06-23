@@ -22,6 +22,12 @@ Route::get('/daftar', [PendaftaranController::class, 'create'])
 Route::post('/daftar', [PendaftaranController::class, 'store'])
     ->name('pendaftaran.store');
 
+Route::get('/pendaftaran/{pendaftaran}/edit',[PendaftaranController::class, 'edit'])
+    ->name('pendaftaran.edit');
+
+Route::put('/pendaftaran/{pendaftaran}',[PendaftaranController::class, 'update'])
+    ->name('pendaftaran.update');
+
 Route::get(
     '/pendaftaran/{pendaftaran}/dokumen',
     [PendaftaranController::class, 'dokumen']

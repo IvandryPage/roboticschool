@@ -347,6 +347,12 @@ width:100%;
 </div>
 @endif
 
+@php
+$identitas = $dokumen->firstWhere('jenis_dokumen', 'Identitas');
+$pasFoto = $dokumen->firstWhere('jenis_dokumen', 'Pas Foto');
+$pendukung = $dokumen->firstWhere('jenis_dokumen', 'Dokumen Pendukung');
+@endphp
+
 <form method="POST"
 action="{{ route('pendaftaran.dokumen.store',$pendaftaran->id) }}"
 enctype="multipart/form-data">
@@ -360,8 +366,7 @@ enctype="multipart/form-data">
 <input
 type="file"
 name="dokumen_identitas"
-id="dokumen_identitas"
-required>
+id="dokumen_identitas">
 
 <div class="upload-content">
 
@@ -377,13 +382,15 @@ JPG / PNG / PDF • Maks 5 MB
 </div>
 <img
 id="previewIdentitas"
+src="{{ $identitas ? asset('storage/'.$identitas->file_path) : '' }}"
 style="
-display:none;
-width:100%;
-max-height:220px;
+display:{{ $identitas ? 'block' : 'none' }};
+width:150px;
+max-height:180px;
 object-fit:contain;
 margin-top:15px;
 border-radius:10px;">
+
 </div>
 
 </label>
@@ -395,8 +402,7 @@ border-radius:10px;">
 <input
 type="file"
 name="pas_foto"
-id="pas_foto"
-required>
+id="pas_foto">
 
 <div class="upload-content">
 
@@ -412,10 +418,11 @@ JPG / PNG • Maks 5 MB
 </div>
 <img
 id="previewFoto"
+src="{{ $pasFoto ? asset('storage/'.$pasFoto->file_path) : '' }}"
 style="
-display:none;
+display:{{ $pasFoto ? 'block' : 'none' }};
 width:150px;
-height:180px;
+max-height:180px;
 object-fit:cover;
 margin-top:15px;
 border-radius:10px;">
@@ -443,12 +450,13 @@ Kartu Mahasiswa / Surat Kerja / dll
 </div>
 
 </div>
-<img
+ <img
 id="previewPendukung"
+src="{{ $pendukung ? asset('storage/'.$pendukung->file_path) : '' }}"
 style="
-display:none;
-width:100%;
-max-height:220px;
+display:{{ $pendukung ? 'block' : 'none' }};
+width:150px;
+max-height:180px;
 object-fit:contain;
 margin-top:15px;
 border-radius:10px;">
@@ -475,14 +483,13 @@ verifikasi pendaftaran dan tidak dibagikan kepada pihak lain.
 
 <div class="btn-area">
 
-<button
-type="button"
-class="btn btn-back"
-onclick="history.back()">
+<a
+href="{{ route('pendaftaran.edit', $pendaftaran->id) }}"
+class="btn btn-back">
 
 ← Kembali
 
-</button>
+</a>
 
 <button
 type="submit"

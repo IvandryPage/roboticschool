@@ -25,7 +25,7 @@ class PembayaranController extends Controller
         // 2. cek apakah invoice sudah ada
         $invoice = Invoice::where('pendaftaran_id', $pendaftaran->id)->first();
 
-        // 3. kalau belum ada, buat invoice baru
+      
         if (!$invoice) {
             $invoice = Invoice::create([
                 'id' => (string) Str::uuid(),

@@ -18,6 +18,47 @@ class PendaftaranController extends Controller
         return view('pendaftaran.form', compact('programs'));
     }
 
+    public function edit(Pendaftaran $pendaftaran)
+    {
+    $programs = ProgramKursus::where(
+        'status_tampil',
+        true
+    )->get();
+
+    return view(
+        'pendaftaran.form',
+        compact('pendaftaran', 'programs')
+    );
+    }
+
+    public function update(
+    Request $request,
+    Pendaftaran $pendaftaran
+)
+{
+    $validated = $request->validate([
+        'nama_lengkap' => 'required|string|max:255',
+        'email' => 'required|email',
+        'no_hp' => 'required|string|max:20',
+        'program_id' => 'required'
+    ]);
+
+    $pendaftaran->calonPeserta->update([
+        'nama_lengkap' => $validated['nama_lengkap'],
+        'email' => $validated['email'],
+        'no_hp' => $validated['no_hp'],
+    ]);
+
+    $pendaftaran->update([
+        'program_id' => $validated['program_id']
+    ]);
+
+    return redirect()->route(
+        'pendaftaran.dokumen',
+        $pendaftaran->id
+    );
+}
+
     // STEP 1 - DATA DIRI
         public function store(Request $request)
         {
@@ -64,59 +105,88 @@ class PendaftaranController extends Controller
     // STEP 2 - FORM DOKUMEN
     public function dokumen(Pendaftaran $pendaftaran)
     {
-        return view('pendaftaran.dokumen', compact('pendaftaran'));
+        $dokumen = DokumenPendaftaran::where(
+        'pendaftaran_id',
+        $pendaftaran->id
+        )->get();
+
+        return view(
+        'pendaftaran.dokumen',
+        compact('pendaftaran', 'dokumen')
+        );
     }
 
     // STEP 3 - SIMPAN DOKUMEN
     public function storeDokumen(Request $request, Pendaftaran $pendaftaran)
 {
     $request->validate([
-        'dokumen_identitas' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-        'pas_foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-        'dokumen_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-    ]);
+    'dokumen_identitas' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+    'pas_foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    'dokumen_pendukung' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+]   );
 
     // Identitas
+    if ($request->hasFile('dokumen_identitas')) {
+
     $pathIdentitas = $request->file('dokumen_identitas')
         ->store('dokumen-pendaftaran', 'public');
 
-    DokumenPendaftaran::create([
-        'pendaftaran_id' => $pendaftaran->id,
-        'jenis_dokumen' => 'Identitas',
-        'nama_file' => $request->file('dokumen_identitas')->getClientOriginalName(),
-        'file_path' => $pathIdentitas,
-        'status_verifikasi' => 'Menunggu',
-        'uploaded_at' => now(),
-    ]);
+    DokumenPendaftaran::updateOrCreate(
+        [
+            'pendaftaran_id' => $pendaftaran->id,
+            'jenis_dokumen' => 'Identitas',
+            'versi' => 1
+        ],
+        [
+            'nama_file' => $request->file('dokumen_identitas')->getClientOriginalName(),
+            'file_path' => $pathIdentitas,
+            'status_verifikasi' => 'Menunggu',
+            'uploaded_at' => now(),
+        ]
+    );
+}
 
     // Pas Foto
+if ($request->hasFile('pas_foto')) {
+
     $pathPasFoto = $request->file('pas_foto')
         ->store('dokumen-pendaftaran', 'public');
 
-    DokumenPendaftaran::create([
-        'pendaftaran_id' => $pendaftaran->id,
-        'jenis_dokumen' => 'Pas Foto',
-        'nama_file' => $request->file('pas_foto')->getClientOriginalName(),
-        'file_path' => $pathPasFoto,
-        'status_verifikasi' => 'Menunggu',
-        'uploaded_at' => now(),
-    ]);
+    DokumenPendaftaran::updateOrCreate(
+        [
+            'pendaftaran_id' => $pendaftaran->id,
+            'jenis_dokumen' => 'Pas Foto',
+            'versi' => 1
+        ],
+        [
+            'nama_file' => $request->file('pas_foto')->getClientOriginalName(),
+            'file_path' => $pathPasFoto,
+            'status_verifikasi' => 'Menunggu',
+            'uploaded_at' => now(),
+        ]
+    );
+}
 
     // Dokumen Pendukung (Opsional)
     if ($request->hasFile('dokumen_pendukung')) {
 
-        $pathPendukung = $request->file('dokumen_pendukung')
-            ->store('dokumen-pendaftaran', 'public');
+    $pathPendukung = $request->file('dokumen_pendukung')
+        ->store('dokumen-pendaftaran', 'public');
 
-        DokumenPendaftaran::create([
+    DokumenPendaftaran::updateOrCreate(
+        [
             'pendaftaran_id' => $pendaftaran->id,
             'jenis_dokumen' => 'Dokumen Pendukung',
+            'versi' => 1
+        ],
+        [
             'nama_file' => $request->file('dokumen_pendukung')->getClientOriginalName(),
-            'file_path' => $pathPendukung,
+            'file_path' => $pathIdentitas,
             'status_verifikasi' => 'Menunggu',
             'uploaded_at' => now(),
-        ]);
-    }
+        ]
+    );
+}
 
     return redirect()
         ->route('pembayaran.index', $pendaftaran->id);
