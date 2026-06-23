@@ -67,9 +67,9 @@ Route::get(
 */
 
 Route::get(
-    '/pendaftaran/{pendaftaran}/selesai',
-    [PendaftaranController::class, 'selesai']
-)->name('pendaftaran.selesai');
+    '/pendaftaran/{pendaftaran}/sukses',
+    [PendaftaranController::class, 'success']
+)->name('pendaftaran.success');
 
 /*
 |--------------------------------------------------------------------------
