@@ -17,6 +17,12 @@
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 
+                <flux:sidebar.group :heading="__('Diskusi')" class="grid mt-4">
+                    <flux:sidebar.item icon="chat-bubble-left-right" :href="route('forum.index')" :current="request()->routeIs('forum.*')" wire:navigate>
+                        {{ __('Forum Diskusi') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
+
                 <flux:sidebar.group :heading="__('Helpdesk')" class="grid mt-4">
                     <flux:sidebar.item icon="ticket" :href="route('keluhan.create')" :current="request()->routeIs('keluhan.create')" wire:navigate>
                         {{ __('Kirim Keluhan') }}

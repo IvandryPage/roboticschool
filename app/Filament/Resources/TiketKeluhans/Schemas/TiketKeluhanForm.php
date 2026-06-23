@@ -2,12 +2,10 @@
 
 namespace App\Filament\Resources\TiketKeluhans\Schemas;
 
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth;
 
 class TiketKeluhanForm
 {
@@ -15,49 +13,35 @@ class TiketKeluhanForm
     {
         return $schema
             ->components([
-                Hidden::make('pelapor_id')
-                    ->default(fn () => Auth::id()),
-
-                Select::make('kategori')
-                    ->label('Kategori Keluhan')
-                    ->options([
-                        'Pembelajaran' => 'Pembelajaran',
-                        'Error Sistem' => 'Error Sistem',
-                        'Pendaftaran & Pembayaran' => 'Pendaftaran & Pembayaran',
-                        'Hal Lainnya' => 'Hal Lainnya',
-                    ])
-                    ->required(),
-
                 TextInput::make('subjek')
                     ->label('Subjek Keluhan')
-                    ->required()
-                    ->maxLength(255),
+                    ->disabled()
+                    ->dehydrated(false),
+
+                TextInput::make('kategori')
+                    ->label('Kategori')
+                    ->disabled()
+                    ->dehydrated(false),
+
+                TextInput::make('prioritas')
+                    ->label('Prioritas')
+                    ->disabled()
+                    ->dehydrated(false),
 
                 Textarea::make('deskripsi')
                     ->label('Deskripsi Keluhan')
-                    ->required()
-                    ->rows(5)
+                    ->disabled()
+                    ->dehydrated(false)
+                    ->rows(4)
                     ->columnSpanFull(),
 
-                Select::make('prioritas')
-                    ->label('Prioritas')
-                    ->options([
-                        'Rendah' => 'Rendah',
-                        'Sedang' => 'Sedang',
-                        'Tinggi' => 'Tinggi',
-                    ])
-                    ->default('Sedang')
-                    ->required(),
-
                 Select::make('status')
-                    ->label('Status')
+                    ->label('Update Status')
                     ->options([
-                        'Open' => 'Open',
+                        'Open'        => 'Open',
                         'In Progress' => 'In Progress',
-                        'Resolved' => 'Resolved',
-                        'Closed' => 'Closed',
+                        'Resolved'    => 'Resolved',
                     ])
-                    ->default('Open')
                     ->required(),
             ]);
     }

@@ -77,10 +77,16 @@
                     </div>
 
                     <div>
-                        <h3 class="font-semibold">
-                            {{ $topik->pembuat->nama_lengkap ?? 'User' }}
-                        </h3>
-
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-semibold">
+                                {{ $topik->pembuat->nama_lengkap ?? 'User' }}
+                            </h3>
+                            @if ($topik->pembuat?->role?->nama_role === 'Instruktur')
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700 uppercase tracking-wide">
+                                    Instruktur
+                                </span>
+                            @endif
+                        </div>
                         <p class="text-xs text-gray-500">
                             {{ $topik->created_at->diffForHumans() }}
                         </p>
@@ -102,11 +108,18 @@
 
                         <div class="mt-2 ml-4 border-l-2 pl-3 text-sm">
 
-                            <div class="font-semibold">
-                                {{ $komentar->user->nama_lengkap ?? 'User' }}
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold">
+                                    {{ $komentar->user->nama_lengkap ?? 'User' }}
+                                </span>
+                                @if ($komentar->user?->role?->nama_role === 'Instruktur')
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-100 text-cyan-700 uppercase tracking-wide">
+                                        Instruktur
+                                    </span>
+                                @endif
                             </div>
 
-                            <div>
+                            <div class="text-gray-700 mt-0.5">
                                 {{ $komentar->komentar }}
                             </div>
 

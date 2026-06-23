@@ -66,7 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'konten' => $request->konten,
         ]);
 
-        return back();
+        return redirect()->route('forum.index');
 
     })->name('forum.store');
 
@@ -79,7 +79,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'komentar' => $request->komentar,
         ]);
 
-        return back();
+        return redirect()->route('forum.index');
 
     })->name('forum.reply');
 
