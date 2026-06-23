@@ -37,11 +37,11 @@ class DatabaseSeeder extends Seeder
             Role::firstOrCreate(['nama_role' => $r['nama_role']], $r);
         }
 
-        $adminRole = Role::where('nama_role', 'Admin Akademik')->first();
-        $instrukturRole = Role::where('nama_role', 'Instruktur')->first();
-        $siswaRole = Role::where('nama_role', 'Siswa')->first();
-        $publikasiRole = Role::where('nama_role', 'Tim Publikasi')->first();
-        $direkturRole = Role::where('nama_role', 'Direktur')->first();
+        $adminRole = Role::where(['nama_role' => 'Admin Akademik'])->first();
+        $instrukturRole = Role::where(['nama_role' => 'Instruktur'])->first();
+        $siswaRole = Role::where(['nama_role' => 'Siswa'])->first();
+        $publikasiRole = Role::where(['nama_role' => 'Tim Publikasi'])->first();
+        $direkturRole = Role::where(['nama_role' => 'Direktur'])->first();
 
         // 2) Users (admin, instructors, director, publikasi)
         $admin = User::firstOrCreate(
@@ -277,15 +277,21 @@ class DatabaseSeeder extends Seeder
             );
         }
 
+        $progressDataKelas2 = [
+            [95.0, 91.0, 100.0, 'Lulus'],
+            [80.0, 80.0, 80.0, 'Lulus'],
+            [80.0, 80.0, 80.0, 'Lulus'],
+            [80.0, 80.0, 80.0, 'Lulus'],
+        ];
         foreach ($next4->values() as $idx => $p) {
-            $pd = [95.0,91.0,100.0,'Lulus'][$idx] ?? [80,80,80,'Lulus'];
+            $pd = $progressDataKelas2[$idx] ?? [80, 80, 80, 'Lulus'];
             ProgressAkademik::firstOrCreate(
                 ['siswa_id' => $p->id, 'kelas_id' => $kelas2->id],
                 [
-                    'persentase_kehadiran' => $pd[0] ?? 80,
-                    'rata_nilai_tugas' => $pd[1] ?? 80,
-                    'persentase_penyelesaian' => $pd[2] ?? 100,
-                    'status' => $pd[3] ?? 'Lulus',
+                    'persentase_kehadiran' => $pd[0],
+                    'rata_nilai_tugas' => $pd[1],
+                    'persentase_penyelesaian' => $pd[2],
+                    'status' => $pd[3],
                 ]
             );
         }
