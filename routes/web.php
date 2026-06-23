@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SertifikatController;
+use App\Http\Controllers\SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -7,13 +9,31 @@ use App\Models\ForumTopik;
 use App\Models\ForumKomentar;
 use App\Models\Kelas;
 
-Route::view('/', 'welcome')->name('home');
+
+require __DIR__ . '/settings.php';
+
+// Halaman utama
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('dashboard', 'dashboard')->name('dashboard');
+    // Route dashboard — dibutuhkan oleh Auth & DashboardTest
+    // Guest akan di-redirect ke login oleh middleware auth
+    // Authenticated user melihat halaman dashboard (200 OK)
+    //     Route::get('/dashboard', function () {
+    //         return view('dashboard');
+    //     })->middleware(['auth'])->name('dashboard');
 
+    // PBI-127: Halaman sertifikat milik siswa
+    Route::get('/sertifikat/saya', [SertifikatController::class, 'milikku'])
+        ->name('sertifikat.saya');
 
+    // Dashboard Siswa — portal dengan sidebar modern
+    Route::get('/siswa/dashboard', [SiswaDashboardController::class, 'index'])
+        ->name('siswa.dashboard');
 
     Route::get('keluhan', [\App\Http\Controllers\KeluhanController::class, 'create'])
         ->name('keluhan.create');
@@ -79,4 +99,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-require __DIR__ . '/settings.php';
+// PBI-128: Halaman verifikasi sertifikat (publik, tanpa login)
+Route::get('/sertifikat/verifikasi/{nomor}', [SertifikatController::class, 'verifikasi'])
+    ->name('sertifikat.verifikasi');

@@ -17,16 +17,28 @@ class ProgressAkademik extends Model
 
     protected $table = 'progress_akademik';
 
-    protected $fillable = ['id', 'siswa_id', 'program_id', 'kelas_id', 'status', 'nilai_rata_rata', 'catatan'];
+    // FIX ERROR 9: sesuaikan dengan kolom yang ada di migration
+    // Hapus: program_id, nilai_rata_rata, catatan (tidak ada di tabel)
+    // Tambah: persentase_kehadiran, rata_nilai_tugas, persentase_penyelesaian
+    protected $fillable = [
+        'id',
+        'siswa_id',
+        'kelas_id',
+        'persentase_kehadiran',
+        'rata_nilai_tugas',
+        'persentase_penyelesaian',
+        'status',
+    ];
+
+    protected $casts = [
+        'persentase_kehadiran'    => 'decimal:2',
+        'rata_nilai_tugas'        => 'decimal:2',
+        'persentase_penyelesaian' => 'decimal:2',
+    ];
 
     public function siswa(): BelongsTo
     {
         return $this->belongsTo(Siswa::class);
-    }
-
-    public function program(): BelongsTo
-    {
-        return $this->belongsTo(ProgramKursus::class, 'program_id');
     }
 
     public function kelas(): BelongsTo
