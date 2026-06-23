@@ -10,6 +10,7 @@
 .env
 .env.backup
 .env.production
+.env.testing
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -22,3 +23,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Filament compiled assets — regenerated via: php artisan filament:assets
+/public/css/filament
+/public/js/filament
+/public/fonts/filament
