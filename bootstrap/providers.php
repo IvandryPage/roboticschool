@@ -5,4 +5,5 @@ return [
     App\Providers\Filament\AdminPanelProvider::class,
     App\Providers\Filament\SepianPanelProvider::class,
     App\Providers\FortifyServiceProvider::class,
+    App\Providers\Filament\AdminPanelProvider::class,
 ];
