@@ -2,18 +2,25 @@
 
 namespace App\Http\Responses;
 
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
-        if ($user && $user->role && $user->role->nama_role === 'Admin Akademik') {
-            return redirect('/admin/aset');
-        }
+        $role = $user?->role?->nama_role;
 
-        return redirect('/dashboard');
+        // Redirect pengguna berdasarkan peran mereka
+        return match ($role) {
+            'Admin' => redirect('/admin/dashboard'),
+            'Instruktur' => redirect('/instruktur/dashboard'),
+            'Siswa' => redirect('/siswa/dashboard'),
+            'Tim Publikasi' => redirect('/publikasi/dashboard'),
+            'Direktur' => redirect('/direktur/dashboard'),
+            default => redirect('/dashboard'),
+        };
     }
 }

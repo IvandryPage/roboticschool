@@ -3,8 +3,10 @@
 use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
+#PB01 
+// use App\Http\Controllers\Admin\UserController;
 
-// // Halaman utama
+// Halaman utama
 // Route::get('/', function () {
 //     return view('welcome');
 // })->name('home');
@@ -42,6 +44,25 @@ use Illuminate\Support\Facades\Route;
 //         Route::post('peminjaman/{peminjaman}/reject', [\App\Http\Controllers\Admin\AdminPeminjamanController::class, 'reject'])->name('peminjaman.reject');
 //         Route::post('peminjaman/{peminjaman}/return', [\App\Http\Controllers\Admin\AdminPeminjamanController::class, 'confirmReturn'])->name('peminjaman.return');
 //     });
+//     Route::view('dashboard', 'dashboard')->name('dashboard');
+//     Route::view('/admin/dashboard', 'dashboard');
+//     Route::view('/instruktur/dashboard', 'dashboard');
+//     Route::view('/siswa/dashboard', 'dashboard');
+//     Route::view('/publikasi/dashboard', 'dashboard');
+//     Route::view('/direktur/dashboard', 'dashboard');
+//     #buat jalur ke UserController
+//     // Route::prefix('admin')->name('admin.')->group(function () {
+//     //     Route::resource('users', UserController::class);
+//     // });
+// });
+
+// // Social login (Google)
+// use App\Http\Controllers\Auth\SocialAuthController;
+
+// Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+// Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+// require __DIR__.'/settings.php';
 // // Route dashboard — dibutuhkan oleh Auth & DashboardTest
 // // Guest akan di-redirect ke login oleh middleware auth
 // // Authenticated user melihat halaman dashboard (200 OK)
