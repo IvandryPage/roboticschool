@@ -12,9 +12,7 @@ class ProgressAkademik extends Model
     use HasFactory, HasUuids;
 
     public $incrementing = false;
-
     protected $keyType = 'string';
-
     protected $table = 'progress_akademik';
 
     // FIX ERROR 9: sesuaikan dengan kolom yang ada di migration
@@ -23,11 +21,15 @@ class ProgressAkademik extends Model
     protected $fillable = [
         'id',
         'siswa_id',
+        'program_id',
         'kelas_id',
+        'nilai_rata_rata', 
         'persentase_kehadiran',
         'rata_nilai_tugas',
+        'catatan',
         'persentase_penyelesaian',
         'status',
+        'nilai_progress_akhir'
     ];
 
     protected $casts = [
@@ -38,7 +40,7 @@ class ProgressAkademik extends Model
 
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
     public function kelas(): BelongsTo

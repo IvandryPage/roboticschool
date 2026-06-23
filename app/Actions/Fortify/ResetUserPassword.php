@@ -26,4 +26,4 @@ class ResetUserPassword implements ResetsUserPasswords
             'password' => $input['password'],
         ])->save();
     }
-}
+} 
