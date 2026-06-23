@@ -25,7 +25,18 @@ class PengumpulanTugas extends Model
         'status_penilaian'
     ];
 
-    // Relasi ke Tugas
+    protected static function booted()
+    {
+        // Setiap kali nilai tugas diinput, diupdate, atau dihapus, jalankan hitung ulang
+        static::saved(function ($pengumpulanTugas) {
+            $pengumpulanTugas->siswa?->sinkronkanProgressAkademik();
+        });
+
+        static::deleted(function ($pengumpulanTugas) {
+            $pengumpulanTugas->siswa?->sinkronkanProgressAkademik();
+        });
+    }
+
     public function tugas(): BelongsTo
     {
         return $this->belongsTo(Tugas::class, 'tugas_id');

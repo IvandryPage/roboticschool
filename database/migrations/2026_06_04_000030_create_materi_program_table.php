@@ -10,7 +10,10 @@ return new class extends Migration
     {
         Schema::create('materi_program', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('program_id')->constrained('program_kursus');
+
+            $table->foreignUuid('program_id')
+                ->constrained('program_kursus')
+                ->cascadeOnDelete();
             $table->integer('nomor_urut');
             $table->string('judul_materi');
             $table->text('deskripsi_materi')->nullable();

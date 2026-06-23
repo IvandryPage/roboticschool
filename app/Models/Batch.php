@@ -20,8 +20,14 @@ class Batch extends Model
         'id', 'program_id', 'nama_batch', 'tanggal_mulai', 'tanggal_selesai', 'kuota_max', 'status_aktif',
     ];
 
-    // Relasi ke ProgramKursus
+    // Relasi ke ProgramKursus (method name: program)
     public function program(): BelongsTo
+    {
+        return $this->belongsTo(ProgramKursus::class, 'program_id');
+    }
+
+    // Alias agar kompatibel dengan kode lama yang pakai programKursus()
+    public function programKursus(): BelongsTo
     {
         return $this->belongsTo(ProgramKursus::class, 'program_id');
     }
