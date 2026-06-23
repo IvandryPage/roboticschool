@@ -4,6 +4,17 @@ use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
 
+// Route dasar PB-14
+// Route::view('/', 'welcome')->name('home');
+
+// Route::middleware(['auth', 'verified'])->group(function () {
+//     Route::view('dashboard', 'dashboard')->name('dashboard');
+// });
+
+// require __DIR__.'/settings.php';
+
+// use App\Http\Controllers\Admin\UserController;
+
 use App\Http\Controllers\Admin\UserController;
 
 Route::get('/', function () {

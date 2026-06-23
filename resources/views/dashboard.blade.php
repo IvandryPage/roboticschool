@@ -9,6 +9,7 @@
                 <h2 class="text-xl font-bold">Selamat Datang di Dashboard!</h2>
                 <p class="text-gray-600 mt-2">Anda login sebagai {{ auth()->user()?->role?->nama_role ?? 'User' }}.</p>
     <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+        <livewire:pending-evaluasi-notification />
         <div class="grid auto-rows-min gap-4 md:grid-cols-3">
             <div class="flex flex-col justify-between p-6 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 shadow-sm">
                 <div>
@@ -27,7 +28,7 @@
                     </p>
                 </div>
                 <div class="mt-6">
-                    <flux:button href="{{ route('peminjaman.index') }}" variant="primary" class="w-full justify-center">
+                    <flux:button href="{{ Route::has('peminjaman.index') ? route('peminjaman.index') : '#' }}" variant="primary" class="w-full justify-center">
                         Ajukan Peminjaman
                     </flux:button>
                 </div>
