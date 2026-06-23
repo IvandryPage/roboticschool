@@ -10,38 +10,15 @@
             <x-app-logo href="{{ route('dashboard') }}" />
 
             <flux:navbar class="-mb-px max-lg:hidden">
-                @if (auth()->user()->role && auth()->user()->role->nama_role === 'Admin Akademik')
-                    <flux:navbar.item icon="layout-grid" href="/admin" :current="request()->is('admin*')">
-                        {{ __('Filament Admin') }}
-                    </flux:navbar.item>
-                    <flux:navbar.item icon="wrench" :href="route('admin.aset.index')" :current="request()->routeIs('admin.aset.*')">
-                        {{ __('Kelola Aset') }}
-                    </flux:navbar.item>
-                    <flux:navbar.item icon="clipboard" :href="route('admin.peminjaman.index')" :current="request()->routeIs('admin.peminjaman.index')">
-                        {{ __('Persetujuan Peminjaman') }}
-                    </flux:navbar.item>
-                @elseif (auth()->user()->role && auth()->user()->role->nama_role === 'Siswa')
-                    <flux:navbar.item icon="home" :href="route('siswa.dashboard')" :current="request()->routeIs('siswa.dashboard')">
-                        {{ __('Dashboard Siswa') }}
-                    </flux:navbar.item>
-                    <flux:navbar.item icon="trophy" :href="route('sertifikat.saya')" :current="request()->routeIs('sertifikat.saya')">
-                        {{ __('Sertifikat Saya') }}
-                    </flux:navbar.item>
-                    <flux:navbar.item icon="clipboard" :href="route('peminjaman.index')" :current="request()->routeIs('peminjaman.index')">
-                        {{ __('Peminjaman Aset') }}
-                    </flux:navbar.item>
-                @elseif (auth()->user()->role && in_array(auth()->user()->role->nama_role, ['Instruktur', 'Tim Publikasi', 'Direktur']))
-                    <flux:navbar.item icon="layout-grid" href="/admin" :current="request()->is('admin*')">
-                        {{ __('Filament Admin') }}
-                    </flux:navbar.item>
-                @else
-                    <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </flux:navbar.item>
-                    <flux:navbar.item icon="clipboard" :href="route('peminjaman.index')" :current="request()->routeIs('peminjaman.index')">
-                        {{ __('Peminjaman Aset') }}
-                    </flux:navbar.item>
-                @endif
+                <flux:navbar.item icon="layout-grid" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                    {{ __('Dashboard') }}
+                </flux:navbar.item>
+                <flux:navbar.item icon="ticket" :href="route('keluhan.create')" :current="request()->routeIs('keluhan.create')" wire:navigate>
+                    {{ __('Kirim Keluhan') }}
+                </flux:navbar.item>
+                <flux:navbar.item icon="clock" :href="route('keluhan.saya')" :current="request()->routeIs('keluhan.saya')" wire:navigate>
+                    {{ __('Riwayat Keluhan') }}
+                </flux:navbar.item>
             </flux:navbar>
 
             <flux:spacer />
@@ -114,6 +91,15 @@
                             {{ __('Peminjaman Aset') }}
                         </flux:sidebar.item>
                     @endif
+                </flux:sidebar.group>
+
+                <flux:sidebar.group :heading="__('Helpdesk')" class="mt-4">
+                    <flux:sidebar.item icon="ticket" :href="route('keluhan.create')" :current="request()->routeIs('keluhan.create')" wire:navigate>
+                        {{ __('Kirim Keluhan') }}
+                    </flux:sidebar.item>
+                    <flux:sidebar.item icon="clock" :href="route('keluhan.saya')" :current="request()->routeIs('keluhan.saya')" wire:navigate>
+                        {{ __('Riwayat Keluhan') }}
+                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
