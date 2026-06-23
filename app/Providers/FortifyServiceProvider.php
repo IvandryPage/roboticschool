@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Http\Responses\LoginResponse;
+use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -18,17 +22,40 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+        LoginResponseContract::class,
+        LoginResponse::class
+        );
     }
 
     /**
      * Bootstrap any application services.
      */
+    // dapat mengatur login berdasarkan status aktif user, jika status aktif = 0 maka tidak bisa login
     public function boot(): void
     {
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+
+        Fortify::authenticateUsing(function (Request $request) {
+
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return null;
+            }
+
+            if (!$user->status_aktif) {
+                return null;
+            }
+
+            if (!Hash::check($request->password, $user->password)) {
+                return null;
+            }
+
+            return $user;
+        });
     }
 
     /**

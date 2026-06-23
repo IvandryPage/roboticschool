@@ -1,16 +1,78 @@
 <?php
 
+use App\Http\Controllers\SertifikatController;
+use App\Http\Controllers\SiswaDashboardController;
 use Illuminate\Support\Facades\Route;
 
+<<<<<<< HEAD
 // --- RUTE ASLI KELOMPOK ---
 Route::view('/', 'welcome')->name('home');
+=======
+use App\Http\Controllers\Admin\UserController;
+
+// Halaman utama
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
+
+use Illuminate\Support\Facades\Auth;
+>>>>>>> main
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', function () {
+        if (Auth::user()->role && Auth::user()->role->nama_role === 'Admin Akademik') {
+            return redirect('/admin/aset');
+        }
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'index'])
+        ->name('peminjaman.index');
+    Route::post('peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'store'])
+        ->name('peminjaman.store');
+
+    // Admin Custom Routes
+    Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('aset', function() {
+            return redirect('/admin/aset-robotiks');
+        })->name('aset.index');
+        Route::get('aset/create', [\App\Http\Controllers\Admin\AdminAsetController::class, 'create'])->name('aset.create');
+        Route::post('aset', [\App\Http\Controllers\Admin\AdminAsetController::class, 'store'])->name('aset.store');
+        Route::get('aset/{aset}/edit', [\App\Http\Controllers\Admin\AdminAsetController::class, 'edit'])->name('aset.edit');
+        Route::put('aset/{aset}', [\App\Http\Controllers\Admin\AdminAsetController::class, 'update'])->name('aset.update');
+        Route::delete('aset/{aset}', [\App\Http\Controllers\Admin\AdminAsetController::class, 'destroy'])->name('aset.destroy');
+        
+        // Item Kits inside Asset
+        Route::post('aset/{aset}/item-kit', [\App\Http\Controllers\Admin\AdminAsetController::class, 'storeItemKit'])->name('aset.item-kit.store');
+        Route::post('item-kit/{itemKit}/condition', [\App\Http\Controllers\Admin\AdminAsetController::class, 'updateItemKitCondition'])->name('item-kit.update-condition');
+        Route::delete('item-kit/{itemKit}', [\App\Http\Controllers\Admin\AdminAsetController::class, 'destroyItemKit'])->name('item-kit.destroy');
+        
+        // Peminjaman Approval and Return
+        Route::get('peminjaman', function() {
+            return redirect('/admin/peminjaman-item-asets');
+        })->name('peminjaman.index');
+        Route::post('peminjaman/{peminjaman}/approve', [\App\Http\Controllers\Admin\AdminPeminjamanController::class, 'approve'])->name('peminjaman.approve');
+        Route::post('peminjaman/{peminjaman}/reject', [\App\Http\Controllers\Admin\AdminPeminjamanController::class, 'reject'])->name('peminjaman.reject');
+        Route::post('peminjaman/{peminjaman}/return', [\App\Http\Controllers\Admin\AdminPeminjamanController::class, 'confirmReturn'])->name('peminjaman.return');
+    });
+    Route::view('/admin/dashboard', 'dashboard');
+    Route::view('/instruktur/dashboard', 'dashboard');
+    Route::view('/siswa/dashboard', 'dashboard');
+    Route::view('/publikasi/dashboard', 'dashboard');
+    Route::view('/direktur/dashboard', 'dashboard');
+    #buat jalur ke UserController
+    // Route::prefix('admin')->name('admin.')->group(function () {
+    //     Route::resource('users', UserController::class);
+    // });
 });
 
-require __DIR__.'/settings.php';
+// Social login (Google)
+use App\Http\Controllers\Auth\SocialAuthController;
 
+Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+require __DIR__.'/settings.php';
 
 // --- RUTE REVIEW UI INVOICE (LANGSUNG DARI WEB.PHP) ---
 Route::get('/dashboard/invoice', function () {
@@ -133,13 +195,13 @@ Route::get('/dashboard/invoice', function () {
                         <span class="key">Status Pembayaran</span>
                         <span class="val"><span class="status-pill">Pending</span></span>
                     </div>
-
-                    <div class="total-box">
+ 
+                     <div class="total-box">
                         <span class="key">Total Tagihan</span>
                         <span class="val">Rp 1.500.000</span>
                     </div>
-
-                    <a href="/dashboard" class="btn-dashboard">Lanjut ke Dashboard &rarr;</a>
+ 
+                     <a href="/dashboard" class="btn-dashboard">Lanjut ke Dashboard &rarr;</a>
                 </div>
             </div>
             <p class="footnote">Pratinjau Halaman Invoice &middot; PBI-145</p>
@@ -150,3 +212,21 @@ Route::get('/dashboard/invoice', function () {
 
     return response($html)->header('Content-Type', 'text/html');
 });
+
+// ============================================================
+// PBI-127: Halaman sertifikat milik siswa
+// Hanya bisa diakses oleh user dengan role Siswa
+// ============================================================
+Route::middleware(['auth'])->group(function () {
+    // PBI-127: Halaman sertifikat milik siswa
+    Route::get('/sertifikat/saya', [SertifikatController::class, 'milikku'])
+        ->name('sertifikat.saya');
+
+    // Dashboard Siswa — portal dengan sidebar modern
+    Route::get('/siswa/dashboard', [SiswaDashboardController::class, 'index'])
+        ->name('siswa.dashboard');
+});
+
+// PBI-128: Halaman verifikasi sertifikat (publik, tanpa login)
+Route::get('/sertifikat/verifikasi/{nomor}', [SertifikatController::class, 'verifikasi'])
+    ->name('sertifikat.verifikasi');

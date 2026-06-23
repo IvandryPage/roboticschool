@@ -9,16 +9,23 @@ class ArsipLaporanFactory extends Factory
 {
     protected $model = ArsipLaporan::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
-            'id' => (string) \Str::uuid(),
-            'judul' => fake()->sentence(),
-            'tipe_laporan' => fake()->randomElement(['laporan_mingguan', 'laporan_bulanan']),
-            'file_path' => null,
+            // FIX: remove \Str::uuid() — HasUuids trait handles this automatically
+            'judul'        => fake()->sentence(4),
+            'tipe_laporan' => fake()->randomElement([
+                'laporan_kelulusan',
+                'laporan_keuangan',
+                'laporan_akademik',
+                'laporan_instruktur',
+                'laporan_bulanan',
+                'laporan_tahunan',
+            ]),
+            'file_path'   => null,
             'dibuat_oleh' => null,
-            'periode' => date('Y-m'),
-            'catatan' => null,
+            'periode'     => now()->format('Y-m'),
+            'catatan'     => fake()->optional()->paragraph(),
         ];
     }
 }
