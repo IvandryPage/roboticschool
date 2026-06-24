@@ -356,12 +356,18 @@
                 </div>
                 <div class="program-info">
                     <h3>MENDAFTAR PROGRAM</h3>
-                    <h2>Arduino Basic</h2>
+                    @php
+                        $selectedProgram = null;
+                        $programId = request('program_id') ?? old('program_id') ?? (isset($pendaftaran) ? $pendaftaran->program_id : null);
+                        if ($programId) $selectedProgram = $programs->firstWhere('id', $programId);
+                        if (!$selectedProgram) $selectedProgram = $programs->first();
+                    @endphp
+                    <h2 id="header-program-name">{{ $selectedProgram?->nama_program ?? 'Pilih Program' }}</h2>
                 </div>
             </div>
             <div class="biaya">
                 <small>Biaya</small>
-                <h2>Rp 3.500.000</h2>
+                <h2 id="header-program-biaya">{{ $selectedProgram ? 'Rp ' . number_format($selectedProgram->biaya ?? 0, 0, ',', '.') : '-' }}</h2>
             </div>
         </div>
 
@@ -415,6 +421,7 @@
         <label>Nama Lengkap *</label>
         <input type="text"
                name="nama_lengkap"
+               value="{{ old('nama_lengkap', auth()->user()?->nama_lengkap ?? '') }}"
                placeholder="Sesuai KTP/Kartu Pelajar">
     </div>
 
@@ -422,7 +429,11 @@
         <label>Email *</label>
         <input type="email"
                name="email"
-               placeholder="email@contoh.com">
+               value="{{ old('email', auth()->user()?->email ?? '') }}"
+               placeholder="email@contoh.com"
+               readonly
+               style="background:#f1f5f9;cursor:not-allowed;">
+        <small style="color:#64748b;font-size:12px;">Email diambil dari akun yang sedang login</small>
     </div>
 
     <div class="form-group">
@@ -544,12 +555,32 @@
 
         @foreach($programs as $program)
             <option value="{{ $program->id }}"
-                {{ (request('program') && stripos($program->nama_program, request('program')) !== false) || (old('program_id') == $program->id) ? 'selected' : '' }}>
+                data-nama="{{ $program->nama_program }}"
+                data-biaya="Rp {{ number_format($program->biaya ?? 0, 0, ',', '.') }}"
+                {{ (request('program_id') == $program->id) || (old('program_id') == $program->id) || ($selectedProgram?->id == $program->id) ? 'selected' : '' }}>
                 {{ $program->nama_program }}
             </option>
         @endforeach
     </select>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const select = document.querySelector('select[name="program_id"]');
+    if (!select) return;
+
+    function updateHeader() {
+        const opt = select.options[select.selectedIndex];
+        if (opt && opt.value) {
+            document.getElementById('header-program-name').textContent = opt.dataset.nama || opt.text;
+            document.getElementById('header-program-biaya').textContent = opt.dataset.biaya || '-';
+        }
+    }
+
+    select.addEventListener('change', updateHeader);
+    updateHeader();
+});
+</script>
 
 
                 <div class="btn-area">

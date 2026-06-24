@@ -55,7 +55,8 @@
     51 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
     52 => 'App\\Providers\\AppServiceProvider',
     53 => 'App\\Providers\\Filament\\AdminPanelProvider',
-    54 => 'App\\Providers\\FortifyServiceProvider',
+    54 => 'App\\Providers\\Filament\\PublikasiPanelProvider',
+    55 => 'App\\Providers\\FortifyServiceProvider',
   ),
   'eager' => 
   array (
@@ -97,7 +98,8 @@
     35 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
     36 => 'App\\Providers\\AppServiceProvider',
     37 => 'App\\Providers\\Filament\\AdminPanelProvider',
-    38 => 'App\\Providers\\FortifyServiceProvider',
+    38 => 'App\\Providers\\Filament\\PublikasiPanelProvider',
+    39 => 'App\\Providers\\FortifyServiceProvider',
   ),
   'deferred' => 
   array (

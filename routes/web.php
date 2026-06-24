@@ -16,8 +16,15 @@ use App\Http\Controllers\Admin\UserController;
 
 require __DIR__ . '/settings.php';
 
+// Redirect semua panel login ke /login utama
+Route::redirect('/admin/login', '/login')->name('filament.admin.auth.login');
+Route::redirect('/publikasi/login', '/login')->name('filament.publikasi.auth.login');
+
 Route::get('/', function () {
-    return view('welcome');
+    $programs = \App\Models\ProgramKursus::where('status_tampil', true)
+        ->with(['batches' => fn($q) => $q->where('status_aktif', true)->orderBy('tanggal_mulai'), 'materiProgram' => fn($q) => $q->orderBy('nomor_urut')])
+        ->get();
+    return view('welcome', compact('programs'));
 })->name('home');
 
 /*
@@ -172,6 +179,11 @@ Route::get('/cek-status', [PendaftaranController::class, 'cekStatus'])
 
 Route::post('/cek-status', [PendaftaranController::class, 'cariStatus'])
     ->name('pendaftaran.cari');
+
+// Status pendaftaran milik user yang sedang login
+Route::get('/pendaftaran-saya', [PendaftaranController::class, 'statusSaya'])
+    ->middleware(['auth', 'verified'])
+    ->name('pendaftaran.status.saya');
 
 // Legacy success URL
 Route::get('/daftar/sukses', [PendaftaranController::class, 'success'])

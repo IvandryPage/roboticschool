@@ -284,14 +284,14 @@ width:100%;
 
         <div class="program-info">
             <small>MENDAFTAR PROGRAM</small>
-            <h2>Arduino Basic</h2>
+            <h2>{{ $pendaftaran->program?->nama_program ?? 'Program Kursus' }}</h2>
         </div>
 
     </div>
 
     <div class="biaya">
         <small>Biaya</small>
-        <h2>Rp 3.500.000</h2>
+        <h2>Rp {{ number_format($pendaftaran->program?->biaya ?? 0, 0, ',', '.') }}</h2>
     </div>
 
 </div>

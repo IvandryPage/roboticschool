@@ -208,10 +208,22 @@ public function success(Pendaftaran $pendaftaran)
 }
 
 // STEP 6 - CEK STATUS
-
 public function cekStatus()
 {
     return view('pendaftaran.status');
+}
+
+// STATUS PENDAFTARAN MILIK USER LOGIN
+public function statusSaya()
+{
+    $user = auth()->user();
+
+    $pendaftarans = \App\Models\Pendaftaran::with(['program', 'dokumenPendaftaran', 'calonPeserta'])
+        ->whereHas('calonPeserta', fn($q) => $q->where('email', $user->email))
+        ->orderByDesc('created_at')
+        ->get();
+
+    return view('pendaftaran.status_saya', compact('pendaftarans'));
 }
 
 

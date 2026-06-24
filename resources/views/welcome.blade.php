@@ -508,9 +508,106 @@
                 </div>
 
                 <!-- Card Program -->
-                <div class="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
+                <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
 
-                    <!-- CARD 1 -->
+                @if(isset($programs) && $programs->count())
+                    @foreach($programs as $prog)
+                    @php
+                        $activeBatch = $prog->batches->first();
+                        $levelColor = match(strtolower($prog->level ?? '')) {
+                            'pemula' => 'bg-green-100 text-green-700',
+                            'menengah' => 'bg-yellow-100 text-yellow-700',
+                            'lanjutan' => 'bg-red-100 text-red-700',
+                            default => 'bg-slate-100 text-slate-700',
+                        };
+                    @endphp
+                    <div class="program-card bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-cyan-500/10 hover:-translate-y-2 transition-all duration-300"
+                        data-category="online">
+
+                        <div class="bg-[#0b3553] p-8 relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-20" style="background-image:linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);background-size:24px 24px;"></div>
+
+                            <div class="flex justify-between mb-10">
+                                <span class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full">
+                                    ● Online
+                                </span>
+                                <span class="{{ $levelColor }} text-xs font-semibold px-3 py-1 rounded-full">
+                                    {{ $prog->level ?? 'Umum' }}
+                                </span>
+                            </div>
+
+                            @if($prog->gambar)
+                                <div class="flex justify-center">
+                                    <img src="{{ Storage::url($prog->gambar) }}" alt="{{ $prog->nama_program }}" class="w-24 h-24 object-cover rounded-xl">
+                                </div>
+                            @else
+                                <div class="flex justify-center">
+                                    <svg class="w-24 h-24 text-cyan-400" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M45 22H68V42" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <rect x="25" y="42" width="70" height="50" rx="12" stroke="currentColor" stroke-width="6"/>
+                                        <line x1="48" y1="60" x2="48" y2="72" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                                        <line x1="72" y1="60" x2="72" y2="72" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                                        <line x1="15" y1="67" x2="25" y2="67" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                                        <line x1="95" y1="67" x2="105" y2="67" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-slate-900 mb-3">{{ $prog->nama_program }}</h3>
+
+                            <p class="text-slate-500 text-sm mb-4 line-clamp-2">{{ $prog->deskripsi ?? '-' }}</p>
+
+                            <div class="space-y-2 text-sm text-slate-500 mb-4">
+                                <div class="flex justify-between">
+                                    <span>Durasi</span>
+                                    <span class="font-semibold text-slate-700">{{ $prog->durasi_minggu ? $prog->durasi_minggu . ' Minggu' : '-' }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Biaya</span>
+                                    <span class="font-semibold text-cyan-500">Rp{{ number_format($prog->biaya ?? 0, 0, ',', '.') }}</span>
+                                </div>
+                                @if($activeBatch)
+                                <div class="flex justify-between">
+                                    <span>Batch Aktif</span>
+                                    <span class="font-semibold text-slate-700">{{ $activeBatch->nama_batch }}</span>
+                                </div>
+                                @endif
+                            </div>
+
+                            @if($prog->materiProgram->count())
+                            <div class="mb-4">
+                                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Materi</p>
+                                <ul class="space-y-1">
+                                    @foreach($prog->materiProgram->take(3) as $materi)
+                                    <li class="text-xs text-slate-500 flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                                        {{ $materi->judul_materi }}
+                                    </li>
+                                    @endforeach
+                                    @if($prog->materiProgram->count() > 3)
+                                    <li class="text-xs text-slate-400">+{{ $prog->materiProgram->count() - 3 }} materi lainnya</li>
+                                    @endif
+                                </ul>
+                            </div>
+                            @endif
+
+                            <a href="{{ route('register') }}"
+                                class="w-full flex justify-center items-center bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 rounded-xl transition">
+                                Daftar Sekarang →
+                            </a>
+                        </div>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="col-span-3 text-center py-16 text-slate-400">
+                        <p class="text-lg">Belum ada program yang ditampilkan.</p>
+                    </div>
+                @endif
+
+                    <!-- CARD 1 (legacy — hidden) -->
+                    <div class="hidden" style="display:none!important">
                     <div class="program-card bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-cyan-500/10 hover:-translate-y-2 transition-all duration-300"
                         data-category="online">
 
@@ -608,7 +705,7 @@
 
                     </div>
 
-                    <!-- CARD 2 -->
+                    <!-- CARD 2 (legacy hidden) -->
                     <div class="program-card bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-cyan-500/10 hover:-translate-y-2 transition-all duration-300"
                         data-category="semi">
 

@@ -35,6 +35,9 @@
                         <flux:sidebar.item icon="user-circle" :href="route('siswa.profil.show')" :current="request()->routeIs('siswa.profil.*')" wire:navigate>
                             Profil Saya
                         </flux:sidebar.item>
+                        <flux:sidebar.item icon="document-text" :href="route('pendaftaran.status.saya')" :current="request()->routeIs('pendaftaran.status.saya')" wire:navigate>
+                            Status Pendaftaran
+                        </flux:sidebar.item>
                         <flux:sidebar.item icon="trophy" :href="route('sertifikat.saya')" :current="request()->routeIs('sertifikat.saya')">
                             {{ __('Sertifikat Saya') }}
                         </flux:sidebar.item>

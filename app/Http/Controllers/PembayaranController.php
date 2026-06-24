@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pendaftaran;
-use App\Models\Pembayaran;
+use App\Models\Batch;
+use App\Models\EnrollmentKelas;
 use App\Models\Invoice;
+use App\Models\Kelas;
+use App\Models\Pembayaran;
+use App\Models\Pendaftaran;
+use App\Models\Siswa;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -17,38 +22,63 @@ class PembayaranController extends Controller
 
     public function store(Request $request, Pendaftaran $pendaftaran)
     {
-        // 1. validasi metode
-        $request->validate([
-            'metode' => 'required'
+        $request->validate(['metode' => 'required']);
+
+        // Biaya dari program (tidak hardcoded)
+        $biayaProgram = $pendaftaran->program?->biaya ?? 0;
+
+        // Buat atau ambil invoice
+        $invoice = Invoice::firstOrCreate(
+            ['pendaftaran_id' => $pendaftaran->id],
+            [
+                'id'         => (string) Str::uuid(),
+                'no_invoice' => 'INV-' . date('Ymd') . '-' . strtoupper(Str::random(6)),
+                'total'      => $biayaProgram,
+                'status'     => 'unpaid',
+            ]
+        );
+
+        // Buat pembayaran
+        Pembayaran::create([
+            'id'                => (string) Str::uuid(),
+            'invoice_id'        => $invoice->id,
+            'nominal'           => $biayaProgram,
+            'metode_pembayaran' => $request->metode,
+            'status'            => 'pending',
         ]);
 
-        // 2. cek apakah invoice sudah ada
-        $invoice = Invoice::where('pendaftaran_id', $pendaftaran->id)->first();
+        // Update status invoice & pendaftaran
+        $invoice->update(['status' => 'menunggu_verifikasi']);
+        $pendaftaran->update(['status' => 'lunas']);
 
-      
-        if (!$invoice) {
-            $invoice = Invoice::create([
-                'id' => (string) Str::uuid(),
-                'pendaftaran_id' => $pendaftaran->id,
-                'no_invoice' => 'INV-' . date('Ymd') . '-' . strtoupper(Str::random(6)),
-                'total' => 3525000,
-                'status' => 'unpaid',
-            ]);
+        // Setelah bayar: daftarkan siswa ke kelas otomatis
+        // Cari kelas aktif/tersedia untuk program & batch ini
+        $siswa = Siswa::where('user_id', auth()->id())->first();
+
+        if ($siswa) {
+            $kelas = Kelas::whereHas('batch', fn($q) =>
+                    $q->where('program_id', $pendaftaran->program_id)
+                      ->where('status_aktif', true)
+                )
+                ->whereDoesntHave('enrollmentKelas', fn($q) =>
+                    $q->where('siswa_id', $siswa->id)
+                )
+                ->first();
+
+            if ($kelas) {
+                EnrollmentKelas::firstOrCreate(
+                    ['kelas_id' => $kelas->id, 'siswa_id' => $siswa->id],
+                    [
+                        'id'                => (string) Str::uuid(),
+                        'kelas_id'          => $kelas->id,
+                        'siswa_id'          => $siswa->id,
+                        'tanggal_bergabung' => now(),
+                        'status'            => 'Terdaftar',
+                    ]
+                );
+            }
         }
 
-        // 4. buat pembayaran
-        Pembayaran::create([
-            'id' => (string) Str::uuid(),
-            'invoice_id' => $invoice->id,
-            'nominal' => 3525000,
-            'metode_pembayaran' => $request->metode,
-            'status' => 'pending',
-        ]);
-
-        // 5. lanjut ke halaman success
-         return redirect()->route(
-            'pendaftaran.success',
-            $pendaftaran->id
-        );
+        return redirect()->route('pendaftaran.success', $pendaftaran->id);
     }
 }

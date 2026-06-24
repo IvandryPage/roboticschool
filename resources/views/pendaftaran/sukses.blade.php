@@ -190,20 +190,15 @@
         </div>
     </div>
 
-    <a href="{{ route('pendaftaran.status') }}" class="btn-dashboard">
+    <p style="font-size:13px;color:#64748b;margin-bottom:8px;">
+        Simpan kode ini — kamu bisa pakai untuk cek status pendaftaran kapan saja.
+    </p>
 
-        Cek Status Pendaftaran
-
-        <svg fill="none"
-             stroke="currentColor"
-             stroke-width="2"
-             viewBox="0 0 24 24">
-
-            <path stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+    <a href="{{ route('pendaftaran.status.saya') }}" class="btn-dashboard">
+        Lihat Status Pendaftaran Saya
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
         </svg>
-
     </a>
 
 </div>
