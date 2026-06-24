@@ -413,7 +413,8 @@ stroke-width="2" viewBox="0 0 24 24">
 </div>
 
 <form method="POST"
-action="{{ route('pembayaran.store',$pendaftaran->id) }}">
+action="{{ route('pembayaran.store',$pendaftaran->id) }}"
+enctype="multipart/form-data">
 
 @csrf
 
@@ -461,6 +462,24 @@ action="{{ route('pembayaran.store',$pendaftaran->id) }}">
 
 </div>
 </label>
+
+{{-- FR-35: Upload bukti pembayaran --}}
+<div style="margin:20px 0;padding:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
+    <label style="font-weight:600;font-size:14px;color:#1e293b;display:block;margin-bottom:8px;">
+        📎 Upload Bukti Pembayaran <span style="color:#ef4444">*</span>
+    </label>
+    <p style="font-size:12px;color:#64748b;margin-bottom:10px;">
+        Unggah screenshot atau foto bukti transfer/pembayaran (JPG, PNG, PDF — maks. 2MB)
+    </p>
+    <input type="file"
+           name="bukti_pembayaran"
+           accept=".jpg,.jpeg,.png,.pdf"
+           required
+           style="width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px;background:#fff;">
+    @error('bukti_pembayaran')
+        <p style="color:#ef4444;font-size:12px;margin-top:4px;">{{ $message }}</p>
+    @enderror
+</div>
 
 <div class="agreement">
 

@@ -22,7 +22,10 @@ class PembayaranController extends Controller
 
     public function store(Request $request, Pendaftaran $pendaftaran)
     {
-        $request->validate(['metode' => 'required']);
+        $request->validate([
+            'metode'             => 'required',
+            'bukti_pembayaran'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
 
         // Biaya dari program (tidak hardcoded)
         $biayaProgram = $pendaftaran->program?->biaya ?? 0;
@@ -38,13 +41,18 @@ class PembayaranController extends Controller
             ]
         );
 
+        // Simpan bukti pembayaran (FR-35)
+        $buktPath = $request->file('bukti_pembayaran')
+            ->store('bukti-pembayaran', 'public');
+
         // Buat pembayaran
         Pembayaran::create([
             'id'                => (string) Str::uuid(),
             'invoice_id'        => $invoice->id,
             'nominal'           => $biayaProgram,
             'metode_pembayaran' => $request->metode,
-            'status'            => 'pending',
+            'bukti_file'        => $buktPath,
+            'status'            => 'Pending',
         ]);
 
         // Update status invoice & pendaftaran

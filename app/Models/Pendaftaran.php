@@ -35,7 +35,8 @@ class Pendaftaran extends Model
                 return;
             }
 
-            if ($pendaftaran->status !== 'Diterima') {
+            // Trigger invoice saat status disetujui (konsisten dengan alur admin)
+            if (! in_array($pendaftaran->status, ['disetujui', 'Diterima'])) {
                 return;
             }
 

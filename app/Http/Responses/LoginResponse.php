@@ -13,14 +13,13 @@ class LoginResponse implements LoginResponseContract
 
         $role = $user?->role?->nama_role;
 
-        // Redirect pengguna berdasarkan peran mereka
         return match ($role) {
-            'Admin' => redirect('/admin/dashboard'),
-            'Instruktur' => redirect('/instruktur/dashboard'),
-            'Siswa' => redirect('/siswa/dashboard'),
-            'Tim Publikasi' => redirect('/publikasi/dashboard'),
-            'Direktur' => redirect('/direktur/dashboard'),
-            default => redirect('/dashboard'),
+            'Admin Akademik' => redirect('/admin'),
+            'Instruktur'     => redirect('/dashboard'),
+            'Siswa'          => redirect('/siswa/dashboard'),
+            'Tim Publikasi'  => redirect('/publikasi'),
+            'Direktur'       => redirect('/admin'),
+            default          => redirect('/dashboard'),
         };
     }
 }
