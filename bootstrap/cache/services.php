@@ -41,10 +41,10 @@
     37 => 'Laravel\\Fortify\\FortifyServiceProvider',
     38 => 'Laravel\\Mcp\\Server\\McpServiceProvider',
     39 => 'Laravel\\Pail\\PailServiceProvider',
-    40 => 'Laravel\\Pao\\Laravel\\ServiceProvider',
-    41 => 'Laravel\\Passkeys\\PasskeysServiceProvider',
-    42 => 'Laravel\\Roster\\RosterServiceProvider',
-    43 => 'Laravel\\Sail\\SailServiceProvider',
+    40 => 'Laravel\\Passkeys\\PasskeysServiceProvider',
+    41 => 'Laravel\\Roster\\RosterServiceProvider',
+    42 => 'Laravel\\Sail\\SailServiceProvider',
+    43 => 'Laravel\\Socialite\\SocialiteServiceProvider',
     44 => 'Laravel\\Tinker\\TinkerServiceProvider',
     45 => 'Flux\\FluxServiceProvider',
     46 => 'Livewire\\LivewireServiceProvider',
@@ -86,19 +86,18 @@
     24 => 'Laravel\\Fortify\\FortifyServiceProvider',
     25 => 'Laravel\\Mcp\\Server\\McpServiceProvider',
     26 => 'Laravel\\Pail\\PailServiceProvider',
-    27 => 'Laravel\\Pao\\Laravel\\ServiceProvider',
-    28 => 'Laravel\\Passkeys\\PasskeysServiceProvider',
-    29 => 'Laravel\\Roster\\RosterServiceProvider',
-    30 => 'Flux\\FluxServiceProvider',
-    31 => 'Livewire\\LivewireServiceProvider',
-    32 => 'Carbon\\Laravel\\ServiceProvider',
-    33 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    34 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    35 => 'Pest\\Laravel\\PestServiceProvider',
-    36 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
-    37 => 'App\\Providers\\AppServiceProvider',
-    38 => 'App\\Providers\\Filament\\AdminPanelProvider',
-    39 => 'App\\Providers\\FortifyServiceProvider',
+    27 => 'Laravel\\Passkeys\\PasskeysServiceProvider',
+    28 => 'Laravel\\Roster\\RosterServiceProvider',
+    29 => 'Flux\\FluxServiceProvider',
+    30 => 'Livewire\\LivewireServiceProvider',
+    31 => 'Carbon\\Laravel\\ServiceProvider',
+    32 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    33 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    34 => 'Pest\\Laravel\\PestServiceProvider',
+    35 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
+    36 => 'App\\Providers\\AppServiceProvider',
+    37 => 'App\\Providers\\Filament\\AdminPanelProvider',
+    38 => 'App\\Providers\\FortifyServiceProvider',
   ),
   'deferred' => 
   array (
@@ -258,6 +257,7 @@
     'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Laravel\\Sail\\Console\\InstallCommand' => 'Laravel\\Sail\\SailServiceProvider',
     'Laravel\\Sail\\Console\\PublishCommand' => 'Laravel\\Sail\\SailServiceProvider',
+    'Laravel\\Socialite\\Contracts\\Factory' => 'Laravel\\Socialite\\SocialiteServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
   ),
   'when' => 
@@ -302,6 +302,9 @@
     array (
     ),
     'Laravel\\Sail\\SailServiceProvider' => 
+    array (
+    ),
+    'Laravel\\Socialite\\SocialiteServiceProvider' => 
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 

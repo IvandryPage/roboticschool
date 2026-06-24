@@ -108,7 +108,7 @@
   array (
     'aliases' => 
     array (
-      'Mcp' => 'Laravel\\Mcp\\Server\\Facades\\Mcp',
+      'Mcp' => 'Laravel\\Mcp\\Facades\\Mcp',
     ),
     'providers' => 
     array (
@@ -120,13 +120,6 @@
     'providers' => 
     array (
       0 => 'Laravel\\Pail\\PailServiceProvider',
-    ),
-  ),
-  'laravel/pao' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Laravel\\Pao\\Laravel\\ServiceProvider',
     ),
   ),
   'laravel/passkeys' => 
@@ -148,6 +141,17 @@
     'providers' => 
     array (
       0 => 'Laravel\\Sail\\SailServiceProvider',
+    ),
+  ),
+  'laravel/socialite' => 
+  array (
+    'aliases' => 
+    array (
+      'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
+    ),
+    'providers' => 
+    array (
+      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
     ),
   ),
   'laravel/tinker' => 

@@ -371,7 +371,7 @@
                     </div>
                 </div>
 
-                {{-- ───── PBI-066: KIRIM CATATAN REVISI ───── --}}
+                <!-- {{-- ───── PBI-066: KIRIM CATATAN REVISI ───── --}} -->
                 <div x-data="{ openRevisi: false }" class="bg-white dark:bg-zinc-900 border border-blue-200 dark:border-blue-800 rounded-xl shadow-sm overflow-hidden">
                     <div class="px-5 py-3 bg-blue-50 dark:bg-blue-950 border-b border-blue-200 dark:border-blue-800 flex items-center gap-2">
                         <flux:icon name="arrow-path" class="size-4 text-blue-600" />
@@ -383,7 +383,7 @@
                             class="w-full text-left text-sm text-zinc-500 mb-2 flex items-center justify-between"
                         >
                             <span>Ada dokumen yang perlu diperbaiki calon peserta?</span>
-                            <flux:icon name="chevron-down" class="size-4 transition-transform" :class="{ 'rotate-180': openRevisi }" />
+                            <flux:icon name="chevron-down" class="size-4 transition-transform" x-bind:class="{ 'rotate-180': openRevisi }" />
                         </button>
 
                         <div x-show="openRevisi" x-transition>
@@ -397,8 +397,8 @@
                                             Dokumen yang perlu diperbaiki
                                         </div>
                                         <div class="space-y-2">
-                                            @foreach($pendaftaran->dokumenPendaftaran as $dok)
-                                                <div
+                                            @foreach($pendaftaran->dokumenPendaftaran as $dok)    
+                                            <div
                                                     x-data="{ checked: false }"
                                                     class="border border-zinc-100 dark:border-zinc-700 rounded-lg overflow-hidden"
                                                 >
@@ -422,9 +422,14 @@
                                                                 'invalid' => 'red',
                                                                 default   => 'yellow',
                                                             };
+                                                            $dokLabel = match($dok->status_verifikasi) {
+                                                                'valid'   => 'Valid',
+                                                                'invalid' => 'Tdk Valid',
+                                                                default   => 'Pending',
+                                                            };
                                                         @endphp
                                                         <flux:badge color="{{ $cb }}" size="sm">
-                                                            {{ match($dok->status_verifikasi) { 'valid' => 'Valid', 'invalid' => 'Tdk Valid', default => 'Pending' } }}
+                                                            {{ $dokLabel }}
                                                         </flux:badge>
                                                     </label>
 
@@ -453,7 +458,7 @@
                                         name="catatan_admin"
                                         placeholder="Jelaskan apa yang perlu diperbaiki oleh pendaftar..."
                                         rows="3"
-                                        :class="$errors->has('catatan_admin') ? 'border-red-400' : ''"
+                                        x-bind:class="$errors->has('catatan_admin') ? 'border-red-400' : ''"
                                     >{{ old('catatan_admin') }}</flux:textarea>
                                     @error('catatan_admin')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -480,7 +485,7 @@
                             class="w-full text-left text-sm text-zinc-500 mb-2 flex items-center justify-between"
                         >
                             <span>Pendaftaran tidak memenuhi syarat?</span>
-                            <flux:icon name="chevron-down" class="size-4 transition-transform" :class="{ 'rotate-180': openTolak }" />
+                            <flux:icon name="chevron-down" class="size-4 transition-transform" x-bind:class="{ 'rotate-180': openTolak }" />
                         </button>
 
                         <div x-show="openTolak" x-transition>
@@ -495,7 +500,7 @@
                                         name="catatan_admin"
                                         placeholder="Tuliskan alasan penolakan yang jelas untuk calon peserta..."
                                         rows="3"
-                                        :class="$errors->has('catatan_admin') ? 'border-red-400' : ''"
+                                        x-bind:class="$errors->has('catatan_admin') ? 'border-red-400' : ''"
                                     >{{ old('catatan_admin') }}</flux:textarea>
                                     @error('catatan_admin')
                                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
