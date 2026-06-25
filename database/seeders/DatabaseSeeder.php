@@ -4,24 +4,38 @@ namespace Database\Seeders;
 
 use App\Models\ArsipLaporan;
 use App\Models\AsetRobotik;
+use App\Models\AuditLog;
 use App\Models\Batch;
+use App\Models\CalonPeserta;
+use App\Models\DokumenPendaftaran;
 use App\Models\EnrollmentKelas;
 use App\Models\EvaluasiInstruktur;
+use App\Models\ForumKomentar;
+use App\Models\ForumTopik;
 use App\Models\ItemKitRobotik;
+use App\Models\Kehadiran;
 use App\Models\Kelas;
-use App\Models\ProgressAkademik;
-use App\Models\ProgramKursus;
-use App\Models\Role;
-use App\Models\Siswa;
-use App\Models\User;
-use App\Models\CalonPeserta;
-use App\Models\Pendaftaran;
-use App\Models\Invoice;
+use App\Models\MateriPembelajaran;
+use App\Models\MateriProgram;
+use App\Models\PengumpulanTugas;
 use App\Models\Pembayaran;
+use App\Models\PeminjamanItemAset;
+use App\Models\Pendaftaran;
+use App\Models\ProgramKursus;
+use App\Models\ProgressAkademik;
+use App\Models\RiwayatStatusPendaftaran;
+use App\Models\Role;
+use App\Models\Sertifikat;
+use App\Models\SesiLive;
+use App\Models\MaintenanceAset;
+use App\Models\TiketKeluhan;
+use App\Models\User;
+use App\Models\Siswa;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -49,12 +63,12 @@ class DatabaseSeeder extends Seeder
 
         // 2) Users (admin, instructors, director, publikasi)
         $admin = User::firstOrCreate(
-            ['email' => 'admin@robonesia.test'],
+            ['email' => 'admin@example.test'],
             [
                 'id' => (string) Str::uuid(),
                 'nama_lengkap' => 'Administrator RoboNesia',
                 'name' => 'admin',
-                'email' => 'admin@robonesia.test',
+                'email' => 'admin@example.test',
                 'password' => Hash::make('admin123'),
                 'role_id' => $adminRole?->id,
                 'status_aktif' => true,
@@ -130,6 +144,7 @@ class DatabaseSeeder extends Seeder
 
         // 3) Students (users + profiles)
         $dataSiswa = [
+            ['email' => 'siswa@example.test', 'nama' => 'Siswa Contoh',     'username' => 'siswa_contoh'],
             ['email' => 'budi@siswa.test',    'nama' => 'Budi Setiawan',     'username' => 'budi_siswa'],
             ['email' => 'dewi@siswa.test',    'nama' => 'Dewi Ratnasari',   'username' => 'dewi_siswa'],
             ['email' => 'fajar@siswa.test',   'nama' => 'Fajar Nugroho',    'username' => 'fajar_siswa'],

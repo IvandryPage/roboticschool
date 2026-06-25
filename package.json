@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "serve": "php artisan serve --host=127.0.0.1 --port=8000",
+    "test:e2e": "npx playwright test"
   },
   "dependencies": {
     "@laravel/passkeys": "^0.2.0",
