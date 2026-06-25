@@ -1,0 +1,189 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: end-to-end-demonstration.spec.js >> Demonstrasi Sistem End-to-End: Sekolah Robotik >> Skenario Lengkap 80 Langkah Simulasi Bisnis Sekolah Robotik
+- Location: e2e\end-to-end-demonstration.spec.js:5:5
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - img [ref=e7]
+      - generic [ref=e10]: Internal Server Error
+    - button "Copy as Markdown" [ref=e11] [cursor=pointer]:
+      - img [ref=e12]
+      - generic [ref=e16]: Copy as Markdown
+  - generic [ref=e19]:
+    - generic [ref=e20]:
+      - heading "Illuminate\\Foundation\\ViteManifestNotFoundException" [level=1] [ref=e21]
+      - generic [ref=e23]: vendor\laravel\framework\src\Illuminate\Foundation\Vite.php:946
+      - paragraph [ref=e24]: "Vite manifest not found at: C:\\Users\\A S U S\\Documents\\roboticschool\\public\\build/manifest.json"
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]: LARAVEL
+          - generic [ref=e29]: 12.61.0
+        - generic [ref=e30]:
+          - generic [ref=e31]: PHP
+          - generic [ref=e32]: 8.4.22
+      - generic [ref=e33]:
+        - img [ref=e34]
+        - text: UNHANDLED
+      - generic [ref=e38]: CODE 0
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - img [ref=e42]
+        - text: "500"
+      - generic [ref=e46]:
+        - img [ref=e47]
+        - text: GET
+      - generic [ref=e50]: http://127.0.0.1:8000/login
+      - button [ref=e51] [cursor=pointer]:
+        - img [ref=e52]
+  - generic [ref=e57]:
+    - generic [ref=e58]:
+      - generic [ref=e59]:
+        - img [ref=e61]
+        - heading "Exception trace" [level=3] [ref=e65]
+      - generic [ref=e66]:
+        - generic [ref=e68] [cursor=pointer]:
+          - img [ref=e69]
+          - generic [ref=e73]: 2 vendor frames
+          - button [ref=e74]:
+            - img [ref=e75]
+        - generic [ref=e80]:
+          - generic [ref=e81] [cursor=pointer]:
+            - generic [ref=e84]:
+              - code [ref=e88]:
+                - generic [ref=e89]: Illuminate\Foundation\Vite->__invoke(object(Illuminate\Support\Collection))
+              - generic [ref=e91]: resources\views\components\passkey-verify.blade.php:10
+            - button [ref=e93]:
+              - img [ref=e94]
+          - code [ref=e103]:
+            - generic [ref=e104]: 5 'loadingLabel' => __('Authenticating...'),
+            - generic [ref=e105]: 6 'separator' => __('Or continue with email'),
+            - generic [ref=e106]: 7])
+            - generic [ref=e107]: "8"
+            - generic [ref=e108]: 9@assets
+            - generic [ref=e109]: 10@vite('resources/js/passkeys.js')
+            - generic [ref=e110]: 11@endassets
+            - generic [ref=e111]: "12"
+            - generic [ref=e112]: 13<div
+            - generic [ref=e113]: "14 x-data=\"{"
+            - generic [ref=e114]: "15 supported: false,"
+            - generic [ref=e115]: "16 loading: false,"
+            - generic [ref=e116]: "17 error: null,"
+            - generic [ref=e117]: "18 updateSupport() {"
+            - generic [ref=e118]: 19 this.supported = Boolean(window.Passkeys?.isSupported());
+            - generic [ref=e119]: "20 },"
+            - generic [ref=e120]: "21 init() {"
+            - generic [ref=e121]: "22"
+        - generic [ref=e123] [cursor=pointer]:
+          - img [ref=e124]
+          - generic [ref=e128]: 10 vendor frames
+          - button [ref=e129]:
+            - img [ref=e130]
+        - generic [ref=e136] [cursor=pointer]:
+          - generic [ref=e139]:
+            - code [ref=e143]:
+              - generic [ref=e144]: Illuminate\View\Factory->renderComponent()
+            - generic [ref=e146]: resources\views\pages\auth\login.blade.php:8
+          - button [ref=e148]:
+            - img [ref=e149]
+        - generic [ref=e155] [cursor=pointer]:
+          - img [ref=e156]
+          - generic [ref=e160]: 63 vendor frames
+          - button [ref=e161]:
+            - img [ref=e162]
+        - generic [ref=e168] [cursor=pointer]:
+          - generic [ref=e171]:
+            - code [ref=e175]:
+              - generic [ref=e176]: Illuminate\Foundation\Application->handleRequest(object(Illuminate\Http\Request))
+            - generic [ref=e178]: public\index.php:20
+          - button [ref=e180]:
+            - img [ref=e181]
+        - generic [ref=e187] [cursor=pointer]:
+          - img [ref=e188]
+          - generic [ref=e192]: 1 vendor frame
+          - button [ref=e193]:
+            - img [ref=e194]
+    - generic [ref=e199]:
+      - generic [ref=e200]:
+        - generic [ref=e201]:
+          - img [ref=e203]
+          - heading "Queries" [level=3] [ref=e205]
+        - generic [ref=e207]: 1-1 of 1
+      - generic [ref=e209]:
+        - generic [ref=e210]:
+          - generic [ref=e211]:
+            - img [ref=e212]
+            - generic [ref=e214]: pgsql
+          - code [ref=e218]:
+            - generic [ref=e219]: select * from "sessions" where "id" = '0uLNh9HUQutBgfUrzPeFwkN3iorwA1d1zos0AT68' limit 1
+        - generic [ref=e220]: 80.46ms
+  - generic [ref=e222]:
+    - generic [ref=e223]:
+      - heading "Headers" [level=2] [ref=e224]
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - generic [ref=e227]: host
+          - generic [ref=e229]: 127.0.0.1:8000
+        - generic [ref=e230]:
+          - generic [ref=e231]: accept-encoding
+          - generic [ref=e233]: deflate, gzip, br
+        - generic [ref=e234]:
+          - generic [ref=e235]: accept
+          - generic [ref=e237]: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+        - generic [ref=e238]:
+          - generic [ref=e239]: upgrade-insecure-requests
+          - generic [ref=e241]: "1"
+        - generic [ref=e242]:
+          - generic [ref=e243]: sec-fetch-dest
+          - generic [ref=e245]: document
+        - generic [ref=e246]:
+          - generic [ref=e247]: sec-fetch-mode
+          - generic [ref=e249]: navigate
+        - generic [ref=e250]:
+          - generic [ref=e251]: sec-fetch-site
+          - generic [ref=e253]: none
+        - generic [ref=e254]:
+          - generic [ref=e255]: user-agent
+          - generic [ref=e257]: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.4 Safari/605.1.15
+        - generic [ref=e258]:
+          - generic [ref=e259]: accept-language
+          - generic [ref=e261]: en-US, en-US
+    - generic [ref=e262]:
+      - heading "Body" [level=2] [ref=e263]
+      - generic [ref=e264]: // No request body
+    - generic [ref=e265]:
+      - heading "Routing" [level=2] [ref=e266]
+      - generic [ref=e267]:
+        - generic [ref=e268]:
+          - generic [ref=e269]: controller
+          - generic [ref=e271]: Laravel\Fortify\Http\Controllers\AuthenticatedSessionController@create
+        - generic [ref=e272]:
+          - generic [ref=e273]: route name
+          - generic [ref=e275]: login
+        - generic [ref=e276]:
+          - generic [ref=e277]: middleware
+          - generic [ref=e279]: web, guest:web
+    - generic [ref=e280]:
+      - heading "Routing parameters" [level=2] [ref=e281]
+      - generic [ref=e282]: // No routing parameters
+  - generic [ref=e285]:
+    - img [ref=e287]
+    - img [ref=e3327]
+```

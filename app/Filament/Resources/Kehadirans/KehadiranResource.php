@@ -7,6 +7,8 @@ use App\Filament\Resources\Kehadirans\Pages\EditKehadiran;
 use App\Filament\Resources\Kehadirans\Pages\ListKehadirans;
 use App\Filament\Resources\Kehadirans\Tables\KehadiransTable;
 use App\Models\Kehadiran;
+use App\Models\Kelas;
+use App\Models\SesiLive;
 use App\Models\Siswa;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -27,13 +29,11 @@ class KehadiranResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
 
-    /** Admin, Instruktur, dan Direktur dapat melihat absensi */
     public static function canViewAny(): bool
     {
         return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
     }
 
-    /** Admin dan Instruktur dapat input/edit absensi */
     public static function canCreate(): bool
     {
         return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
@@ -49,19 +49,30 @@ class KehadiranResource extends Resource
         return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (Auth::user()?->role?->nama_role === 'Instruktur') {
+            $kelasIds = \App\Models\Kelas::where('instruktur_id', Auth::id())->pluck('id');
+            $sesiIds  = \App\Models\SesiLive::whereIn('kelas_id', $kelasIds)->pluck('id');
+            return $query->whereIn('sesi_id', $sesiIds);
+        }
+
+        return $query;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                // Pilihan Sesi Kelas
                 Select::make('sesi_id')
                     ->label('Sesi')
-                    ->relationship('sesi', 'nomor_sesi') 
+                    ->relationship('sesi', 'nomor_sesi')
                     ->searchable()
                     ->preload()
                     ->required(),
 
-                // Pilihan Siswa (Menggunakan options array agar bisa membaca accessor getNamaAttribute)
                 Select::make('siswa_id')
                     ->label('Siswa')
                     ->options(
@@ -71,18 +82,20 @@ class KehadiranResource extends Resource
                     ->preload()
                     ->required(),
 
-                // Pilihan Status Kehadiran
                 Select::make('status_hadir')
+                    ->label('Status Kehadiran')
                     ->options([
-                        'hadir' => 'Hadir',
-                        'izin' => 'Izin',
-                        'alpa' => 'Tidak Hadir / Alpa',
+                        'Hadir' => 'Hadir',
+                        'Izin'  => 'Izin',
+                        'Sakit' => 'Sakit',
+                        'Alpa'  => 'Tidak Hadir / Alpa',
                     ])
+                    ->default('Hadir')
                     ->required(),
 
-                // Input Catatan Tambahan
                 TextInput::make('catatan')
-                    ->placeholder('Tulis alasan atau catatan jika ada...')
+                    ->label('Catatan')
+                    ->placeholder('Alasan izin/sakit atau catatan tambahan...')
                     ->maxLength(255),
             ]);
     }
@@ -94,17 +107,15 @@ class KehadiranResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListKehadirans::route('/'),
+            'index'  => ListKehadirans::route('/'),
             'create' => CreateKehadiran::route('/create'),
-            'edit' => EditKehadiran::route('/{record}/edit'),
+            'edit'   => EditKehadiran::route('/{record}/edit'),
         ];
     }
 }

@@ -28,7 +28,7 @@ class ProgramResource extends Resource
     /** Semua role dalam panel bisa melihat program kursus */
     public static function canViewAny(): bool
     {
-        return Auth::check();
+        return in_array(Auth::user()?->role?->nama_role, [ 'Admin Akademik']);
     }
 
     /** Hanya Tim Publikasi dan Admin yang bisa tambah program */

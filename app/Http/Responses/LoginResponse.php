@@ -14,11 +14,19 @@ class LoginResponse implements LoginResponseContract
         $role = $user?->role?->nama_role;
 
         return match ($role) {
+            // Filament panel
             'Admin Akademik' => redirect('/admin'),
-            'Instruktur'     => redirect('/dashboard'),
-            'Siswa'          => redirect('/siswa/dashboard'),
-            'Tim Publikasi'  => redirect('/publikasi'),
             'Direktur'       => redirect('/admin'),
+
+            // Generic blade dashboard (returns view('dashboard'))
+            'Instruktur'     => redirect('/dashboard'),
+
+            // Tim Publikasi: panel Filament terpisah di /publikasi
+            'Tim Publikasi'  => redirect('/publikasi'),
+
+            // Siswa: custom blade dashboard
+            'Siswa'          => redirect()->route('siswa.dashboard'),
+
             default          => redirect('/dashboard'),
         };
     }

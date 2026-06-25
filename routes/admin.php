@@ -1,97 +1,63 @@
 <?php
 
-use App\Http\Controllers\Admin\PendaftaranController;
-use App\Http\Controllers\Admin\SiswaController;
-use App\Http\Controllers\Admin\AdminAsetController;
-use App\Http\Controllers\Admin\AdminPeminjamanController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes — PBI-057, 060, 061, 062, 063, 064, 065, 066
+| Admin Blade Routes — DEPRECATED
 |--------------------------------------------------------------------------
-| Tambahkan require __DIR__.'/admin.php'; di routes/web.php
+| Semua fitur admin telah dipindahkan ke Filament panel (/admin).
+|
+| Routes di bawah ini diganti redirect ke Filament equivalents agar
+| link lama yang tersimpan di bookmark/email tidak 404.
+|
+| Filament equivalents:
+|   /admin/pendaftarans          → PendaftaranResource
+|   /admin/siswas                → SiswaResource
+|   /admin/aset-robotiks         → AsetRobotikResource
+|   /admin/peminjaman-item-asets → PeminjamanItemAsetResource
+|--------------------------------------------------------------------------
 */
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'verified', 'role.admin'])
+    ->middleware(['auth', 'verified'])
     ->group(function () {
 
-        // PBI-060 & PBI-061: Daftar pendaftaran + filter + search
-        Route::get('/pendaftaran', [PendaftaranController::class, 'index'])
-            ->name('pendaftaran.index');
+        // Pendaftaran → PendaftaranResource (Filament)
+        Route::get('/pendaftaran',          fn () => redirect('/admin/pendaftarans'))->name('pendaftaran.index');
+        Route::get('/pendaftaran/{id}',     fn () => redirect('/admin/pendaftarans'))->name('pendaftaran.show');
+        Route::post('/pendaftaran/{a}/dokumen/{b}/verifikasi', fn () => redirect('/admin/pendaftarans'))->name('pendaftaran.verifikasi-dokumen');
+        Route::post('/pendaftaran/{id}/setujui',  fn () => redirect('/admin/pendaftarans'))->name('pendaftaran.setujui');
+        Route::post('/pendaftaran/{id}/tolak',    fn () => redirect('/admin/pendaftarans'))->name('pendaftaran.tolak');
+        Route::post('/pendaftaran/{id}/revisi',   fn () => redirect('/admin/pendaftarans'))->name('pendaftaran.revisi');
+        Route::get('/pendaftaran/{id}/buat-akun', fn () => redirect('/admin/siswas'))->name('siswa.create-akun');
+        Route::post('/pendaftaran/{id}/buat-akun', fn () => redirect('/admin/siswas'))->name('siswa.store-akun');
 
-        // PBI-062: Detail pendaftaran + pratinjau dokumen
-        Route::get('/pendaftaran/{id}', [PendaftaranController::class, 'show'])
-            ->name('pendaftaran.show');
+        // Siswa → SiswaResource (Filament)
+        Route::get('/siswa',               fn () => redirect('/admin/siswas'))->name('siswa.index');
+        Route::get('/siswa/{id}',          fn () => redirect('/admin/siswas'))->name('siswa.show');
+        Route::get('/siswa/{id}/edit',     fn () => redirect('/admin/siswas'))->name('siswa.edit');
+        Route::put('/siswa/{id}',          fn () => redirect('/admin/siswas'))->name('siswa.update');
+        Route::post('/siswa/{id}/toggle-status', fn () => redirect('/admin/siswas'))->name('siswa.toggle-status');
+        Route::post('/siswa/{id}/nonaktifkan',   fn () => redirect('/admin/siswas'))->name('siswa.nonaktifkan');
+        Route::post('/siswa/{id}/aktifkan',      fn () => redirect('/admin/siswas'))->name('siswa.aktifkan');
 
-        // PBI-063: Verifikasi per dokumen (valid / tidak valid + catatan)
-        Route::post('/pendaftaran/{pendaftaranId}/dokumen/{dokumenId}/verifikasi', [PendaftaranController::class, 'verifikasiDokumen'])
-            ->name('pendaftaran.verifikasi-dokumen');
+        // Aset → AsetRobotikResource (Filament)
+        Route::get('/aset',                fn () => redirect('/admin/aset-robotiks'))->name('aset.index');
+        Route::get('/aset/create',         fn () => redirect('/admin/aset-robotiks/create'))->name('aset.create');
+        Route::post('/aset',               fn () => redirect('/admin/aset-robotiks'))->name('aset.store');
+        Route::get('/aset/{id}/edit',      fn () => redirect('/admin/aset-robotiks'))->name('aset.edit');
+        Route::put('/aset/{id}',           fn () => redirect('/admin/aset-robotiks'))->name('aset.update');
+        Route::delete('/aset/{id}',        fn () => redirect('/admin/aset-robotiks'))->name('aset.destroy');
+        Route::post('/aset/{id}/item-kit', fn () => redirect('/admin/aset-robotiks'))->name('aset.item-kit.store');
+        Route::post('/item-kit/{id}/update-condition', fn () => redirect('/admin/aset-robotiks'))->name('item-kit.update-condition');
+        Route::delete('/item-kit/{id}',    fn () => redirect('/admin/aset-robotiks'))->name('item-kit.destroy');
 
-        // PBI-064: Setujui pendaftaran (semua dokumen harus valid)
-        Route::post('/pendaftaran/{id}/setujui', [PendaftaranController::class, 'setujui'])
-            ->name('pendaftaran.setujui');
-
-        // PBI-065: Tolak pendaftaran + alasan
-        Route::post('/pendaftaran/{id}/tolak', [PendaftaranController::class, 'tolak'])
-            ->name('pendaftaran.tolak');
-
-        // PBI-066: Kirim catatan revisi (pilih dokumen bermasalah)
-        Route::post('/pendaftaran/{id}/revisi', [PendaftaranController::class, 'revisi'])
-            ->name('pendaftaran.revisi');
-        
-        // PBI-068 & PBI-069
-        Route::get('/siswa', [SiswaController::class, 'index'])
-            ->name('siswa.index');
-
-        // PBI-067
-        Route::get('/pendaftaran/{pendaftaranId}/buat-akun', [SiswaController::class, 'createAkun'])
-            ->name('siswa.create-akun');
-
-        Route::post('/pendaftaran/{pendaftaranId}/buat-akun', [SiswaController::class, 'storeAkun'])
-            ->name('siswa.store-akun');
-
-        // PBI-070
-        Route::get('/siswa/{id}', [SiswaController::class, 'show'])
-            ->name('siswa.show');
-
-        Route::get('/siswa/{id}/edit', [SiswaController::class, 'edit'])
-            ->name('siswa.edit');
-
-        Route::put('/siswa/{id}', [SiswaController::class, 'update'])
-            ->name('siswa.update');
-
-        // PBI-071: Nonaktifkan / Aktifkan akun siswa
-
-        // Toggle cepat dari tabel daftar siswa
-        Route::post('/siswa/{id}/toggle-status', [SiswaController::class, 'toggleStatus'])
-           ->name('siswa.toggle-status');
-
-        // Nonaktifkan dari halaman detail
-        Route::post('/siswa/{id}/nonaktifkan', [SiswaController::class, 'nonaktifkan'])
-          ->name('siswa.nonaktifkan');
-
-        // Aktifkan kembali akun siswa
-        Route::post('/siswa/{id}/aktifkan', [SiswaController::class, 'aktifkan'])
-            ->name('siswa.aktifkan');
-        
-        // Aset Robotik
-        Route::get('/aset', [AdminAsetController::class, 'index'])->name('aset.index');
-        Route::get('/aset/create', [AdminAsetController::class, 'create'])->name('aset.create');
-        Route::post('/aset', [AdminAsetController::class, 'store'])->name('aset.store');
-        Route::get('/aset/{aset}/edit', [AdminAsetController::class, 'edit'])->name('aset.edit');
-        Route::put('/aset/{aset}', [AdminAsetController::class, 'update'])->name('aset.update');
-        Route::delete('/aset/{aset}', [AdminAsetController::class, 'destroy'])->name('aset.destroy');
-        Route::post('/aset/{aset}/item-kit', [AdminAsetController::class, 'storeItemKit'])->name('aset.item-kit.store');
-        Route::post('/item-kit/{itemKit}/update-condition', [AdminAsetController::class, 'updateItemKitCondition'])->name('item-kit.update-condition');
-        Route::delete('/item-kit/{itemKit}', [AdminAsetController::class, 'destroyItemKit'])->name('item-kit.destroy');
-
-        // Peminjaman Aset
-        Route::get('/peminjaman-aset', [AdminPeminjamanController::class, 'index'])->name('peminjaman.index');
-        Route::post('/peminjaman-aset/{peminjaman}/approve', [AdminPeminjamanController::class, 'approve'])->name('peminjaman.approve');
-        Route::post('/peminjaman-aset/{peminjaman}/reject', [AdminPeminjamanController::class, 'reject'])->name('peminjaman.reject');
-        Route::post('/peminjaman-aset/{peminjaman}/confirm-return', [AdminPeminjamanController::class, 'confirmReturn'])->name('peminjaman.return');
+        // Peminjaman → PeminjamanItemAsetResource (Filament)
+        Route::get('/peminjaman-aset',              fn () => redirect('/admin/peminjaman-item-asets'))->name('peminjaman.index');
+        Route::post('/peminjaman-aset/{id}/approve',        fn () => redirect('/admin/peminjaman-item-asets'))->name('peminjaman.approve');
+        Route::post('/peminjaman-aset/{id}/reject',         fn () => redirect('/admin/peminjaman-item-asets'))->name('peminjaman.reject');
+        Route::post('/peminjaman-aset/{id}/confirm-return', fn () => redirect('/admin/peminjaman-item-asets'))->name('peminjaman.return');
 
     });

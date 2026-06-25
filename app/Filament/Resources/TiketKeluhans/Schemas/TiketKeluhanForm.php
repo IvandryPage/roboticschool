@@ -6,43 +6,69 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 
 class TiketKeluhanForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $role      = Auth::user()?->role?->nama_role;
+        $isAdmin   = $role === 'Admin Akademik';
+        $isCreator = in_array($role, ['Siswa', 'Instruktur']);
+
         return $schema
             ->components([
                 TextInput::make('subjek')
                     ->label('Subjek Keluhan')
-                    ->disabled()
-                    ->dehydrated(false),
+                    ->placeholder('Contoh: Tidak bisa mengakses materi modul 3')
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->disabled($isAdmin)
+                    ->dehydrated(! $isAdmin),
 
-                TextInput::make('kategori')
+                Select::make('kategori')
                     ->label('Kategori')
-                    ->disabled()
-                    ->dehydrated(false),
+                    ->options([
+                        'Akademik' => 'Akademik',
+                        'Teknis'   => 'Teknis (Sistem/Akses)',
+                        'Lainnya'  => 'Lainnya',
+                    ])
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->disabled($isAdmin)
+                    ->dehydrated(! $isAdmin),
 
-                TextInput::make('prioritas')
+                Select::make('prioritas')
                     ->label('Prioritas')
-                    ->disabled()
-                    ->dehydrated(false),
+                    ->options([
+                        'Low'    => 'Rendah',
+                        'Medium' => 'Sedang',
+                        'High'   => 'Tinggi',
+                    ])
+                    ->default('Medium')
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->disabled($isAdmin)
+                    ->dehydrated(! $isAdmin),
 
                 Textarea::make('deskripsi')
                     ->label('Deskripsi Keluhan')
-                    ->disabled()
-                    ->dehydrated(false)
+                    ->placeholder('Jelaskan masalah yang dihadapi secara detail...')
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->disabled($isAdmin)
+                    ->dehydrated(! $isAdmin)
                     ->rows(4)
                     ->columnSpanFull(),
 
                 Select::make('status')
-                    ->label('Update Status')
+                    ->label('Status Penanganan')
                     ->options([
                         'Open'        => 'Open',
                         'In Progress' => 'In Progress',
                         'Resolved'    => 'Resolved',
                     ])
-                    ->required(),
+                    ->default('Open')
+                    ->required()
+                    ->disabled(fn (string $operation): bool => $operation === 'create' && $isCreator)
+                    ->dehydrated(fn (string $operation): bool => ! ($operation === 'create' && $isCreator))
+                    ->visible(fn (string $operation): bool => $isAdmin || $operation === 'create'),
             ]);
     }
 }
