@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Programs;
 use App\Filament\Resources\Programs\Pages\CreateProgram;
 use App\Filament\Resources\Programs\Pages\EditProgram;
 use App\Filament\Resources\Programs\Pages\ListPrograms;
+use App\Filament\Resources\Programs\RelationManagers\MateriProgramRelationManager;
+
 use App\Models\ProgramKursus;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -28,7 +30,7 @@ class ProgramResource extends Resource
     /** Semua role dalam panel bisa melihat program kursus */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, [ 'Admin Akademik']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Tim Publikasi']);
     }
 
     /** Hanya Tim Publikasi dan Admin yang bisa tambah program */
@@ -55,6 +57,13 @@ class ProgramResource extends Resource
     public static function table(Table $table): Table
     {
         return \App\Filament\Resources\Programs\Tables\ProgramsTable::configure($table);
+    }
+
+    public static function getRelationManagers(): array
+    {
+        return [
+            MateriProgramRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

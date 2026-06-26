@@ -29,7 +29,7 @@ class BatchResource extends Resource
     /** Admin, Instruktur, dan Direktur dapat melihat batch */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
 
     /** Hanya Admin yang bisa kelola batch */

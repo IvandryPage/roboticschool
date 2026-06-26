@@ -9,7 +9,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth; // <--- SEBELUMNYA BARIS INI HILANG
+use Illuminate\Support\Facades\Auth;
 
 class PengumpulanTugasResource extends Resource
 {
@@ -20,15 +20,33 @@ class PengumpulanTugasResource extends Resource
     protected static ?string $navigationLabel = 'Pengumpulan Tugas';
     protected static ?string $pluralModelLabel = 'Pengumpulan Tugas';
 
+    /**
+     * Instruktur: lihat & nilai pengumpulan tugas kelasnya
+     * Siswa: submit & lihat tugas milik sendiri
+     * Admin Akademik: akses penuh untuk pengawasan
+     * Direktur: TIDAK ada akses per PRD
+     */
     public static function canViewAny(): bool
     {
-        // Direktur tidak ada akses pengumpulan tugas per PRD
         return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Siswa']);
     }
 
+    /** Hanya Siswa yang mengumpulkan tugas per PRD */
     public static function canCreate(): bool
     {
-        return Auth::user()?->role?->nama_role === 'Siswa'; // Hanya Siswa yang mengumpulkan
+        return Auth::user()?->role?->nama_role === 'Siswa';
+    }
+
+    /** Instruktur menginput nilai. Siswa tidak bisa edit setelah submit. Admin bisa. */
+    public static function canEdit($record): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+    }
+
+    /** Hanya Admin yang bisa hapus */
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
     public static function form(Schema $schema): Schema
@@ -133,23 +151,6 @@ class PengumpulanTugasResource extends Resource
                     \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    /** Instruktur: pengumpulan di kelasnya. Siswa: milik sendiri. */
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-    {
-        $q = parent::getEloquentQuery();
-        $role = auth()->user()?->role?->nama_role;
-        if ($role === 'Instruktur') {
-            $kIds = \App\Models\Kelas::where('instruktur_id', auth()->id())->pluck('id');
-            $sIds = \App\Models\SesiLive::whereIn('kelas_id', $kIds)->pluck('id');
-            return $q->whereHas('tugas', fn($sq) => $sq->whereIn('sesi_id', $sIds));
-        }
-        if ($role === 'Siswa') {
-            $siswa = \App\Models\Siswa::where('user_id', auth()->id())->first();
-            return $siswa ? $q->where('siswa_id', $siswa->id) : $q->whereRaw('1=0');
-        }
-        return $q;
     }
 
     public static function getPages(): array

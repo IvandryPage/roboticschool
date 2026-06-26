@@ -30,7 +30,7 @@ class KelasResource extends Resource
     /** Admin, Instruktur, dan Direktur dapat melihat kelas */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
 
     /** Hanya Admin yang bisa tambah/edit/hapus kelas */
@@ -64,6 +64,16 @@ class KelasResource extends Resource
         return [
             //
         ];
+    }
+
+    /** Instruktur hanya lihat kelas yang ditugaskan kepadanya */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $query = parent::getEloquentQuery();
+        if (\Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Instruktur') {
+            return $query->where('instruktur_id', \Illuminate\Support\Facades\Auth::id());
+        }
+        return $query;
     }
 
     public static function getPages(): array

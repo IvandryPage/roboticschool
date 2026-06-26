@@ -31,9 +31,24 @@ class LaporanResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Laporan';
 
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()?->role?->nama_role === 'Admin Akademik';
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()?->role?->nama_role === 'Admin Akademik';
+    }
+
     public static function canViewAny(): bool
     {
-        return Auth::check() && in_array(Auth::user()->role?->nama_role, ['Admin Akademik', 'Direktur']);
+        return Auth::check() && in_array(Auth::user()->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
 
     public static function form(Schema $schema): Schema
@@ -123,8 +138,12 @@ class LaporanResource extends Resource
                     ]),
             ])
              ->recordActions([
-                \Filament\Actions\EditAction::make(),
-                \Filament\Actions\DeleteAction::make(),
+                \Filament\Actions\ViewAction::make()
+                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Instruktur'),
+                \Filament\Actions\EditAction::make()
+                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Admin Akademik'),
+                \Filament\Actions\DeleteAction::make()
+                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Admin Akademik'),
             ])
             ->toolbarActions([
                 \Filament\Actions\BulkActionGroup::make([

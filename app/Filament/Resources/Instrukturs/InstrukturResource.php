@@ -26,7 +26,7 @@ class InstrukturResource extends Resource
     /** Admin & Direktur dapat melihat data instruktur */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik']);
     }
 
     /** Hanya Admin yang bisa tambah/edit/hapus instruktur */

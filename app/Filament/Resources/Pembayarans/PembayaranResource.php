@@ -35,7 +35,7 @@ class PembayaranResource extends Resource
     /** Admin dan Direktur dapat melihat data pembayaran */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik']);
     }
 
     /** Hanya Admin yang bisa verifikasi/edit pembayaran */

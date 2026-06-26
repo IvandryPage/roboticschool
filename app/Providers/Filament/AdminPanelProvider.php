@@ -125,7 +125,6 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            // ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -143,48 +142,15 @@ class AdminPanelProvider extends PanelProvider
                  \Filament\Navigation\NavigationItem::make('Pendaftaran')
                     ->url(fn (): string => route('admin.pendaftaran.index'))
                     ->icon('heroicon-o-clipboard-document-check')
-                    ->openUrlInNewTab()   // ← tambah ini
-                    ->visible(fn () => Auth::user()?->role?->nama_role === 'Admin Akademik')
+                    ->openUrlInNewTab()   
+                    ->visible(fn () => Auth::user()?->role?->nama_role === 'Admin Academic' || Auth::user()?->role?->nama_role === 'Admin Akademik')
                     ->group('Administrasi Sistem')
                     ->sort(1),
-                //  \Filament\Navigation\NavigationItem::make('Siswa Aktif')
-                //      ->url(fn (): string => route('admin.siswa.index'))
-                //      ->icon('heroicon-o-users')
-                //      ->isActiveWhen(fn () => request()->routeIs('admin.siswa.*'))
-                //      ->visible(fn () => Auth::user()?->role?->nama_role === 'Admin Akademik')
-                //      ->group('Administrasi Sistem')
-                //      ->sort(2),
-                //  \Filament\Navigation\NavigationItem::make('Kelola Aset')
-                //      ->url(fn (): string => route('admin.aset.index'))
-                //      ->icon('heroicon-o-wrench')
-                //      ->isActiveWhen(fn () => request()->routeIs('admin.aset.*'))
-                //      ->visible(fn () => Auth::user()?->role?->nama_role === 'Admin Akademik')
-                //      ->group('Operasional')
-                //      ->sort(3),
-                //  \Filament\Navigation\NavigationItem::make('Persetujuan Peminjaman')
-                //      ->url(fn (): string => route('admin.peminjaman.index'))
-                //      ->icon('heroicon-o-clipboard')
-                //      ->isActiveWhen(fn () => request()->routeIs('admin.peminjaman.index'))
-                //      ->visible(fn () => Auth::user()?->role?->nama_role === 'Admin Akademik')
-                //      ->group('Operasional')
-                //      ->sort(4),
                  \Filament\Navigation\NavigationItem::make('Portal Utama')
                      ->url(fn (): string => route('dashboard'))
                      ->icon('heroicon-o-arrow-left-on-rectangle')
                      ->visible(fn () => Auth::user()?->role?->nama_role !== 'Siswa')
                      ->sort(100),
-                 \Filament\Navigation\NavigationItem::make('Dashboard Siswa')
-                     ->url(fn (): string => route('siswa.dashboard'))
-                     ->icon('heroicon-o-home')
-                     ->isActiveWhen(fn () => request()->routeIs('siswa.dashboard'))
-                     ->visible(fn () => Auth::user()?->role?->nama_role === 'Siswa')
-                     ->sort(0),
-                 \Filament\Navigation\NavigationItem::make('Sertifikat Saya')
-                     ->url(fn (): string => route('sertifikat.saya'))
-                     ->icon('heroicon-o-academic-cap')
-                     ->isActiveWhen(fn () => request()->routeIs('sertifikat.saya'))
-                     ->visible(fn () => Auth::user()?->role?->nama_role === 'Siswa')
-                     ->sort(1),
             ])
             ->middleware([
                 EncryptCookies::class,

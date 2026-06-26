@@ -76,6 +76,18 @@ class MateriPembelajaranResource extends Resource
             ]);
     }
 
+    /** Instruktur hanya lihat materi sesi kelas miliknya */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $q = parent::getEloquentQuery();
+        if (\Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Instruktur') {
+            $kIds = \App\Models\Kelas::where('instruktur_id', \Illuminate\Support\Facades\Auth::id())->pluck('id');
+            $sIds = \App\Models\SesiLive::whereIn('kelas_id', $kIds)->pluck('id');
+            return $q->whereIn('sesi_id', $sIds);
+        }
+        return $q;
+    }
+
     public static function getPages(): array
     {
         return [

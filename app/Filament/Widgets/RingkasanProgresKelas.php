@@ -11,7 +11,7 @@ class RingkasanProgresKelas extends BaseWidget
 {
     public static function canView(): bool
     {
-        return in_array(auth()->user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+        return in_array(auth()->user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
     protected int | string | array $columnSpan = 'full';
     

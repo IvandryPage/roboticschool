@@ -31,7 +31,7 @@ class KehadiranResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
 
     public static function canCreate(): bool

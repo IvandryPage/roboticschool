@@ -65,6 +65,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('peminjaman.store');
 
     // Materi Siswa
+
+    // ── Siswa: Jadwal Live Session ─────────────────────────────────────
+    Route::get('/siswa/jadwal', [\App\Http\Controllers\Siswa\JadwalController::class, 'index'])
+        ->name('siswa.jadwal.index');
+
+    // ── Siswa: Penugasan (lihat tugas + submit jawaban + lihat nilai) ───
+    Route::get('/siswa/tugas', [\App\Http\Controllers\Siswa\TugasController::class, 'index'])
+        ->name('siswa.tugas.index');
+    Route::post('/siswa/tugas/{tugas}/kumpul', [\App\Http\Controllers\Siswa\TugasController::class, 'kumpul'])
+        ->name('siswa.tugas.kumpul');
+
+    // ── Siswa: Progres Belajar ─────────────────────────────────────────
+    Route::get('/siswa/progres', [\App\Http\Controllers\Siswa\ProgresController::class, 'index'])
+        ->name('siswa.progres.index');
+
     Route::get('/siswa/materi', [MateriController::class, 'index'])->name('siswa.materi.index');
 
     // Keluhan

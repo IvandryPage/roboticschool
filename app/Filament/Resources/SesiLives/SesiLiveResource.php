@@ -32,7 +32,7 @@ class SesiLiveResource extends Resource
     /** Admin, Instruktur, dan Direktur dapat melihat sesi */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
 
     /** Admin dan Instruktur dapat mengelola sesi */
@@ -71,6 +71,17 @@ class SesiLiveResource extends Resource
         return [
             //
         ];
+    }
+
+    /** Instruktur hanya lihat sesi live kelas miliknya */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        $q = parent::getEloquentQuery();
+        if (\Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Instruktur') {
+            $ids = \App\Models\Kelas::where('instruktur_id', \Illuminate\Support\Facades\Auth::id())->pluck('id');
+            return $q->whereIn('kelas_id', $ids);
+        }
+        return $q;
     }
 
     public static function getPages(): array

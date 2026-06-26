@@ -15,6 +15,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class MateriProgramResource extends Resource
 {
@@ -29,6 +30,12 @@ class MateriProgramResource extends Resource
     protected static ?string $pluralModelLabel = 'Materi Program';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Konten';
+
+        /** Hanya Tim Publikasi yang mengelola rincian materi program per PRD */
+    public static function canViewAny(): bool
+    {
+        return Auth::user()?->role?->nama_role === 'Tim Publikasi';
+    }
 
     public static function form(Schema $schema): Schema
     {

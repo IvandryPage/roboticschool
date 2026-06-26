@@ -37,9 +37,13 @@ class AsetRobotikResource extends Resource
         return 'heroicon-o-wrench';
     }
 
+    public static function canCreate(): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
+    public static function canEdit($r): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
+    public static function canDelete($r): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
+
     public static function canViewAny(): bool
     {
-        return Auth::check() && Auth::user()->role?->nama_role === 'Admin Akademik';
+        return Auth::check() && in_array(Auth::user()->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
 
     public static function shouldRegisterNavigation(): bool

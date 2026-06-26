@@ -28,7 +28,7 @@ class AuditLogResource extends Resource
     /** Hanya Admin dan Direktur yang dapat mengakses audit log */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik']);
     }
 
     public static function canCreate(): bool { return false; }

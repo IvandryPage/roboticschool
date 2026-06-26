@@ -53,7 +53,7 @@ class TiketKeluhanResource extends Resource
         $user = Auth::user();
 
         // Admin dan Direktur bisa lihat semua tiket
-        if (in_array($user?->role?->nama_role, ['Admin Akademik', 'Direktur'])) {
+        if ($user?->role?->nama_role === 'Admin Akademik') {
             return parent::getEloquentQuery();
         }
 
@@ -80,10 +80,15 @@ class TiketKeluhanResource extends Resource
         return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
+    public static function canCreate(): bool
+    {
+        return in_array(Auth::user()?->role?->nama_role, ['Siswa', 'Instruktur']);
+    }
+
     public static function canViewAny(): bool
     {
         // Admin dan Direktur dapat mengakses manajemen tiket
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Siswa']);
     }
 
     public static function getPages(): array

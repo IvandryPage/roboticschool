@@ -2,8 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Publikasi\Resources\MateriPrograms\MateriProgramResource;
-use App\Filament\Resources\Batches\BatchResource;
 use App\Filament\Resources\Programs\ProgramResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -32,10 +30,9 @@ class PublikasiPanelProvider extends PanelProvider
                 'primary' => Color::Cyan,
             ])
             ->brandName('RoboNesia — Tim Publikasi')
+            ->font('Plus Jakarta Sans', provider: \Filament\FontProviders\GoogleFontProvider::class)
             ->resources([
                 ProgramResource::class,
-                BatchResource::class,
-                MateriProgramResource::class,
             ])
             ->pages([
                 Pages\Dashboard::class,

@@ -10,7 +10,7 @@ class ClassProgressOverview extends BaseWidget
 {
     public static function canView(): bool
     {
-        return in_array(auth()->user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+        return in_array(auth()->user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
     }
     protected function getStats(): array
     {

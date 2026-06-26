@@ -17,6 +17,11 @@ class EvaluasiInstrukturWidget extends BaseWidget
 
     protected static ?int $sort = 1;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->role?->nama_role === 'Direktur';
+    }
+
     public function table(Table $table): Table
     {
         return $table
