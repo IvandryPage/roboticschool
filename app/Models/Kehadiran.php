@@ -45,7 +45,13 @@ class Kehadiran extends Model
 
     // --- RELASI MODEL ---
 
+    // Disediakan dua versi (sesi & sesiLive) agar ProgresController dan Filament sama-sama work!
     public function sesi(): BelongsTo
+    {
+        return $this->belongsTo(SesiLive::class, 'sesi_id');
+    }
+
+    public function sesiLive(): BelongsTo
     {
         return $this->belongsTo(SesiLive::class, 'sesi_id');
     }

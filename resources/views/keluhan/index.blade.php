@@ -1,243 +1,250 @@
-<x-layouts::app :title="__('Kirim Keluhan')">
+<x-layouts::app :title="'Kirim Keluhan'">
 
-    <div class="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-        
-        <!-- Container Utama (max-width: 1200px) -->
-        <div class="max-w-6xl mx-auto">
-            
-            <!-- Main Card Wrapper -->
-            <div class="bg-white rounded-3xl shadow-lg border border-slate-100 p-8 md:p-12">
-                
-                <!-- Heading -->
-                <div class="mb-12">
-                    <h1 class="text-5xl font-extrabold text-slate-900 tracking-tight mb-3">
-                        Kirim Keluhan
-                    </h1>
-                    <p class="text-lg text-slate-500">
-                        Sampaikan kendala atau masukanmu, tim kami akan menindaklanjuti.
-                    </p>
+    <div class="mb-6">
+        <flux:heading size="xl" class="font-bold">Kirim Keluhan</flux:heading>
+        <flux:text class="text-zinc-500 mt-1">Sampaikan kendala atau masukanmu, tim kami akan menindaklanjuti dalam 1×24 jam.</flux:text>
+    </div>
+
+    <div class="max-w-2xl">
+        <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-xl shadow-sm overflow-hidden">
+            <div class="px-5 py-3 border-b border-zinc-100 dark:border-zinc-800 flex items-center gap-2">
+                <flux:icon name="exclamation-triangle" class="size-4 text-zinc-400" />
+                <flux:heading size="sm" class="font-semibold">Form Keluhan</flux:heading>
+            </div>
+
+            <form action="{{ route('keluhan.store') }}" method="POST" class="px-5 py-5 space-y-5">
+                @csrf
+
+                {{-- ── Jenis Keluhan ── --}}
+                {{--
+                    Alpine.js dipakai karena peer-checked: Tailwind tidak jalan
+                    ketika class di-purge saat build (class tidak ada di HTML statis).
+                    Dengan x-data, toggle class dilakukan di runtime → aman.
+                --}}
+                <div x-data="{ selected: '{{ old('kategori', '') }}' }">
+                    <flux:label class="mb-2 block">Jenis Keluhan <span class="text-red-500">*</span></flux:label>
+
+                    {{-- Hidden input untuk submit form --}}
+                    <input type="hidden" name="kategori" :value="selected">
+
+                    <div class="grid grid-cols-2 gap-3">
+
+                        {{-- ── Pembelajaran (TEAL) ── --}}
+                        <button type="button"
+                                @click="selected = 'Pembelajaran'"
+                                class="text-left rounded-xl border-2 p-4 transition-all focus:outline-none"
+                                :class="selected === 'Pembelajaran'
+                                    ? 'border-teal-500 bg-teal-50 dark:bg-teal-900/20 ring-1 ring-teal-400/30'
+                                    : 'border-zinc-100 dark:border-zinc-700 hover:border-teal-200 dark:hover:border-teal-700 bg-white dark:bg-zinc-800'">
+                            <div class="flex items-start gap-3">
+                                <div class="size-9 rounded-lg flex items-center justify-center shrink-0 transition-colors"
+                                     :class="selected === 'Pembelajaran' ? 'bg-teal-100 dark:bg-teal-900/40' : 'bg-zinc-100 dark:bg-zinc-700'">
+                                    <svg class="size-5 transition-colors"
+                                         :class="selected === 'Pembelajaran' ? 'text-teal-600' : 'text-zinc-400'"
+                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold"
+                                         :class="selected === 'Pembelajaran' ? 'text-teal-700 dark:text-teal-300' : 'text-zinc-800 dark:text-zinc-100'">
+                                        Pembelajaran
+                                    </div>
+                                    <div class="text-xs text-zinc-400 mt-0.5">Materi, kelas, atau konsep</div>
+                                </div>
+                            </div>
+                            {{-- Checkmark --}}
+                            <div class="mt-2 flex justify-end">
+                                <div class="size-4 rounded-full border-2 transition-all flex items-center justify-center"
+                                     :class="selected === 'Pembelajaran' ? 'border-teal-500 bg-teal-500' : 'border-zinc-200 dark:border-zinc-600'">
+                                    <svg x-show="selected === 'Pembelajaran'" class="size-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+
+                        {{-- ── Error Sistem (RED) ── --}}
+                        <button type="button"
+                                @click="selected = 'Error Sistem'"
+                                class="text-left rounded-xl border-2 p-4 transition-all focus:outline-none"
+                                :class="selected === 'Error Sistem'
+                                    ? 'border-red-500 bg-red-50 dark:bg-red-900/20 ring-1 ring-red-400/30'
+                                    : 'border-zinc-100 dark:border-zinc-700 hover:border-red-200 dark:hover:border-red-700 bg-white dark:bg-zinc-800'">
+                            <div class="flex items-start gap-3">
+                                <div class="size-9 rounded-lg flex items-center justify-center shrink-0 transition-colors"
+                                     :class="selected === 'Error Sistem' ? 'bg-red-100 dark:bg-red-900/40' : 'bg-zinc-100 dark:bg-zinc-700'">
+                                    <svg class="size-5 transition-colors"
+                                         :class="selected === 'Error Sistem' ? 'text-red-600' : 'text-zinc-400'"
+                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold"
+                                         :class="selected === 'Error Sistem' ? 'text-red-700 dark:text-red-300' : 'text-zinc-800 dark:text-zinc-100'">
+                                        Error Sistem
+                                    </div>
+                                    <div class="text-xs text-zinc-400 mt-0.5">Bug, gangguan, halaman error</div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end">
+                                <div class="size-4 rounded-full border-2 transition-all flex items-center justify-center"
+                                     :class="selected === 'Error Sistem' ? 'border-red-500 bg-red-500' : 'border-zinc-200 dark:border-zinc-600'">
+                                    <svg x-show="selected === 'Error Sistem'" class="size-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+
+                        {{-- ── Pendaftaran & Pembayaran (AMBER) ── --}}
+                        <button type="button"
+                                @click="selected = 'Pendaftaran & Pembayaran'"
+                                class="text-left rounded-xl border-2 p-4 transition-all focus:outline-none"
+                                :class="selected === 'Pendaftaran & Pembayaran'
+                                    ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 ring-1 ring-amber-400/30'
+                                    : 'border-zinc-100 dark:border-zinc-700 hover:border-amber-200 dark:hover:border-amber-700 bg-white dark:bg-zinc-800'">
+                            <div class="flex items-start gap-3">
+                                <div class="size-9 rounded-lg flex items-center justify-center shrink-0 transition-colors"
+                                     :class="selected === 'Pendaftaran & Pembayaran' ? 'bg-amber-100 dark:bg-amber-900/40' : 'bg-zinc-100 dark:bg-zinc-700'">
+                                    <svg class="size-5 transition-colors"
+                                         :class="selected === 'Pendaftaran & Pembayaran' ? 'text-amber-600' : 'text-zinc-400'"
+                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold"
+                                         :class="selected === 'Pendaftaran & Pembayaran' ? 'text-amber-700 dark:text-amber-300' : 'text-zinc-800 dark:text-zinc-100'">
+                                        Pendaftaran & Pembayaran
+                                    </div>
+                                    <div class="text-xs text-zinc-400 mt-0.5">Enroll, transaksi, invoice</div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end">
+                                <div class="size-4 rounded-full border-2 transition-all flex items-center justify-center"
+                                     :class="selected === 'Pendaftaran & Pembayaran' ? 'border-amber-500 bg-amber-500' : 'border-zinc-200 dark:border-zinc-600'">
+                                    <svg x-show="selected === 'Pendaftaran & Pembayaran'" class="size-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+
+                        {{-- ── Hal Lainnya (GREEN) ── --}}
+                        <button type="button"
+                                @click="selected = 'Hal Lainnya'"
+                                class="text-left rounded-xl border-2 p-4 transition-all focus:outline-none"
+                                :class="selected === 'Hal Lainnya'
+                                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20 ring-1 ring-green-400/30'
+                                    : 'border-zinc-100 dark:border-zinc-700 hover:border-green-200 dark:hover:border-green-700 bg-white dark:bg-zinc-800'">
+                            <div class="flex items-start gap-3">
+                                <div class="size-9 rounded-lg flex items-center justify-center shrink-0 transition-colors"
+                                     :class="selected === 'Hal Lainnya' ? 'bg-green-100 dark:bg-green-900/40' : 'bg-zinc-100 dark:bg-zinc-700'">
+                                    <svg class="size-5 transition-colors"
+                                         :class="selected === 'Hal Lainnya' ? 'text-green-600' : 'text-zinc-400'"
+                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold"
+                                         :class="selected === 'Hal Lainnya' ? 'text-green-700 dark:text-green-300' : 'text-zinc-800 dark:text-zinc-100'">
+                                        Hal Lainnya
+                                    </div>
+                                    <div class="text-xs text-zinc-400 mt-0.5">Pertanyaan umum lainnya</div>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex justify-end">
+                                <div class="size-4 rounded-full border-2 transition-all flex items-center justify-center"
+                                     :class="selected === 'Hal Lainnya' ? 'border-green-500 bg-green-500' : 'border-zinc-200 dark:border-zinc-600'">
+                                    <svg x-show="selected === 'Hal Lainnya'" class="size-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+
+                    </div>
+
+                    {{-- Validasi: tampil jika form disubmit tanpa pilih kategori --}}
+                    @error('kategori')
+                        <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                    @enderror
+
+                    {{-- Warning jika belum pilih dan coba submit --}}
+                    <div x-show="selected === ''" class="hidden">
+                        {{-- handled by required on hidden input via :value --}}
+                    </div>
                 </div>
 
-                <form action="{{ route('keluhan.store') }}" method="POST">
-                    @csrf
+                {{-- ── Subjek ── --}}
+                <div>
+                    <flux:label for="subjek">Subjek <span class="text-red-500">*</span></flux:label>
+                    <flux:input
+                        id="subjek"
+                        name="subjek"
+                        type="text"
+                        value="{{ old('subjek') }}"
+                        placeholder="Contoh: Tidak bisa memutar video materi"
+                        class="mt-1 {{ $errors->has('subjek') ? 'border-red-400' : '' }}"
+                    />
+                    @error('subjek')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                    <!-- Jenis Keluhan -->
-                    <div class="mb-12">
-                        <label class="block text-lg font-bold text-slate-900 mb-6">
-                            Pilih Jenis Keluhan <span class="text-red-500">*</span>
-                        </label>
+                {{-- ── Detail Keluhan ── --}}
+                <div>
+                    <flux:label for="deskripsi">Detail Keluhan <span class="text-red-500">*</span></flux:label>
+                    <flux:textarea
+                        id="deskripsi"
+                        name="deskripsi"
+                        rows="5"
+                        placeholder="Jelaskan kendala secara lengkap — termasuk langkah yang sudah dicoba..."
+                        class="mt-1 {{ $errors->has('deskripsi') ? 'border-red-400' : '' }}"
+                    />
+                    @error('deskripsi')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                        <!-- Grid 4 Kolom -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            
-                            <!-- Card: Pembelajaran -->
-                            <label class="relative cursor-pointer group h-56">
-                                <input type="radio" name="kategori" value="Pembelajaran" class="peer sr-only" required {{ old('kategori') == 'Pembelajaran' ? 'checked' : '' }}>
-                                <div class="h-full rounded-2xl border-2 border-slate-100 bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg peer-checked:border-cyan-500 peer-checked:bg-cyan-50 peer-checked:shadow-md peer-checked:ring-2 peer-checked:ring-cyan-200 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                                    
-                                    <!-- Checkmark -->
-                                    <div class="absolute top-4 right-4 hidden peer-checked:block">
-                                        <div class="bg-cyan-500 rounded-full p-1 text-white shadow-sm">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                    </div>
+                {{-- Info --}}
+                <div class="bg-zinc-50 dark:bg-zinc-800 border border-zinc-100 dark:border-zinc-700 rounded-lg px-4 py-3 flex items-start gap-2 text-xs text-zinc-500">
+                    <flux:icon name="information-circle" class="size-4 text-zinc-400 shrink-0 mt-0.5" />
+                    <span>Keluhanmu akan ditinjau oleh tim <strong class="text-zinc-700 dark:text-zinc-300">RoboNesia Academy</strong> dalam 1×24 jam.</span>
+                </div>
 
-                                    <!-- Icon -->
-                                    <div class="mb-4 text-cyan-500 transition transform group-hover:scale-110">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                        </svg>
-                                    </div>
-
-                                    <h3 class="font-bold text-slate-900 text-base mb-2">Pembelajaran</h3>
-                                    <p class="text-sm text-slate-500">Materi, kelas, atau pemahaman konsep</p>
-                                </div>
-                            </label>
-
-                            <!-- Card: Error Sistem -->
-                            <label class="relative cursor-pointer group h-56">
-                                <input type="radio" name="kategori" value="Error Sistem" class="peer sr-only" {{ old('kategori') == 'Error Sistem' ? 'checked' : '' }}>
-                                <div class="h-full rounded-2xl border-2 border-slate-100 bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg peer-checked:border-cyan-500 peer-checked:bg-cyan-50 peer-checked:shadow-md peer-checked:ring-2 peer-checked:ring-cyan-200 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                                    
-                                    <div class="absolute top-4 right-4 hidden peer-checked:block">
-                                        <div class="bg-cyan-500 rounded-full p-1 text-white shadow-sm">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <!-- Warna Pink untuk Error -->
-                                    <div class="mb-4 text-pink-500 transition transform group-hover:scale-110">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                        </svg>
-                                    </div>
-
-                                    <h3 class="font-bold text-slate-900 text-base mb-2">Error Sistem / Platform</h3>
-                                    <p class="text-sm text-slate-500">Bug, gangguan, atau halaman tidak berfungsi</p>
-                                </div>
-                            </label>
-
-                            <!-- Card: Pendaftaran & Pembayaran -->
-                            <label class="relative cursor-pointer group h-56">
-                                <input type="radio" name="kategori" value="Pendaftaran & Pembayaran" class="peer sr-only" {{ old('kategori') == 'Pendaftaran & Pembayaran' ? 'checked' : '' }}>
-                                <div class="h-full rounded-2xl border-2 border-slate-100 bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg peer-checked:border-cyan-500 peer-checked:bg-cyan-50 peer-checked:shadow-md peer-checked:ring-2 peer-checked:ring-cyan-200 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                                    
-                                    <div class="absolute top-4 right-4 hidden peer-checked:block">
-                                        <div class="bg-cyan-500 rounded-full p-1 text-white shadow-sm">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <!-- Warna Amber/Orange untuk Pembayaran -->
-                                    <div class="mb-4 text-amber-500 transition transform group-hover:scale-110">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                        </svg>
-                                    </div>
-
-                                    <h3 class="font-bold text-slate-900 text-base mb-2">Pendaftaran & Pembayaran</h3>
-                                    <p class="text-sm text-slate-500">Kendala enroll, transaksi, atau invoice</p>
-                                </div>
-                            </label>
-
-                            <!-- Card: Hal Lainnya -->
-                            <label class="relative cursor-pointer group h-56">
-                                <input type="radio" name="kategori" value="Hal Lainnya" class="peer sr-only" {{ old('kategori') == 'Hal Lainnya' ? 'checked' : '' }}>
-                                <div class="h-full rounded-2xl border-2 border-slate-100 bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-lg peer-checked:border-cyan-500 peer-checked:bg-cyan-50 peer-checked:shadow-md peer-checked:ring-2 peer-checked:ring-cyan-200 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                                    
-                                    <div class="absolute top-4 right-4 hidden peer-checked:block">
-                                        <div class="bg-cyan-500 rounded-full p-1 text-white shadow-sm">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-
-                                    <!-- Warna Emerald untuk Lainnya -->
-                                    <div class="mb-4 text-emerald-500 transition transform group-hover:scale-110">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                        </svg>
-                                    </div>
-
-                                    <h3 class="font-bold text-slate-900 text-base mb-2">Hal Lainnya</h3>
-                                    <p class="text-sm text-slate-500">Pertanyaan umum atau masukan lainnya</p>
-                                </div>
-                            </label>
-                        </div>
-
-                        @error('kategori')
-                            <p class="text-red-500 text-sm mt-3 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-
-                    <!-- Subjek -->
-                    <div class="mb-8">
-                        <label class="block text-lg font-bold text-slate-900 mb-3">
-                            Subjek (Wajib) <span class="text-red-500">*</span>
-                        </label>
-                        
-                        <input type="text" name="subjek" value="{{ old('subjek') }}" required
-                               class="w-full rounded-2xl border-2 border-slate-100 bg-slate-50 px-6 py-4 text-slate-900 text-lg placeholder-slate-400 transition focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-cyan-100 hover:border-slate-300"
-                               placeholder="Contoh: Tidak bisa memutar video materi">
-                        
-                        @error('subjek')
-                            <p class="text-red-500 text-sm mt-2 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-
-                    <!-- Detail Keluhan -->
-                    <div class="mb-12">
-                        <label class="block text-lg font-bold text-slate-900 mb-3">
-                            Detail Keluhan <span class="text-red-500">*</span>
-                        </label>
-                        
-                        <textarea name="deskripsi" rows="8" required
-                                  class="w-full rounded-2xl border-2 border-slate-100 bg-slate-50 px-6 py-4 text-slate-900 text-lg placeholder-slate-400 transition focus:border-cyan-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-cyan-100 hover:border-slate-300 resize-none"
-                                  placeholder="Jelaskan kendala secara lengkap di sini..."></textarea>
-
-                        @error('deskripsi')
-                            <p class="text-red-500 text-sm mt-2 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-
-                    <!-- Submit Section -->
-                    <div>
-                        <!-- Tombol Kirim -->
-                        <button type="submit"
-                                class="w-full bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold h-16 rounded-2xl transition duration-300 shadow-xl shadow-cyan-500/30 hover:shadow-cyan-500/50 hover:-translate-y-1 flex items-center justify-center gap-3 text-lg">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transform -rotate-45" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
-                            Kirim Keluhan
-                        </button>
-                        
-                        <!-- Info Box Bawah -->
-                        <div class="mt-8 flex items-center gap-4 bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-cyan-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <p class="text-base text-slate-600">
-                                Keluhanmu akan ditinjau oleh tim <span class="font-bold text-slate-900">RoboNesia Academy</span> dalam 1x24 jam.
-                            </p>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
+                <div class="flex justify-end gap-3 pt-1">
+                    <flux:button href="{{ route('keluhan.saya') }}" variant="ghost">
+                        Riwayat Keluhan
+                    </flux:button>
+                    <flux:button type="submit" variant="primary" icon="paper-airplane">
+                        Kirim Keluhan
+                    </flux:button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Modal Success -->
+    {{-- Modal Sukses --}}
     @if(session('success_modal'))
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        
-        <!-- Backdrop Blur -->
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity"></div>
-        
-        <!-- Modal Card -->
-        <div class="relative bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full text-center border border-slate-100">
-            
-            <!-- Icon Success Circle -->
-            <div class="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-emerald-50 mb-8">
-                <svg class="h-12 w-12 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                </svg>
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm"></div>
+            <div class="relative bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-700 p-8 max-w-sm w-full text-center">
+                <div class="mx-auto size-16 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center mb-5">
+                    <flux:icon name="check-circle" class="size-8 text-green-500" />
+                </div>
+                <flux:heading size="lg" class="font-bold mb-2">Keluhan Terkirim!</flux:heading>
+                <flux:text class="text-zinc-500 mb-6">
+                    Tim RoboNesia Academy akan meninjau dan menghubungimu dalam 1×24 jam.
+                </flux:text>
+                <flux:button href="{{ route('keluhan.saya') }}" variant="primary" class="w-full">
+                    Lihat Riwayat Keluhan
+                </flux:button>
             </div>
-            
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Keluhan Terkirim!</h2>
-            
-            <p class="text-slate-500 mb-10 text-lg leading-relaxed">
-                Terima kasih atas laporanmu. Tim RoboNesia Academy akan meninjau dan menghubungimu melalui email dalam 1×24 jam.
-            </p>
-            
-            <a href="{{ route('keluhan.saya') }}" 
-               class="block w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold h-14 rounded-2xl flex items-center justify-center transition duration-300 shadow-lg shadow-cyan-500/30 text-lg">
-                Selesai
-            </a>
         </div>
-    </div>
     @endif
 
 </x-layouts::app>
