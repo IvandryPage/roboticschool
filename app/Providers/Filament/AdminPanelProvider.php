@@ -149,7 +149,7 @@ class AdminPanelProvider extends PanelProvider
                  \Filament\Navigation\NavigationItem::make('Portal Utama')
                      ->url(fn (): string => route('dashboard'))
                      ->icon('heroicon-o-arrow-left-on-rectangle')
-                     ->visible(fn () => Auth::user()?->role?->nama_role !== 'Siswa')
+                     ->visible(fn () => false)
                      ->sort(100),
             ])
             ->middleware([
