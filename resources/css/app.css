@@ -310,3 +310,40 @@ select:focus[data-flux-control] {
 .form-cta:hover {
     filter: brightness(0.98);
 }
+
+/* ─────────────────────────────────────────────────────────
+   Flux Sidebar — Active item: teal/cyan (sesuai Filament)
+   ─────────────────────────────────────────────────────────
+   Root cause: html class="dark" menyebabkan --color-accent
+   jadi white. Override langsung di sini agar sidebar item
+   aktif selalu teal/cyan di light maupun dark mode.
+   ───────────────────────────────────────────────────────── */
+
+/* Light mode active */
+[data-flux-sidebar-item][aria-current],
+[data-flux-sidebar-item][data-current="true"],
+[data-flux-sidebar-item][data-current] {
+    background-color: rgb(6 182 212 / 0.12) !important;
+    color: rgb(6 182 212) !important;
+}
+
+/* Ikon di dalam item aktif juga teal */
+[data-flux-sidebar-item][aria-current] [data-flux-icon],
+[data-flux-sidebar-item][data-current="true"] [data-flux-icon],
+[data-flux-sidebar-item][data-current] [data-flux-icon] {
+    color: rgb(6 182 212) !important;
+}
+
+/* Dark mode: teal juga, BUKAN putih */
+.dark [data-flux-sidebar-item][aria-current],
+.dark [data-flux-sidebar-item][data-current="true"],
+.dark [data-flux-sidebar-item][data-current] {
+    background-color: rgb(6 182 212 / 0.18) !important;
+    color: rgb(6 182 212) !important;
+}
+
+.dark [data-flux-sidebar-item][aria-current] [data-flux-icon],
+.dark [data-flux-sidebar-item][data-current="true"] [data-flux-icon],
+.dark [data-flux-sidebar-item][data-current] [data-flux-icon] {
+    color: rgb(6 182 212) !important;
+}

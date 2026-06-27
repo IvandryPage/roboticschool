@@ -119,10 +119,11 @@
 
             <flux:spacer />
 
+            {{-- Desktop: user menu di dalam sidebar (unchanged) --}}
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>
 
-        {{-- Mobile header only --}}
+        {{-- Mobile header --}}
         <flux:header class="lg:hidden">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
             <flux:spacer />
@@ -131,11 +132,11 @@
                 <flux:menu>
                     <flux:menu.radio.group>
                         <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                            <div class="flex items-center gap-2 px-1 py-1.5 text-sm">
                                 <flux:avatar :name="auth()->user()->name" :initials="auth()->user()->initials()" />
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <flux:heading class="truncate">{{ auth()->user()->name }}</flux:heading>
-                                    <flux:text class="truncate">{{ auth()->user()->email }}</flux:text>
+                                <div class="grid flex-1 leading-tight">
+                                    <span class="font-semibold truncate text-sm">{{ auth()->user()->name }}</span>
+                                    <span class="text-xs text-zinc-400 truncate">{{ auth()->user()->email }}</span>
                                 </div>
                             </div>
                         </div>
@@ -161,6 +162,7 @@
             </flux:dropdown>
         </flux:header>
 
+        {{-- Content: tidak ada perubahan sama sekali dari versi yang benar --}}
         {{ $slot }}
 
         @persist('toast')
