@@ -25,10 +25,9 @@ class AuditLogResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Administrasi Sistem';
 
-    /** Hanya Admin dan Direktur yang dapat mengakses audit log */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
     }
 
     public static function canCreate(): bool { return false; }

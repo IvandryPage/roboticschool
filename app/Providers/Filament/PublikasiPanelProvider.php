@@ -53,6 +53,8 @@ class PublikasiPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // Guard: hanya Tim Publikasi yang boleh akses panel ini
+                \App\Http\Middleware\EnsureTimPublikasi::class,
             ]);
     }
 }

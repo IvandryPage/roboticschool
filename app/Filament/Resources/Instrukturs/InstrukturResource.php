@@ -23,10 +23,10 @@ class InstrukturResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Administrasi Sistem';
 
-    /** Admin & Direktur dapat melihat data instruktur */
+    /** Admin kelola, Direktur view-only */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
     }
 
     /** Hanya Admin yang bisa tambah/edit/hapus instruktur */
@@ -45,7 +45,7 @@ class InstrukturResource extends Resource
         return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
-   public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
+    public static function form(\Filament\Schemas\Schema $schema): \Filament\Schemas\Schema
     {
         return $schema
             ->components([

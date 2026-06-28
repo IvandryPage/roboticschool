@@ -23,16 +23,20 @@ class SiswaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    /** Nonaktifkan dari navigasi otomatis — sudah dihandle blade admin */
+    protected static ?string $navigationLabel = 'Siswa Aktif';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    protected static ?int $navigationSort = 2;
+
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
     }
 
-    /** Admin, Instruktur, dan Direktur dapat melihat data siswa */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
     }
 
     /** Hanya Admin yang bisa tambah/edit siswa */
@@ -51,10 +55,10 @@ class SiswaResource extends Resource
         return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
-public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-{
-    return parent::getEloquentQuery()->with(['kehadiran', 'user']);
-}
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['kehadiran', 'user']);
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -73,18 +77,16 @@ public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListSiswas::route('/'),
+            'index'  => ListSiswas::route('/'),
             'create' => CreateSiswa::route('/create'),
-            'view' => ViewSiswa::route('/{record}'),
-            'edit' => EditSiswa::route('/{record}/edit'),
+            'view'   => ViewSiswa::route('/{record}'),
+            'edit'   => EditSiswa::route('/{record}/edit'),
         ];
     }
 }

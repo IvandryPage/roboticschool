@@ -11,7 +11,6 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -19,26 +18,29 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+/**
+ * Panel ini tidak digunakan oleh role manapun (orphan panel).
+ * Di-lock ke path /sepian-disabled dan hanya bisa diakses Admin
+ * sebagai safety measure — tidak dihapus untuk menghindari
+ * error pada AppServiceProvider yang mungkin sudah register provider ini.
+ */
 class SepianPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('sepian')
-            ->path('sepian')
+            ->path('sepian-disabled')   // Ubah path agar tidak bisa diakses via /sepian
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Gray,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->brandName('RoboNesia')
+            ->resources([])             // Kosongkan semua resource
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -53,6 +55,8 @@ class SepianPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                // Hanya Admin yang boleh akses — untuk debugging jika perlu
+                \App\Http\Middleware\CheckAdminRole::class,
             ]);
     }
 }

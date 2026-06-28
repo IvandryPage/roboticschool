@@ -47,6 +47,33 @@
                             :current="request()->routeIs('sertifikat.saya')">
                             Sertifikat
                         </flux:sidebar.item>
+
+                        {{-- Evaluasi Instruktur — hanya muncul jika ada kelas yang sudah selesai dan belum dievaluasi --}}
+                        @php
+                            $siswa = auth()->user()->siswa ?? null;
+                            $kelasSelesaiBelumEvaluasi = null;
+                            if ($siswa) {
+                                $kelasSelesaiBelumEvaluasi = $siswa->enrollmentKelas()
+                                    ->with('kelas')
+                                    ->get()
+                                    ->filter(fn ($e) =>
+                                        $e->kelas?->status === 'selesai' &&
+                                        ! \App\Models\EvaluasiInstruktur::where('kelas_id', $e->kelas_id)
+                                            ->where('siswa_id', $siswa->id)
+                                            ->exists()
+                                    )
+                                    ->first();
+                            }
+                        @endphp
+
+                        @if($kelasSelesaiBelumEvaluasi)
+                            <flux:sidebar.item icon="star"
+                                :href="route('siswa.evaluasi.form', $kelasSelesaiBelumEvaluasi->kelas_id)"
+                                :current="request()->routeIs('siswa.evaluasi.*')">
+                                Evaluasi Instruktur
+                                <flux:badge size="sm" color="amber" class="ml-auto">Baru</flux:badge>
+                            </flux:sidebar.item>
+                        @endif
                     </flux:sidebar.group>
 
                     <flux:sidebar.group heading="Lainnya" class="grid mt-3">
@@ -119,7 +146,7 @@
 
             <flux:spacer />
 
-            {{-- Desktop: user menu di dalam sidebar (unchanged) --}}
+            {{-- Desktop: user menu di dalam sidebar --}}
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>
 
@@ -162,7 +189,6 @@
             </flux:dropdown>
         </flux:header>
 
-        {{-- Content: tidak ada perubahan sama sekali dari versi yang benar --}}
         {{ $slot }}
 
         @persist('toast')

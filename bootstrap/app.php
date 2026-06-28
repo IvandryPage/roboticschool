@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role.admin' => \App\Http\Middleware\CheckAdminRole::class,
+            'role.siswa' => \App\Http\Middleware\EnsureSiswa::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

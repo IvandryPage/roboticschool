@@ -32,10 +32,10 @@ class SesiLiveResource extends Resource
     /** Admin, Instruktur, dan Direktur dapat melihat sesi */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur', 'Direktur']);
     }
 
-    /** Admin dan Instruktur dapat mengelola sesi */
+    /** Hanya Admin dan Instruktur yang bisa kelola sesi — Direktur read-only */
     public static function canCreate(): bool
     {
         return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Instruktur']);
@@ -68,29 +68,29 @@ class SesiLiveResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
-    /** Instruktur hanya lihat sesi live kelas miliknya */
+    /** Instruktur hanya lihat sesi live kelas miliknya — Direktur lihat semua */
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         $q = parent::getEloquentQuery();
-        if (\Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Instruktur') {
-            $ids = \App\Models\Kelas::where('instruktur_id', \Illuminate\Support\Facades\Auth::id())->pluck('id');
+
+        if (Auth::user()?->role?->nama_role === 'Instruktur') {
+            $ids = \App\Models\Kelas::where('instruktur_id', Auth::id())->pluck('id');
             return $q->whereIn('kelas_id', $ids);
         }
+
         return $q;
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListSesiLives::route('/'),
+            'index'  => ListSesiLives::route('/'),
             'create' => CreateSesiLive::route('/create'),
-            'view' => ViewSesiLive::route('/{record}'),
-            'edit' => EditSesiLive::route('/{record}/edit'),
+            'view'   => ViewSesiLive::route('/{record}'),
+            'edit'   => EditSesiLive::route('/{record}/edit'),
         ];
     }
 }

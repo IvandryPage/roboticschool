@@ -50,77 +50,109 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // PBI-127: Halaman sertifikat milik siswa
-    Route::get('/sertifikat/saya', [SertifikatController::class, 'milikku'])
-        ->name('sertifikat.saya');
+    // ── SISWA ONLY routes (protected by role.siswa) ────────────────────
+    Route::middleware(['role.siswa'])->group(function () {
 
-    // Dashboard Siswa — portal dengan sidebar modern
-    Route::get('/siswa/dashboard', [SiswaDashboardController::class, 'index'])
-        ->name('siswa.dashboard');
+        // Dashboard Siswa
+        Route::get('/siswa/dashboard', [SiswaDashboardController::class, 'index'])
+            ->name('siswa.dashboard');
 
-    // User-side Peminjaman (Siswa & lainnya)
-    Route::get('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'index'])
-        ->name('peminjaman.index');
-    Route::post('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'store'])
-        ->name('peminjaman.store');
+        // Jadwal Live Session
+        Route::get('/siswa/jadwal', [\App\Http\Controllers\Siswa\JadwalController::class, 'index'])
+            ->name('siswa.jadwal.index');
 
-    // Materi Siswa
+        // Penugasan
+        Route::get('/siswa/tugas', [\App\Http\Controllers\Siswa\TugasController::class, 'index'])
+            ->name('siswa.tugas.index');
+        Route::post('/siswa/tugas/{tugas}/kumpul', [\App\Http\Controllers\Siswa\TugasController::class, 'kumpul'])
+            ->name('siswa.tugas.kumpul');
 
-    // ── Siswa: Jadwal Live Session ─────────────────────────────────────
-    Route::get('/siswa/jadwal', [\App\Http\Controllers\Siswa\JadwalController::class, 'index'])
-        ->name('siswa.jadwal.index');
+        // Progres Belajar
+        Route::get('/siswa/progres', [\App\Http\Controllers\Siswa\ProgresController::class, 'index'])
+            ->name('siswa.progres.index');
 
-    // ── Siswa: Penugasan (lihat tugas + submit jawaban + lihat nilai) ───
-    Route::get('/siswa/tugas', [\App\Http\Controllers\Siswa\TugasController::class, 'index'])
-        ->name('siswa.tugas.index');
-    Route::post('/siswa/tugas/{tugas}/kumpul', [\App\Http\Controllers\Siswa\TugasController::class, 'kumpul'])
-        ->name('siswa.tugas.kumpul');
+        // Materi
+        Route::get('/siswa/materi', [MateriController::class, 'index'])
+            ->name('siswa.materi.index');
 
-    // ── Siswa: Progres Belajar ─────────────────────────────────────────
-    Route::get('/siswa/progres', [\App\Http\Controllers\Siswa\ProgresController::class, 'index'])
-        ->name('siswa.progres.index');
+        // Sertifikat
+        Route::get('/sertifikat/saya', [SertifikatController::class, 'milikku'])
+            ->name('sertifikat.saya');
 
-    Route::get('/siswa/materi', [MateriController::class, 'index'])->name('siswa.materi.index');
+        // Peminjaman Aset
+        Route::get('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'index'])
+            ->name('peminjaman.index');
+        Route::post('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'store'])
+            ->name('peminjaman.store');
 
-    // Keluhan
-    Route::get('keluhan', [\App\Http\Controllers\KeluhanController::class, 'create'])
-        ->name('keluhan.create');
-    Route::post('keluhan', [\App\Http\Controllers\KeluhanController::class, 'store'])
-        ->name('keluhan.store');
-    Route::get('keluhan/saya', [\App\Http\Controllers\KeluhanController::class, 'index'])
-        ->name('keluhan.saya');
+        // Keluhan
+        Route::get('keluhan', [\App\Http\Controllers\KeluhanController::class, 'create'])
+            ->name('keluhan.create');
+        Route::post('keluhan', [\App\Http\Controllers\KeluhanController::class, 'store'])
+            ->name('keluhan.store');
+        Route::get('keluhan/saya', [\App\Http\Controllers\KeluhanController::class, 'index'])
+            ->name('keluhan.saya');
 
-    // Forum
-    Route::get('/forum', function () {
-        $topiks = ForumTopik::with(['pembuat', 'komentar'])
-            ->latest()
-            ->get();
-        return view('forum.index', compact('topiks'));
-    })->name('forum.index');
+        // Kuesioner Evaluasi Instruktur
+        // Siswa hanya bisa mengisi evaluasi untuk kelas yang sudah selesai dan dia terdaftar
+        Route::get('/evaluasi/{kelas}', function (\App\Models\Kelas $kelas) {
+            return view('siswa.evaluasi.form', compact('kelas'));
+        })->name('siswa.evaluasi.form');
 
-    Route::post('/forum', function (Request $request) {
-        ForumTopik::create([
-            'kelas_id' => Kelas::first()->id,
-            'pembuat_id' => Auth::id(),
-            'judul' => 'Diskusi ' . now()->format('d M Y H:i'),
-            'konten' => $request->konten,
-        ]);
-        return redirect()->route('forum.index');
-    })->name('forum.store');
+        // Forum — hanya tampil thread dari kelas yang diikuti siswa
+        Route::get('/forum', function () {
+            $siswa = Auth::user()->siswa;
 
-    Route::post('/forum/{topik}/reply', function (ForumTopik $topik, Request $request) {
-        ForumKomentar::create([
-            'topik_id' => $topik->id,
-            'user_id' => Auth::id(),
-            'komentar' => $request->komentar,
-        ]);
-        return redirect()->route('forum.index');
-    })->name('forum.reply');
+            $kelasIds = $siswa
+                ? $siswa->enrollmentKelas()->pluck('kelas_id')
+                : collect();
 
-    Route::get('/forum/{topik}', function (ForumTopik $topik) {
-        $topik->load(['pembuat', 'komentar.user']);
-        return view('forum.show', compact('topik'));
-    })->name('forum.show');
+            $topiks = ForumTopik::with(['pembuat', 'komentar', 'kelas'])
+                ->when($kelasIds->isNotEmpty(), fn ($q) => $q->whereIn('kelas_id', $kelasIds))
+                ->latest()
+                ->get();
+
+            return view('forum.index', compact('topiks'));
+        })->name('forum.index');
+
+        Route::post('/forum', function (Request $request) {
+            $siswa = Auth::user()->siswa;
+
+            // Gunakan kelas pertama yang di-enroll siswa, bukan Kelas::first() global
+            $kelasId = $siswa
+                ? $siswa->enrollmentKelas()->latest()->value('kelas_id')
+                : null;
+
+            if (! $kelasId) {
+                return redirect()->route('forum.index')
+                    ->with('error', 'Kamu belum terdaftar di kelas manapun.');
+            }
+
+            ForumTopik::create([
+                'kelas_id'   => $kelasId,
+                'pembuat_id' => Auth::id(),
+                'judul'      => $request->judul ?? ('Diskusi ' . now()->format('d M Y H:i')),
+                'konten'     => $request->konten,
+            ]);
+
+            return redirect()->route('forum.index')->with('success', 'Topik berhasil dibuat.');
+        })->name('forum.store');
+
+        Route::post('/forum/{topik}/reply', function (ForumTopik $topik, Request $request) {
+            ForumKomentar::create([
+                'topik_id' => $topik->id,
+                'user_id'  => Auth::id(),
+                'komentar' => $request->komentar,
+            ]);
+            return redirect()->route('forum.show', $topik)->with('success', 'Balasan dikirim.');
+        })->name('forum.reply');
+
+        Route::get('/forum/{topik}', function (ForumTopik $topik) {
+            $topik->load(['pembuat', 'komentar.user']);
+            return view('forum.show', compact('topik'));
+        })->name('forum.show');
+
+    }); // end role.siswa group
 
 });
 
@@ -210,7 +242,6 @@ Route::get('/daftar/sukses', [PendaftaranController::class, 'success'])
 |--------------------------------------------------------------------------
 */
 
-// PBI-128: Halaman verifikasi sertifikat (publik, tanpa login)
 Route::get('/sertifikat/verifikasi/{nomor}', [SertifikatController::class, 'verifikasi'])
     ->name('sertifikat.verifikasi');
 
@@ -223,10 +254,10 @@ Route::get('/sertifikat/verifikasi/{nomor}', [SertifikatController::class, 'veri
 Route::get('/bypass-program', function () {
     if (ProgramKursus::count() == 0) {
         ProgramKursus::create([
-            'nama_program' => 'Robotik Dasar (Dummy)',
-            'deskripsi'    => 'Data otomatis untuk testing',
-            'biaya'        => 0,
-            'status_tampil'=> true,
+            'nama_program'  => 'Robotik Dasar (Dummy)',
+            'deskripsi'     => 'Data otomatis untuk testing',
+            'biaya'         => 0,
+            'status_tampil' => true,
         ]);
         return "Berhasil! Data dummy sudah dimasukkan. Silakan buka halaman Create Batch.";
     }

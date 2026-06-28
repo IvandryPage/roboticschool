@@ -32,10 +32,10 @@ class PembayaranResource extends Resource
 
     protected static ?string $slug = 'pembayaran';
 
-    /** Admin dan Direktur dapat melihat data pembayaran */
+    /** Admin verifikasi, Direktur view-only */
     public static function canViewAny(): bool
     {
-        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik']);
+        return in_array(Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
     }
 
     /** Hanya Admin yang bisa verifikasi/edit pembayaran */
@@ -66,17 +66,15 @@ class PembayaranResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListPembayarans::route('/'),
+            'index'  => ListPembayarans::route('/'),
             'create' => CreatePembayaran::route('/create'),
-            'edit' => EditPembayaran::route('/{record}/edit'),
+            'edit'   => EditPembayaran::route('/{record}/edit'),
         ];
     }
 }

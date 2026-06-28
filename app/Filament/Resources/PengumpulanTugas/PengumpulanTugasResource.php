@@ -9,16 +9,21 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth; // <--- SEBELUMNYA BARIS INI HILANG
+use Illuminate\Support\Facades\Auth;
 
 class PengumpulanTugasResource extends Resource
 {
     protected static ?string $model = PengumpulanTugas::class;
-    
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-check';
-    
+
     protected static ?string $navigationLabel = 'Pengumpulan Tugas';
+
     protected static ?string $pluralModelLabel = 'Pengumpulan Tugas';
+
+    protected static string|\UnitEnum|null $navigationGroup = 'Akademik';
+
+    protected static ?int $navigationSort = 5;
 
     public static function canViewAny(): bool
     {
@@ -28,7 +33,7 @@ class PengumpulanTugasResource extends Resource
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->role?->nama_role === 'Siswa'; // Hanya Siswa yang mengumpulkan
+        return Auth::user()?->role?->nama_role === 'Siswa';
     }
 
     public static function form(Schema $schema): Schema
@@ -37,28 +42,35 @@ class PengumpulanTugasResource extends Resource
             ->components([
                 \Filament\Forms\Components\Select::make('tugas_id')
                     ->label('Pilih Tugas')
-                    ->relationship('tugas', 'judul_tugas') 
+                    ->relationship('tugas', 'judul_tugas')
                     ->required()
                     ->searchable()
                     ->preload(),
-                    
+
+                // Fix: pluck('nama') tidak bisa karena 'nama' adalah accessor — pakai mapWithKeys
                 \Filament\Forms\Components\Select::make('siswa_id')
                     ->label('Nama Siswa')
-                    ->options(Siswa::with('user')->get()->pluck('nama', 'id'))
+                    ->options(
+                        Siswa::with('user')->get()->mapWithKeys(
+                            fn (Siswa $s): array => [
+                                $s->id => $s->user?->nama_lengkap ?? $s->user?->name ?? 'Siswa #' . $s->id,
+                            ]
+                        )
+                    )
                     ->required()
                     ->searchable()
                     ->preload(),
-                    
+
                 \Filament\Forms\Components\FileUpload::make('file_jawaban')
                     ->label('File Jawaban')
                     ->directory('file-jawaban')
                     ->nullable(),
-                    
+
                 \Filament\Forms\Components\Textarea::make('catatan_siswa')
                     ->label('Catatan dari Siswa')
                     ->nullable()
                     ->columnSpanFull(),
-                    
+
                 \Filament\Forms\Components\DateTimePicker::make('waktu_kumpul')
                     ->label('Waktu Dikumpulkan')
                     ->default(now())
@@ -68,17 +80,17 @@ class PengumpulanTugasResource extends Resource
                     ->label('Nilai (0-100)')
                     ->numeric()
                     ->nullable(),
-                    
+
                 \Filament\Forms\Components\Select::make('status_penilaian')
                     ->label('Status Penilaian')
                     ->options([
-                        'Menunggu' => 'Menunggu Penilaian',
-                        'Dinilai' => 'Sudah Dinilai',
+                        'Menunggu'  => 'Menunggu Penilaian',
+                        'Dinilai'   => 'Sudah Dinilai',
                         'Terlambat' => 'Terlambat',
                     ])
                     ->default('Menunggu')
                     ->nullable(),
-                    
+
                 \Filament\Forms\Components\Textarea::make('umpan_balik')
                     ->label('Umpan Balik (Feedback)')
                     ->nullable()
@@ -94,25 +106,25 @@ class PengumpulanTugasResource extends Resource
                     ->label('Tugas')
                     ->searchable()
                     ->sortable(),
-                    
+
                 \Filament\Tables\Columns\TextColumn::make('siswa.user.name')
                     ->label('Siswa')
                     ->searchable()
                     ->sortable(),
-                    
+
                 \Filament\Tables\Columns\TextColumn::make('waktu_kumpul')
                     ->label('Waktu Kumpul')
                     ->dateTime('d M Y, H:i')
                     ->sortable(),
-                    
+
                 \Filament\Tables\Columns\TextColumn::make('status_penilaian')
                     ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'Dinilai' => 'success',
-                        'Menunggu' => 'warning',
+                        'Dinilai'   => 'success',
+                        'Menunggu'  => 'warning',
                         'Terlambat' => 'danger',
-                        default => 'gray',
+                        default     => 'gray',
                     })
                     ->sortable(),
 
@@ -121,9 +133,7 @@ class PengumpulanTugasResource extends Resource
                     ->numeric()
                     ->sortable(),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->recordActions([
                 \Filament\Actions\EditAction::make(),
                 \Filament\Actions\DeleteAction::make(),
@@ -138,17 +148,20 @@ class PengumpulanTugasResource extends Resource
     /** Instruktur: pengumpulan di kelasnya. Siswa: milik sendiri. */
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        $q = parent::getEloquentQuery();
-        $role = auth()->user()?->role?->nama_role;
+        $q    = parent::getEloquentQuery();
+        $role = Auth::user()?->role?->nama_role;
+
         if ($role === 'Instruktur') {
-            $kIds = \App\Models\Kelas::where('instruktur_id', auth()->id())->pluck('id');
+            $kIds = \App\Models\Kelas::where('instruktur_id', Auth::id())->pluck('id');
             $sIds = \App\Models\SesiLive::whereIn('kelas_id', $kIds)->pluck('id');
-            return $q->whereHas('tugas', fn($sq) => $sq->whereIn('sesi_id', $sIds));
+            return $q->whereHas('tugas', fn ($sq) => $sq->whereIn('sesi_id', $sIds));
         }
+
         if ($role === 'Siswa') {
-            $siswa = \App\Models\Siswa::where('user_id', auth()->id())->first();
+            $siswa = \App\Models\Siswa::where('user_id', Auth::id())->first();
             return $siswa ? $q->where('siswa_id', $siswa->id) : $q->whereRaw('1=0');
         }
+
         return $q;
     }
 
