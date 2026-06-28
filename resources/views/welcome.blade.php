@@ -75,7 +75,7 @@
                     @else
                         <a href="{{ route('login') }}"
                             class="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors">Masuk</a>
-                        <a href="{{ route('register') }}"
+                        <a href="{{ route('pendaftaran.create') }}"
                             class="bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all duration-200 hover:shadow-md flex items-center gap-1.5">
                             Daftar
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -593,7 +593,7 @@
                             </div>
                             @endif
 
-                            <a href="{{ route('register') }}"
+                            <a href="{{ route('pendaftaran.create') }}"
                                 class="w-full flex justify-center items-center bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 rounded-xl transition">
                                 Daftar Sekarang →
                             </a>

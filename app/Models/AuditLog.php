@@ -17,7 +17,11 @@ class AuditLog extends Model
 
     protected $table = 'audit_logs';
 
-    protected $fillable = ['id', 'user_id', 'aksi', 'entity_type', 'entity_id', 'data_sebelum', 'data_sesudah', 'ip_address'];
+    protected $fillable = [
+        'id', 'user_id', 'aksi', 'tipe',
+        'entity_type', 'entity_id',
+        'data_sebelum', 'data_sesudah', 'ip_address',
+    ];
 
     protected $casts = [
         'data_sebelum' => 'array',

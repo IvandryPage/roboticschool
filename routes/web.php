@@ -93,6 +93,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('keluhan/saya', [\App\Http\Controllers\KeluhanController::class, 'index'])
             ->name('keluhan.saya');
 
+        // Daftar Kelas Baru (untuk siswa yang sudah punya akun)
+        Route::get('/daftar-kelas', [\App\Http\Controllers\Siswa\DaftarKelasController::class, 'index'])
+            ->name('siswa.daftar-kelas.index');
+        Route::post('/daftar-kelas', [\App\Http\Controllers\Siswa\DaftarKelasController::class, 'store'])
+            ->name('siswa.daftar-kelas.store');
+        Route::get('/daftar-kelas/status', [\App\Http\Controllers\Siswa\DaftarKelasController::class, 'status'])
+            ->name('siswa.daftar-kelas.status');
+
         // Kuesioner Evaluasi Instruktur
         // Siswa hanya bisa mengisi evaluasi untuk kelas yang sudah selesai dan dia terdaftar
         Route::get('/evaluasi/{kelas}', function (\App\Models\Kelas $kelas) {

@@ -431,9 +431,10 @@
                name="email"
                value="{{ old('email', auth()->user()?->email ?? '') }}"
                placeholder="email@contoh.com"
-               readonly
-               style="background:#f1f5f9;cursor:not-allowed;">
-        <small style="color:#64748b;font-size:12px;">Email diambil dari akun yang sedang login</small>
+               required>
+        @auth
+        <small style="color:#64748b;font-size:12px;">Email diisi otomatis dari akun kamu. Bisa diubah jika perlu.</small>
+        @endauth
     </div>
 
     <div class="form-group">

@@ -47,6 +47,16 @@
                             :current="request()->routeIs('sertifikat.saya')">
                             Sertifikat
                         </flux:sidebar.item>
+                        <flux:sidebar.item icon="plus-circle"
+                            :href="route('siswa.daftar-kelas.index')"
+                            :current="request()->routeIs('siswa.daftar-kelas.index')">
+                            Daftar Kelas Baru
+                        </flux:sidebar.item>
+                        <flux:sidebar.item icon="clock"
+                            :href="route('siswa.daftar-kelas.status')"
+                            :current="request()->routeIs('siswa.daftar-kelas.status')">
+                            Lacak Pendaftaran Kelas
+                        </flux:sidebar.item>
 
                         {{-- Evaluasi Instruktur — hanya muncul jika ada kelas yang sudah selesai dan belum dievaluasi --}}
                         @php

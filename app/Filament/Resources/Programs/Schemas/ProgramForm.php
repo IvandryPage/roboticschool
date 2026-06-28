@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
 
 class ProgramForm
 {
@@ -16,13 +17,17 @@ class ProgramForm
             ->components([
                 TextInput::make('nama_program')
                     ->label('Nama Program Kursus')
-                    ->required() // Wajib diisi agar tidak memicu error database
+                    ->required()
                     ->maxLength(255),
 
-                TextInput::make('level')
+                Select::make('level')
                     ->label('Tingkat Kesulitan / Level')
-                    ->placeholder('Contoh: Pemula, Menengah, Mahir')
-                    ->maxLength(255),
+                    ->options([
+                        'Pemula'    => 'Pemula',
+                        'Menengah'  => 'Menengah',
+                        'Mahir'     => 'Mahir',
+                    ])
+                    ->placeholder('Pilih level'),
 
                 TextInput::make('biaya')
                     ->label('Biaya Program (Rp)')
@@ -38,14 +43,23 @@ class ProgramForm
                 FileUpload::make('gambar')
                     ->label('Upload Gambar/Poster Program')
                     ->image()
-                    ->directory('program-gambar'), // Gambar akan disimpan di folder storage/app/public/program-gambar
+                    ->disk('public')                      // ← FIX: eksplisit disk public
+                    ->directory('program-gambar')         // → storage/app/public/program-gambar
+                    ->imageResizeMode('cover')
+                    ->imageCropAspectRatio('16:9')
+                    ->imageResizeTargetWidth('800')
+                    ->imageResizeTargetHeight('450')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxSize(2048)
+                    ->helperText('JPG/PNG/WebP, maks 2MB. Rasio ideal 16:9.'),
 
                 Toggle::make('status_tampil')
-                    ->label('Tampilkan Program Ini?')
+                    ->label('Tampilkan Program Ini di Landing Page?')
                     ->default(true),
 
                 Textarea::make('deskripsi')
                     ->label('Deskripsi Lengkap')
+                    ->rows(4)
                     ->columnSpanFull(),
             ]);
     }
