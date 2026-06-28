@@ -20,7 +20,7 @@ class Pendaftaran extends Model
 
     protected $table = 'pendaftaran';
 
-    protected $fillable = ['id', 'calon_peserta_id', 'program_id', 'no_referensi', 'tanggal_daftar', 'status', 'catatan_admin'];
+    protected $fillable = ['id', 'calon_peserta_id', 'user_id', 'program_id', 'no_referensi', 'tanggal_daftar', 'status', 'catatan_admin'];
 
     /**
      * PBI-145: Otomatisasi Penerbitan Invoice

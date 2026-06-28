@@ -255,6 +255,18 @@ Route::get('/sertifikat/verifikasi/{nomor}', [SertifikatController::class, 'veri
 
 /*
 |--------------------------------------------------------------------------
+| BUAT AKUN SISWA (setelah pendaftaran & upload bukti bayar)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/pendaftaran/{pendaftaran}/buat-akun', [App\Http\Controllers\BuatAkunSiswaController::class, 'show'])
+    ->name('pendaftaran.buat-akun');
+
+Route::post('/pendaftaran/{pendaftaran}/buat-akun', [App\Http\Controllers\BuatAkunSiswaController::class, 'store'])
+    ->name('pendaftaran.buat-akun.store');
+
+/*
+|--------------------------------------------------------------------------
 | BYPASS DUMMY (Dev only)
 |--------------------------------------------------------------------------
 */
