@@ -65,7 +65,7 @@ class SiswaRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('Daftarkan Siswa'),
             ])
-            ->actions([
+            ->recordActions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()->label('Hapus dari Kelas'),
             ])

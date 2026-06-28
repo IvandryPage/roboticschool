@@ -28,9 +28,10 @@ class TiketKeluhanForm
                 Select::make('kategori')
                     ->label('Kategori')
                     ->options([
-                        'Akademik' => 'Akademik',
-                        'Teknis'   => 'Teknis (Sistem/Akses)',
-                        'Lainnya'  => 'Lainnya',
+                        'Pembelajaran'              => 'Pembelajaran',
+                        'Error Sistem'              => 'Error Sistem',
+                        'Pendaftaran & Pembayaran'  => 'Pendaftaran & Pembayaran',
+                        'Hal Lainnya'               => 'Hal Lainnya',
                     ])
                     ->required(fn (string $operation): bool => $operation === 'create')
                     ->disabled($isAdmin)
@@ -69,6 +70,13 @@ class TiketKeluhanForm
                     ->disabled(fn (string $operation): bool => $operation === 'create' && $isCreator)
                     ->dehydrated(fn (string $operation): bool => ! ($operation === 'create' && $isCreator))
                     ->visible(fn (string $operation): bool => $isAdmin || $operation === 'create'),
+
+                Textarea::make('catatan_admin')
+                    ->label('Catatan / Respons Admin')
+                    ->placeholder('Tulis catatan penanganan atau respons untuk pelapor...')
+                    ->rows(3)
+                    ->visible($isAdmin)
+                    ->columnSpanFull(),
             ]);
     }
 }

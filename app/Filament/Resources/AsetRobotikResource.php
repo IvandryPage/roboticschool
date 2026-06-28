@@ -43,12 +43,16 @@ class AsetRobotikResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return Auth::check() && in_array(Auth::user()->role?->nama_role, ['Admin Akademik', 'Instruktur']);
+        return Auth::check() && in_array(Auth::user()->role?->nama_role, ['Admin Akademik']);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return \Illuminate\Support\Facades\Auth::check()
+            && in_array(
+                \Illuminate\Support\Facades\Auth::user()->role?->nama_role,
+                ['Admin Akademik', 'Instruktur']
+            );
     }
 
     public static function form(Schema $schema): Schema
@@ -118,7 +122,7 @@ class AsetRobotikResource extends Resource
                     ->color(fn ($state) => $state > 0 ? 'success' : 'danger'),
             ])
             ->filters([])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
                     ->before(function (AsetRobotik $record) {

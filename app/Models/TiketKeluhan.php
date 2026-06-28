@@ -17,7 +17,7 @@ class TiketKeluhan extends Model
 
     protected $table = 'tiket_keluhan';
 
-    protected $fillable = ['id', 'pelapor_id', 'ditangani_oleh', 'kategori', 'prioritas', 'subjek', 'deskripsi', 'status', 'resolved_at'];
+    protected $fillable = ['id', 'pelapor_id', 'ditangani_oleh', 'kategori', 'prioritas', 'subjek', 'deskripsi', 'status', 'catatan_admin', 'resolved_at'];
 
     public function pelapor(): BelongsTo
     {

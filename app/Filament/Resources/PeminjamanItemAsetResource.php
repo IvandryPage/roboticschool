@@ -42,7 +42,7 @@ class PeminjamanItemAsetResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return Auth::check() && Auth::user()->role?->nama_role === 'Admin Akademik';
     }
 
     public static function form(Schema $schema): Schema
@@ -111,7 +111,7 @@ class PeminjamanItemAsetResource extends Resource
                     ])
                     ->label('Filter Status'),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('approve')
                     ->label('Approve')
                     ->icon('heroicon-o-check')

@@ -62,7 +62,8 @@ class KelasResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Admin\Resources\Kelas\RelationManagers\SiswaRelationManager::class,
+            \App\Filament\Admin\Resources\Kelas\RelationManagers\SesiLiveRelationManager::class,
         ];
     }
 

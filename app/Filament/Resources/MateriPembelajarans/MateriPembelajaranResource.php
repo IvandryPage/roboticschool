@@ -71,7 +71,7 @@ class MateriPembelajaranResource extends Resource
                     ->label('Tipe')
                     ->badge(),
             ])
-            ->actions([
+            ->recordActions([
                 // Silakan isi action nanti, ini dibiarkan dulu agar tabel muncul
             ]);
     }

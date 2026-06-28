@@ -76,7 +76,11 @@ class KehadiranResource extends Resource
                 Select::make('siswa_id')
                     ->label('Siswa')
                     ->options(
-                        Siswa::with('user')->get()->pluck('nama', 'id')
+                        \App\Models\Siswa::with('user')
+                            ->get()
+                            ->mapWithKeys(fn (\App\Models\Siswa $siswa): array => [
+                                $siswa->id => $siswa->user?->nama_lengkap ?? $siswa->user?->name ?? 'Siswa #' . $siswa->id,
+                            ])
                     )
                     ->searchable()
                     ->preload()

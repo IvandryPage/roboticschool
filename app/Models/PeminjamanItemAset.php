@@ -39,4 +39,9 @@ class PeminjamanItemAset extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function verifikator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'diverifikasi_oleh');
+    }
 }

@@ -87,7 +87,7 @@ class PembayaransTable
                         'Gagal' => 'Gagal (Tidak Valid)',
                     ]),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 Action::make('verifikasi')
                     ->label('Verifikasi')

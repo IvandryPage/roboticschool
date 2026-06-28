@@ -122,7 +122,7 @@ class ItemKitsRelationManager extends RelationManager
                         }
                     }),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
                     ->before(function (ItemKitRobotik $record) {

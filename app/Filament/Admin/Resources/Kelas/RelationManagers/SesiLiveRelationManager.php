@@ -74,7 +74,7 @@ class SesiLiveRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('Tambah Sesi'),
             ])
-            ->actions([
+            ->recordActions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
