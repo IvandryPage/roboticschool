@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Actions;
 
 use Livewire\Component;
 use App\Models\Sesi;
