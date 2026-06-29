@@ -12,6 +12,7 @@ use App\Models\EnrollmentKelas;
 use App\Models\EvaluasiInstruktur;
 use App\Models\ForumKomentar;
 use App\Models\ForumTopik;
+use App\Models\Invoice; // <-- FIX: Model Invoice sekarang sudah di-import di sini
 use App\Models\ItemKitRobotik;
 use App\Models\Kehadiran;
 use App\Models\Kelas;
@@ -294,7 +295,7 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 7) Progress Akademik (sample)
+        // 7) Progress Academic (sample)
         $progressDataKelas1 = [
             [92.5, 88.0, 100.0, 'Lulus'],
             [85.0, 76.5, 100.0, 'Lulus'],
@@ -372,7 +373,7 @@ class DatabaseSeeder extends Seeder
             'lokasi_rak' => 'RAK-A1',
         ]);
 
-        // Calon peserta and related docs (dari PB-11)
+        // Calon peserta and related docs
         $programs = collect([$programRobot, $programIoT]);
         $calons = CalonPeserta::factory()->count(5)->create();
         $index = 0;
