@@ -26,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if (app()->isProduction()) {
+            URL::forceScheme('https');
+        }
         // Listen to migrations starting event to create a dummy 'sesi' table
         // to satisfy a foreign key constraint in the group's migration files.
         Event::listen(\Illuminate\Database\Events\MigrationsStarted::class, function () {
