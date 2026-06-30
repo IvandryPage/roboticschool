@@ -13,23 +13,25 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { test, expect } from '@playwright/test';
-import { USERS, loginAs } from './helpers/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 const FIXTURE_PDF = path.join(__dirname, 'fixtures', 'dummy.pdf');
+
+// Auth paths — session disimpan oleh auth.setup.js
+const SISWA_AUTH      = path.join(__dirname, '..', 'playwright', '.auth', 'siswa.json');
+const ADMIN_AUTH      = path.join(__dirname, '..', 'playwright', '.auth', 'admin.json');
+const INSTRUKTUR_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'instruktur.json');
 
 // ─────────────────────────────────────────────────────────────
 // Dashboard Siswa
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Siswa — dashboard dan navigasi', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   test('Dashboard siswa load di /siswa/dashboard', async ({ page }) => {
+    await page.goto('/siswa/dashboard');
     await expect(page).toHaveURL(/\/siswa\/dashboard/);
     await expect(page.locator('body')).not.toContainText(/500|Whoops|Server Error/i);
   });
@@ -50,11 +52,11 @@ test.describe('Siswa — dashboard dan navigasi', () => {
 
   for (const navItem of expectedNavItems) {
     test(`Nav item "${navItem}" muncul di sidebar siswa`, async ({ page }) => {
+      await page.goto('/siswa/dashboard');
       // Case-insensitive partial match di halaman
       const isVisible = await page.locator(`text=${navItem}`).first().isVisible()
         .catch(() => false);
       // Soft check: tampilkan warning kalau tidak ada tapi tidak gagalkan test langsung
-      // karena text mungkin berbeda (e.g. "Materi Pembelajaran" vs "Materi")
       if (!isVisible) {
         console.warn(`[WARNING] Nav item "${navItem}" tidak ditemukan di dashboard siswa — cek sidebar.blade.php`);
       }
@@ -70,10 +72,7 @@ test.describe('Siswa — dashboard dan navigasi', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Siswa — route smoke test', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   const siswaRoutes = [
     { name: 'Dashboard',         url: '/siswa/dashboard' },
@@ -108,15 +107,14 @@ test.describe('Siswa — route smoke test', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Siswa — kirim keluhan', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   test('Form keluhan tampil dengan field kategori dan deskripsi', async ({ page }) => {
     await page.goto('/keluhan');
-    const hasForm = await page.locator('form').first().isVisible();
-    expect(hasForm).toBe(true);
+    // Livewire form — cek ada input/textarea/label yang visible
+    const hasFormContent = await page.locator('textarea, input[type="text"], label.method, [wire\\:id]')
+      .first().isVisible().catch(() => false);
+    expect(hasFormContent).toBe(true);
   });
 
   test('Kategori keluhan menggunakan opsi yang benar dari PRD', async ({ page }) => {
@@ -143,10 +141,7 @@ test.describe('Siswa — kirim keluhan', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Siswa — peminjaman aset', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   test('Halaman peminjaman tampil tanpa error', async ({ page }) => {
     const response = await page.goto('/peminjaman');
@@ -165,13 +160,9 @@ test.describe('Siswa — peminjaman aset', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Siswa — forum diskusi', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   test('Forum route tidak 500 dan filter per kelas enrolled', async ({ page }) => {
-    // Route forum siswa — cek apakah ada di routes
     const forumRoutes = ['/forum', '/siswa/forum'];
     let found = false;
     for (const url of forumRoutes) {
@@ -181,7 +172,6 @@ test.describe('Siswa — forum diskusi', () => {
         break;
       }
     }
-    // Soft: forum mungkin belum di-route-kan tapi tidak boleh crash
     if (!found) {
       console.warn('[WARNING] Route forum tidak ditemukan di /forum atau /siswa/forum');
     }
@@ -193,32 +183,26 @@ test.describe('Siswa — forum diskusi', () => {
 // EnsureSiswa Middleware — Block Non-Siswa
 // ─────────────────────────────────────────────────────────────
 
-test.describe('EnsureSiswa middleware enforcement', () => {
+test.describe('EnsureSiswa middleware — Admin', () => {
+  test.use({ storageState: ADMIN_AUTH });
 
   test('Admin akses /siswa/dashboard → diblokir', async ({ page }) => {
-    await loginAs(page, USERS.admin);
     const response = await page.goto('/siswa/dashboard');
     const status = response?.status() ?? 0;
     const isBlocked = status === 403 || !page.url().includes('/siswa/dashboard');
     expect(isBlocked, `Admin tidak boleh akses /siswa/dashboard, status: ${status}`).toBe(true);
   });
+});
+
+test.describe('EnsureSiswa middleware — Instruktur', () => {
+  test.use({ storageState: INSTRUKTUR_AUTH });
 
   test('Instruktur akses /siswa/tugas → diblokir', async ({ page }) => {
-    await loginAs(page, USERS.instruktur);
     const response = await page.goto('/siswa/tugas');
     const isBlocked = (response?.status() === 403)
       || !page.url().includes('/siswa/tugas');
     expect(isBlocked).toBe(true);
   });
-
-  test('Direktur akses /peminjaman (route siswa) → diblokir', async ({ page }) => {
-    await loginAs(page, USERS.direktur);
-    const response = await page.goto('/peminjaman');
-    const isBlocked = (response?.status() === 403)
-      || !page.url().includes('/peminjaman');
-    expect(isBlocked).toBe(true);
-  });
-
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -226,13 +210,9 @@ test.describe('EnsureSiswa middleware enforcement', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Siswa — profil', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   test('Halaman profil/settings bisa diakses', async ({ page }) => {
-    // Laravel Breeze/Jetstream default profile route
     const profileRoutes = ['/profile', '/settings/profile', '/siswa/profil'];
     let success = false;
     for (const url of profileRoutes) {

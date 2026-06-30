@@ -26,12 +26,15 @@ export default defineConfig({
   },
 
   projects: [
+    // Jalankan setup terlebih dahulu — login & simpan session
+    {
+      name: 'setup',
+      testMatch: /auth\.setup\.js/,
+    },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
     },
-    // Firefox & webkit di-disable dulu — fokus ke logika dulu, bukan cross-browser
-    // Aktifkan kalau mau cross-browser check:
-    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
   ],
 });

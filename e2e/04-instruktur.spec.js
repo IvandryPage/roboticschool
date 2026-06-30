@@ -10,15 +10,20 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { USERS, loginAs } from './helpers/auth.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const INSTRUKTUR_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'instruktur.json');
 
 test.describe('Instruktur — akses panel', () => {
 
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.instruktur);
-  });
+  // Pakai storageState instruktur — tidak perlu login di setiap test
+  test.use({ storageState: INSTRUKTUR_AUTH });
 
   test('Instruktur redirect ke /admin setelah login', async ({ page }) => {
+    await page.goto('/admin');
     await expect(page).toHaveURL(/\/admin/);
     await expect(page.locator('body')).not.toContainText(/500|Whoops/i);
   });

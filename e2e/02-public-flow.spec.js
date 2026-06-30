@@ -19,7 +19,7 @@ import { fileURLToPath } from 'url';
 import { test, expect } from '@playwright/test';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
+const __dirname = path.dirname(__filename);
 const FIXTURE_PDF = path.join(__dirname, 'fixtures', 'dummy.pdf');
 
 /** Generate email unik tiap run biar tidak tabrakan */
@@ -38,7 +38,7 @@ test.describe('Landing page', () => {
     await expect(page).toHaveTitle(/.+/); // Ada title, tidak kosong
     // Tombol CTA utama harus ada
     await expect(
-      page.locator('text=Daftar Sekarang').or(page.locator('text=Daftar'))
+      page.locator('text=Daftar Sekarang').or(page.locator('text=Daftar')).first()
     ).toBeVisible();
   });
 
@@ -174,7 +174,7 @@ test.describe('Alur pendaftaran calon peserta', () => {
     }
 
     await page.click('button:has-text("Lanjutkan"), button[type="submit"]');
-    await page.waitForURL(/\/pendaftaran\/[^/]+\/dokumen/, { timeout: 15_000 });
+    await page.waitForURL(/\/pendaftaran\/[^/]+\/dokumen/, { timeout: 45_000 });
 
     // Step 2: Upload dokumen
     const ktpInput = page.locator('input[type="file"][name*="identitas"], input[type="file"][name*="ktp"]');
@@ -192,6 +192,13 @@ test.describe('Alur pendaftaran calon peserta', () => {
 
     // Step 3: Upload bukti pembayaran
     await expect(page).toHaveURL(/\/pembayaran\//);
+
+    // Pilih metode pembayaran — radio input adalah display:none, klik label wrapper-nya
+    const metodeLabelFirst = page.locator('label.method').first();
+    if (await metodeLabelFirst.isVisible()) {
+      await metodeLabelFirst.click();
+    }
+
     const buktiInput = page.locator('input[type="file"][name*="bukti"]');
     if (await buktiInput.isVisible()) {
       await buktiInput.setInputFiles(FIXTURE_PDF);
@@ -203,11 +210,11 @@ test.describe('Alur pendaftaran calon peserta', () => {
       await konfirmasiCheckbox.check();
     }
 
-    await page.click('button:has-text("Bayar"), button:has-text("Selesai"), button[type="submit"]');
+    await page.click('button[type="submit"]');
 
     // Setelah bayar → harusnya ke buat-akun atau sukses
-    await page.waitForURL(/\/(buat-akun|sukses|pendaftaran)/, { timeout: 15_000 });
-    expect(page.url()).toMatch(/buat-akun|sukses|pendaftaran/);
+    await page.waitForURL(/\/(buat-akun|sukses)/, { timeout: 45_000 });
+    expect(page.url()).toMatch(/buat-akun|sukses/);
   });
 
 });

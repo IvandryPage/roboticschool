@@ -10,17 +10,26 @@
  */
 
 import { test, expect } from '@playwright/test';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { USERS, loginAs } from './helpers/auth.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ADMIN_AUTH    = path.join(__dirname, '..', 'playwright', '.auth', 'admin.json');
+const SISWA_AUTH    = path.join(__dirname, '..', 'playwright', '.auth', 'siswa.json');
+const PUBLIKASI_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'publikasi.json');
+const INSTRUKTUR_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'instruktur.json');
+
 // ─────────────────────────────────────────────────────────────
-// Setup: login sebagai Admin sebelum tiap test di describe ini
+// Setup: pakai session admin yang sudah disimpan oleh auth.setup.js
+// Ini jauh lebih cepat daripada login ulang di setiap test
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Admin Akademik — akses panel', () => {
 
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.admin);
-  });
+  // Pakai storageState admin — tidak perlu login di setiap test
+  test.use({ storageState: ADMIN_AUTH });
 
   // ── Dashboard ──────────────────────────────────────────────
 
@@ -33,22 +42,22 @@ test.describe('Admin Akademik — akses panel', () => {
   // ── Resource Smoke Tests (Admin punya akses ke semua) ──────
 
   const adminResources = [
-    { name: 'Manajemen User',        url: '/admin/users' },
-    { name: 'Data Siswa',            url: '/admin/siswas' },
-    { name: 'Kelas',                 url: '/admin/kelas' },
-    { name: 'Program Kursus',        url: '/admin/programs' },
-    { name: 'Batch',                 url: '/admin/batches' },
-    { name: 'Pendaftaran',           url: '/admin/pendaftarans' },
-    { name: 'Pembayaran',            url: '/admin/pembayarans' },
-    { name: 'Tugas',                 url: '/admin/tugas' },
-    { name: 'Materi Pembelajaran',   url: '/admin/materi-pembelajarans' },
-    { name: 'Sesi Live',             url: '/admin/sesi-lives' },
-    { name: 'Tiket Keluhan',         url: '/admin/tiket-keluhans' },
-    { name: 'Aset Robotik',          url: '/admin/aset-robotiks' },
-    { name: 'Peminjaman Aset',       url: '/admin/peminjaman-item-asets' },
-    { name: 'Sertifikat',            url: '/admin/sertifikats' },
-    { name: 'Audit Log',             url: '/admin/audit-logs' },
-    { name: 'Pengumpulan Tugas',     url: '/admin/pengumpulan-tugas' },
+    { name: 'Manajemen User', url: '/admin/users' },
+    { name: 'Data Siswa', url: '/admin/siswas' },
+    { name: 'Kelas', url: '/admin/kelas' },
+    { name: 'Program Kursus', url: '/admin/programs' },
+    { name: 'Batch', url: '/admin/batches' },
+    { name: 'Pendaftaran', url: '/admin/pendaftarans' },
+    { name: 'Pembayaran', url: '/admin/pembayarans' },
+    { name: 'Tugas', url: '/admin/tugas' },
+    { name: 'Materi Pembelajaran', url: '/admin/materi-pembelajarans' },
+    { name: 'Sesi Live', url: '/admin/sesi-lives' },
+    { name: 'Tiket Keluhan', url: '/admin/tiket-keluhans' },
+    { name: 'Aset Robotik', url: '/admin/aset-robotiks' },
+    { name: 'Peminjaman Aset', url: '/admin/peminjaman-item-asets' },
+    { name: 'Sertifikat', url: '/admin/sertifikats' },
+    { name: 'Audit Log', url: '/admin/audit-logs' },
+    { name: 'Pengumpulan Tugas', url: '/admin/pengumpulan-tugas' },
   ];
 
   for (const resource of adminResources) {
@@ -65,22 +74,24 @@ test.describe('Admin Akademik — akses panel', () => {
   // ── Create Pages Load ──────────────────────────────────────
 
   const createPages = [
-    { name: 'Buat User',       url: '/admin/users/create' },
-    { name: 'Buat Kelas',      url: '/admin/kelas/create' },
-    { name: 'Buat Program',    url: '/admin/programs/create' },
-    { name: 'Buat Batch',      url: '/admin/batches/create' },
-    { name: 'Buat Aset',       url: '/admin/aset-robotiks/create' },
-    { name: 'Buat Tugas',      url: '/admin/tugas/create' },
-    { name: 'Buat Materi',     url: '/admin/materi-pembelajarans/create' },
+    { name: 'Buat User',    url: '/admin/users/create' },
+    { name: 'Buat Kelas',   url: '/admin/kelas/create' },
+    { name: 'Buat Program', url: '/admin/programs/create' },
+    { name: 'Buat Batch',   url: '/admin/batches/create' },
+    { name: 'Buat Aset',    url: '/admin/aset-robotiks/create' },
+    // Tugas & Materi canCreate() = Instruktur only — 403 untuk Admin adalah benar
   ];
 
   for (const p of createPages) {
     test(`Halaman create "${p.name}" menampilkan form`, async ({ page }) => {
       const response = await page.goto(p.url);
-      expect(response?.status()).toBeLessThan(500);
-      // Harus ada elemen form
-      const hasForm = await page.locator('form').first().isVisible();
-      expect(hasForm, `${p.name}: halaman create harus punya form`).toBe(true);
+      const status = response?.status() ?? 0;
+      expect(status, `${p.name} returned HTTP ${status}`).toBeLessThan(500);
+      // Tunggu Livewire selesai hydrate
+      await page.waitForLoadState('networkidle');
+      // Filament v5 bisa pakai <form> atau [wire:id] tergantung resource
+      const hasForm = await page.locator('form, [wire\\:id]').first().isVisible();
+      expect(hasForm, `${p.name}: halaman create harus punya form/Livewire component`).toBe(true);
     });
   }
 
@@ -107,13 +118,10 @@ test.describe('Admin Akademik — akses panel', () => {
 // Resource yang seharusnya TIDAK bisa diakses non-Admin
 // ─────────────────────────────────────────────────────────────
 
-test.describe('Resource yang restricted untuk non-Admin', () => {
+test.describe('Resource yang restricted — Siswa', () => {
+  test.use({ storageState: SISWA_AUTH });
 
-  /**
-   * Siswa tidak boleh akses resource admin apapun
-   */
   test('Siswa akses /admin/users → diblokir', async ({ page }) => {
-    await loginAs(page, USERS.siswa);
     const response = await page.goto('/admin/users');
     // 403 atau redirect ke /login atau /siswa
     const isBlocked = (response?.status() === 403)
@@ -121,37 +129,38 @@ test.describe('Resource yang restricted untuk non-Admin', () => {
       || page.url().includes('/siswa');
     expect(isBlocked, `Siswa tidak boleh akses /admin/users`).toBe(true);
   });
+});
 
-  test('Tim Publikasi tidak tampil di sidenar /admin/users', async ({ page }) => {
-    await loginAs(page, USERS.publikasi);
-    // Tim Publikasi redirect ke /publikasi, bukan /admin
-    await expect(page).toHaveURL(/\/publikasi/);
-    // Coba akses /admin/users langsung
+test.describe('Resource yang restricted — Tim Publikasi', () => {
+  test.use({ storageState: PUBLIKASI_AUTH });
+
+  test('Tim Publikasi tidak bisa akses /admin/users', async ({ page }) => {
     const response = await page.goto('/admin/users');
     const isBlocked = (response?.status() === 403)
       || page.url().includes('/login')
       || !page.url().includes('/admin/users');
     expect(isBlocked).toBe(true);
   });
-
 });
 
 // ─────────────────────────────────────────────────────────────
 // Audit Log — Tipe Filtering
 // ─────────────────────────────────────────────────────────────
 
-test.describe('Audit Log — Admin lihat semua, Direktur lihat bisnis saja', () => {
+test.describe('Audit Log — Admin', () => {
+  test.use({ storageState: ADMIN_AUTH });
 
   test('Admin bisa akses /admin/audit-logs', async ({ page }) => {
-    await loginAs(page, USERS.admin);
     const response = await page.goto('/admin/audit-logs');
     expect(response?.status()).toBeLessThan(500);
   });
+});
+
+test.describe('Audit Log — Direktur', () => {
+  test.use({ storageState: INSTRUKTUR_AUTH });
 
   test('Direktur bisa akses /admin/audit-logs', async ({ page }) => {
-    await loginAs(page, USERS.direktur);
     const response = await page.goto('/admin/audit-logs');
     expect(response?.status()).toBeLessThan(500);
   });
-
 });

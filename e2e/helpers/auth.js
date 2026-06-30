@@ -6,13 +6,13 @@ import { expect } from '@playwright/test';
  * Pastikan sudah `php artisan db:seed` sebelum run test
  */
 export const USERS = {
-  admin:       { email: 'admin@example.test',         password: 'admin123', redirectTo: /\/admin/ },
-  instruktur:  { email: 'instruktur1@robonesia.test', password: 'password', redirectTo: /\/admin/ },
+  admin: { email: 'admin@example.test', password: 'admin123', redirectTo: /\/admin/ },
+  instruktur: { email: 'instruktur1@robonesia.test', password: 'password', redirectTo: /\/admin/ },
   instruktur2: { email: 'instruktur2@robonesia.test', password: 'password', redirectTo: /\/admin/ },
-  direktur:    { email: 'direktur@robonesia.test',    password: 'password', redirectTo: /\/admin/ },
-  publikasi:   { email: 'publikasi@robonesia.test',   password: 'password', redirectTo: /\/publikasi/ },
-  siswa:       { email: 'budi@siswa.test',            password: 'password', redirectTo: /\/siswa\/dashboard/ },
-  siswa2:      { email: 'dewi@siswa.test',            password: 'password', redirectTo: /\/siswa\/dashboard/ },
+  direktur: { email: 'direktur@robonesia.test', password: 'password', redirectTo: /\/admin/ },
+  publikasi: { email: 'publikasi@robonesia.test', password: 'password', redirectTo: /\/publikasi/ },
+  siswa: { email: 'budi@siswa.test', password: 'password', redirectTo: /\/siswa\/dashboard/ },
+  siswa2: { email: 'dewi@siswa.test', password: 'password', redirectTo: /\/siswa\/dashboard/ },
 };
 
 /**
