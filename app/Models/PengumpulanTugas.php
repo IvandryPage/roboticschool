@@ -29,11 +29,13 @@ class PengumpulanTugas extends Model
     {
         // Setiap kali nilai tugas diinput, diupdate, atau dihapus, jalankan hitung ulang
         static::saved(function ($pengumpulanTugas) {
-            $pengumpulanTugas->siswa?->sinkronkanProgressAkademik();
+            $kelasId = $pengumpulanTugas->tugas?->sesi?->kelas_id;
+            $pengumpulanTugas->siswa?->sinkronkanProgressAkademik($kelasId);
         });
 
         static::deleted(function ($pengumpulanTugas) {
-            $pengumpulanTugas->siswa?->sinkronkanProgressAkademik();
+            $kelasId = $pengumpulanTugas->tugas?->sesi?->kelas_id;
+            $pengumpulanTugas->siswa?->sinkronkanProgressAkademik($kelasId);
         });
     }
 

@@ -158,30 +158,36 @@ class Siswa extends Model
         return $this->hasMany(EvaluasiInstruktur::class);
     }
 
-    // --- LOGIKA PBI 110: SINKRONISASI PERMANEN ---
-    public function sinkronkanProgressAkademik()
+    public function sinkronkanProgressAkademik($kelasId = null)
     {
-        // 1. Hitung Kehadiran
-        $totalPertemuan = $this->kehadiran()->count();
-        $jumlahHadir = $this->kehadiran()->where('status', 'Hadir')->count();
-        $persentaseKehadiran = ($totalPertemuan > 0) ? ($jumlahHadir / $totalPertemuan) * 100 : 0;
+        $kelasIds = $kelasId ? [$kelasId] : $this->kelas()->pluck('kelas.id')->toArray();
 
-        // 2. Hitung Rata-Rata Nilai
-        $rataRataTugas = $this->pengumpulanTugas()->avg('nilai') ?? 0;
+        foreach ($kelasIds as $kId) {
+            // 1. Hitung Kehadiran
+            $sesiIds = \App\Models\SesiLive::where('kelas_id', $kId)->pluck('id');
+            $totalPertemuan = $this->kehadiran()->whereIn('sesi_id', $sesiIds)->count();
+            $jumlahHadir = $this->kehadiran()->whereIn('sesi_id', $sesiIds)->where('status_hadir', 'Hadir')->count();
+            $persentaseKehadiran = ($totalPertemuan > 0) ? ($jumlahHadir / $totalPertemuan) * 100 : 0;
 
-        // 3. Kalkulasi (30% Kehadiran, 70% Tugas)
-        $progressFinal = ($persentaseKehadiran * 0.30) + ($rataRataTugas * 0.70);
+            // 2. Hitung Rata-Rata Nilai
+            $tugasIds = \App\Models\Tugas::whereIn('sesi_id', $sesiIds)->pluck('id');
+            $rataRataTugas = $this->pengumpulanTugas()->whereIn('tugas_id', $tugasIds)->avg('nilai') ?? 0;
 
-        // 4. Update ke tabel progress_akademik
-        // Catatan: Jika siswa memiliki lebih dari satu data di progress_akademik, 
-        // gunakan where/first untuk memilih record yang tepat.
-        return $this->progressAkademik()->updateOrCreate(
-            ['siswa_id' => $this->id], // Syarat pencarian
-            [
-                'persentase_kehadiran' => $persentaseKehadiran,
-                'nilai_rata_rata'      => $rataRataTugas,
-                'nilai_progress_akhir' => $progressFinal,
-            ]
-        );
+            // 3. Kalkulasi (30% Kehadiran, 70% Tugas)
+            $progressFinal = ($persentaseKehadiran * 0.30) + ($rataRataTugas * 0.70);
+
+            // 4. Update ke tabel progress_akademik
+            $this->progressAkademik()->updateOrCreate(
+                [
+                    'siswa_id' => $this->id,
+                    'kelas_id' => $kId,
+                ],
+                [
+                    'persentase_kehadiran'    => $persentaseKehadiran,
+                    'rata_nilai_tugas'        => $rataRataTugas,
+                    'persentase_penyelesaian' => $progressFinal,
+                ]
+            );
+        }
     }
 }

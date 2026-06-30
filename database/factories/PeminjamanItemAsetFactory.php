@@ -15,7 +15,7 @@ class PeminjamanItemAsetFactory extends Factory
         return [
             'id' => (string) Str::uuid(),
             'item_kit_id' => null,
-            'user_id' => null,
+            'user_id' => \App\Models\User::factory(),
             'tanggal_pinjam' => null,
             'tanggal_jatuh_tempo' => now()->addDays(7),
             'tanggal_kembali' => null,

@@ -35,11 +35,13 @@ class Kehadiran extends Model
     {
         // Setiap kali data kehadiran disimpan atau dihapus, update progress akademik siswanya
         static::saved(function ($kehadiran) {
-            $kehadiran->siswa?->sinkronkanProgressAkademik();
+            $kelasId = $kehadiran->sesi?->kelas_id;
+            $kehadiran->siswa?->sinkronkanProgressAkademik($kelasId);
         });
 
         static::deleted(function ($kehadiran) {
-            $kehadiran->siswa?->sinkronkanProgressAkademik();
+            $kelasId = $kehadiran->sesi?->kelas_id;
+            $kehadiran->siswa?->sinkronkanProgressAkademik($kelasId);
         });
     }   
 

@@ -69,6 +69,14 @@
                                     Verifikasi
                                 </flux:button>
                             @endif
+                            <flux:button
+                                onclick="window.print()"
+                                variant="ghost"
+                                icon="printer"
+                                size="sm"
+                            >
+                                Cetak
+                            </flux:button>
                         </div>
                     </div>
 

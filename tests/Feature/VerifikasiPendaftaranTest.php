@@ -151,9 +151,11 @@ class VerifikasiPendaftaranTest extends TestCase
             ->post(route('admin.pendaftaran.setujui', $pendaftaran->id));
 
         // Harus redirect dengan error atau 422, bukan mengubah status
-        $response->assertStatus(422)->orElse(
-            fn() => $response->assertSessionHas('error')
-        );
+        try {
+            $response->assertStatus(422);
+        } catch (\PHPUnit\Framework\AssertionFailedError $e) {
+            $response->assertSessionHas('error');
+        }
     }
 
     // =========================================================================

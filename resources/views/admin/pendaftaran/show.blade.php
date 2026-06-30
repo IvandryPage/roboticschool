@@ -523,6 +523,11 @@
                         <flux:text class="text-zinc-400 text-sm mt-2">
                             Semua {{ $totalDokumen }} dokumen valid. Tidak ada aksi lebih lanjut.
                         </flux:text>
+                        <div class="mt-4">
+                            <flux:button href="{{ route('admin.siswa.create-akun', $pendaftaran->id) }}" variant="primary" class="w-full bg-green-600 hover:bg-green-700">
+                                Buat Akun Siswa
+                            </flux:button>
+                        </div>
                     @elseif($pendaftaran->status === 'ditolak')
                         <flux:icon name="x-circle" class="size-10 text-red-500 mx-auto mb-3" />
                         <flux:heading size="sm" class="text-red-600 font-semibold">Pendaftaran Ditolak</flux:heading>

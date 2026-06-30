@@ -12,7 +12,8 @@ test('guests are redirected to the login page from peminjaman', function () {
 });
 
 test('authenticated users can access the peminjaman page', function () {
-    $user = User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Siswa']);
+    $user = User::factory()->create(['role_id' => $role->id]);
     $this->actingAs($user);
 
     $response = $this->get(route('peminjaman.index'));
@@ -20,7 +21,8 @@ test('authenticated users can access the peminjaman page', function () {
 });
 
 test('user can submit a borrowing request when item kit is available', function () {
-    $user = User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Siswa']);
+    $user = User::factory()->create(['role_id' => $role->id]);
     $this->actingAs($user);
 
     $asset = AsetRobotik::factory()->create([
@@ -51,7 +53,8 @@ test('user can submit a borrowing request when item kit is available', function 
 });
 
 test('user cannot borrow when no item kit is available', function () {
-    $user = User::factory()->create();
+    $role = \App\Models\Role::firstOrCreate(['nama_role' => 'Siswa']);
+    $user = User::factory()->create(['role_id' => $role->id]);
     $this->actingAs($user);
 
     $asset = AsetRobotik::factory()->create([

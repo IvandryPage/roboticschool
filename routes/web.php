@@ -75,15 +75,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/siswa/materi', [MateriController::class, 'index'])
             ->name('siswa.materi.index');
 
-        // Sertifikat
-        Route::get('/sertifikat/saya', [SertifikatController::class, 'milikku'])
-            ->name('sertifikat.saya');
 
-        // Peminjaman Aset
-        Route::get('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'index'])
-            ->name('peminjaman.index');
-        Route::post('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'store'])
-            ->name('peminjaman.store');
 
         // Keluhan
         Route::get('keluhan', [\App\Http\Controllers\KeluhanController::class, 'create'])
@@ -161,6 +153,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->name('forum.show');
 
     }); // end role.siswa group
+
+    // Sertifikat
+    Route::get('/sertifikat/saya', [\App\Http\Controllers\SertifikatController::class, 'milikku'])
+        ->name('sertifikat.saya');
+
+    // Peminjaman Aset
+    Route::get('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'index'])
+        ->name('peminjaman.index');
+    Route::post('/peminjaman', [\App\Http\Controllers\PeminjamanController::class, 'store'])
+        ->name('peminjaman.store');
 
 });
 

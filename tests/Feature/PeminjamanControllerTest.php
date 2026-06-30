@@ -113,7 +113,7 @@ test('POST dengan aset_id yang tidak ada di DB → validasi error (exists:aset_r
     $siswa = buatSiswaUser();
 
     $response = $this->actingAs($siswa)->post('/peminjaman', [
-        'aset_id'              => 'uuid-tidak-ada-' . uniqid(),
+        'aset_id'              => (string) \Illuminate\Support\Str::uuid(),
         'tanggal_jatuh_tempo'  => now()->addDays(5)->format('Y-m-d'),
     ]);
 

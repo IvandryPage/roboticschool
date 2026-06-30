@@ -22,7 +22,7 @@ class SertifikatFactory extends Factory
             'file_path'        => null,
             'qr_code'          => null,
             'verified_url'     => null,
-            'diterbitkan_oleh' => null,
+            'diterbitkan_oleh' => \App\Models\User::factory(),
             'tanggal_terbit'   => now(),
         ];
     }
