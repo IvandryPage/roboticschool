@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -26,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if (app()->isProduction()) {
+        if (app()->environment('production')) {
             URL::forceScheme('https');
         }
         // Listen to migrations starting event to create a dummy 'sesi' table
