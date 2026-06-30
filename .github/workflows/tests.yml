@@ -21,6 +21,21 @@ jobs:
       matrix:
         php-version: ['8.4']
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: sekolah_robotik_testing
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -32,7 +47,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
-          coverage: xdebug
+          coverage: none
 
       - name: Add Flux Credentials
         run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
@@ -54,8 +69,25 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+      - name: Run Migrations
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: sekolah_robotik_testing
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
+        run: php artisan migrate --force
+
       - name: Build Assets
         run: npm run build
 
       - name: Run Tests
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: sekolah_robotik_testing
+          DB_USERNAME: postgres
+          DB_PASSWORD: password
         run: ./vendor/bin/pest
