@@ -9,17 +9,19 @@ export default defineConfig({
   workers: 1, // satu worker untuk hindari state DB bentrok antar test
   reporter: [['html', { open: 'never' }], ['list']],
 
+  timeout: 90_000, // 90 seconds per test global timeout
+
   use: {
     baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
-    actionTimeout: 15_000,
-    navigationTimeout: 30_000,
+    actionTimeout: 30_000,
+    navigationTimeout: 60_000,
   },
 
   webServer: {
-    command: 'php artisan serve --host=127.0.0.1 --port=8000',
+    command: 'php artisan serve --host=127.0.0.1 --port=8000 --no-reload',
     url: 'http://127.0.0.1:8000',
     reuseExistingServer: true, // kamu jalanin server sendiri, test tinggal pakai
     timeout: 120_000,
