@@ -33,17 +33,17 @@ class LaporanResource extends Resource
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->role?->nama_role === 'Admin Akademik';
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return auth()->user()?->role?->nama_role === 'Admin Akademik';
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
     {
-        return auth()->user()?->role?->nama_role === 'Admin Akademik';
+        return Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
     public static function canViewAny(): bool
@@ -139,11 +139,11 @@ class LaporanResource extends Resource
             ])
              ->recordActions([
                 \Filament\Actions\ViewAction::make()
-                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Instruktur'),
+                    ->visible(fn () => Auth::user()?->role?->nama_role === 'Instruktur'),
                 \Filament\Actions\EditAction::make()
-                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Admin Akademik'),
+                    ->visible(fn () => Auth::user()?->role?->nama_role === 'Admin Akademik'),
                 \Filament\Actions\DeleteAction::make()
-                    ->visible(fn () => auth()->user()?->role?->nama_role === 'Admin Akademik'),
+                    ->visible(fn () => Auth::user()?->role?->nama_role === 'Admin Akademik'),
             ])
             ->toolbarActions([
                 \Filament\Actions\BulkActionGroup::make([

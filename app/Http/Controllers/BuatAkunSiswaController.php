@@ -21,7 +21,7 @@ class BuatAkunSiswaController extends Controller
     /**
      * Tampilkan form buat akun — email + nama pre-filled dari data pendaftaran.
      */
-    public function show(Pendaftaran $pendaftaran): \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+    public function show(Pendaftaran $pendaftaran): \Illuminate\Contracts\View\View|RedirectResponse
     {
         // Guard: kalau sudah punya akun, redirect ke dashboard
         if ($pendaftaran->user_id && Auth::check()) {

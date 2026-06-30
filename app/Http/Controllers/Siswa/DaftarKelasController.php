@@ -11,6 +11,7 @@ use App\Models\ProgramKursus;
 use App\Models\Siswa;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -22,7 +23,7 @@ class DaftarKelasController extends Controller
      */
     public function index(): View
     {
-        $siswa = Siswa::where('user_id', auth()->id())->with('kelas')->firstOrFail();
+        $siswa = Siswa::where('user_id', Auth::id())->with('kelas')->firstOrFail();
 
         $kelasEnrolled = $siswa->kelas()->pluck('kelas.id');
 
@@ -52,7 +53,7 @@ class DaftarKelasController extends Controller
             'bukti_pembayaran'  => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ]);
 
-        $siswa = Siswa::where('user_id', auth()->id())->firstOrFail();
+        $siswa = Siswa::where('user_id', Auth::id())->firstOrFail();
         $kelas = Kelas::with('batch.program')->findOrFail($request->kelas_id);
 
         // Guard: cegah double enrollment
@@ -111,7 +112,7 @@ class DaftarKelasController extends Controller
     /** Halaman tracking status pendaftaran kelas ulang */
     public function status(): View
     {
-        $siswa = Siswa::where('user_id', auth()->id())
+        $siswa = Siswa::where('user_id', Auth::id())
             ->with([
                 'enrollmentKelas' => fn ($q) => $q->where('status', 'Pending')
                     ->with('kelas.batch.program'),

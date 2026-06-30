@@ -1,3 +1,4 @@
+@php /** @var \Illuminate\Support\ViewErrorBag $errors */ @endphp
 <x-layouts::auth.split :title="'Login RoboNesia'">
 
     <div class="w-full max-w-[450px] mx-auto px-4 py-10 sm:px-0">

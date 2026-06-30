@@ -54,8 +54,8 @@ class KehadiranResource extends Resource
         $query = parent::getEloquentQuery();
 
         if (Auth::user()?->role?->nama_role === 'Instruktur') {
-            $kelasIds = \App\Models\Kelas::where('instruktur_id', Auth::id())->pluck('id');
-            $sesiIds  = \App\Models\SesiLive::whereIn('kelas_id', $kelasIds)->pluck('id');
+            $kelasIds = Kelas::where('instruktur_id', Auth::id())->pluck('id');
+            $sesiIds  = SesiLive::whereIn('kelas_id', $kelasIds)->pluck('id');
             return $query->whereIn('sesi_id', $sesiIds);
         }
 
@@ -76,9 +76,9 @@ class KehadiranResource extends Resource
                 Select::make('siswa_id')
                     ->label('Siswa')
                     ->options(
-                        \App\Models\Siswa::with('user')
+                        Siswa::with('user')
                             ->get()
-                            ->mapWithKeys(fn (\App\Models\Siswa $siswa): array => [
+                            ->mapWithKeys(fn (Siswa $siswa): array => [
                                 $siswa->id => $siswa->user?->nama_lengkap ?? $siswa->user?->name ?? 'Siswa #' . $siswa->id,
                             ])
                     )

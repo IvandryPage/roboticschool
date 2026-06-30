@@ -38,8 +38,8 @@ class AsetRobotikResource extends Resource
     }
 
     public static function canCreate(): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
-    public static function canEdit($r): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
-    public static function canDelete($r): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $r): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $r): bool { return Auth::user()->role?->nama_role === 'Admin Akademik'; }
 
     public static function canViewAny(): bool
     {
@@ -48,9 +48,9 @@ class AsetRobotikResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return \Illuminate\Support\Facades\Auth::check()
+        return Auth::check()
             && in_array(
-                \Illuminate\Support\Facades\Auth::user()->role?->nama_role,
+                Auth::user()->role?->nama_role,
                 ['Admin Akademik', 'Instruktur']
             );
     }

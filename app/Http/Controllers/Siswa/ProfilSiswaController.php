@@ -102,6 +102,7 @@ class ProfilSiswaController extends Controller
      */
     public function updatePassword(Request $request)
     {
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $request->validate([

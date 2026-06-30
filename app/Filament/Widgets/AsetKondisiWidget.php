@@ -10,7 +10,7 @@ class AsetKondisiWidget extends BaseWidget
 {
     public static function canView(): bool
     {
-        return in_array(auth()->user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
+        return in_array(\Illuminate\Support\Facades\Auth::user()?->role?->nama_role, ['Admin Akademik', 'Direktur']);
     }
 
     protected ?string $heading = 'Rekap Kondisi Aset Robotik';

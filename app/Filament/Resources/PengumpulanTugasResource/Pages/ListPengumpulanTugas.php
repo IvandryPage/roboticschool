@@ -13,7 +13,7 @@ class ListPengumpulanTugas extends ListRecords
     protected function getHeaderActions(): array
 {
     return [
-        \Filament\Actions\CreateAction::make()
+        CreateAction::make()
             ->createAnother(false), // 👈 Misi utamamu ada di baris ini
     ];
 }

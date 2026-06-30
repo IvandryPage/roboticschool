@@ -21,7 +21,7 @@ Route::redirect('/admin/login', '/login')->name('filament.admin.auth.login');
 Route::redirect('/publikasi/login', '/login')->name('filament.publikasi.auth.login');
 
 Route::get('/', function () {
-    $programs = \App\Models\ProgramKursus::where('status_tampil', true)
+    $programs = ProgramKursus::where('status_tampil', true)
         ->with(['batches' => fn($q) => $q->where('status_aktif', true)->orderBy('tanggal_mulai'), 'materiProgram' => fn($q) => $q->orderBy('nomor_urut')])
         ->get();
     return view('welcome', compact('programs'));
@@ -95,7 +95,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Kuesioner Evaluasi Instruktur
         // Siswa hanya bisa mengisi evaluasi untuk kelas yang sudah selesai dan dia terdaftar
-        Route::get('/evaluasi/{kelas}', function (\App\Models\Kelas $kelas) {
+        Route::get('/evaluasi/{kelas}', function (Kelas $kelas) {
             return view('siswa.evaluasi.form', compact('kelas'));
         })->name('siswa.evaluasi.form');
 
@@ -155,7 +155,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     }); // end role.siswa group
 
     // Sertifikat
-    Route::get('/sertifikat/saya', [\App\Http\Controllers\SertifikatController::class, 'milikku'])
+    Route::get('/sertifikat/saya', [SertifikatController::class, 'milikku'])
         ->name('sertifikat.saya');
 
     // Peminjaman Aset

@@ -10,6 +10,8 @@ use App\Filament\Resources\Tugas\Schemas\TugasForm;
 use App\Filament\Resources\Tugas\Schemas\TugasInfolist;
 use App\Filament\Resources\Tugas\Tables\TugasTable;
 use App\Models\Tugas;
+use App\Models\Kelas;
+use App\Models\SesiLive;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -81,9 +83,9 @@ class TugasResource extends Resource
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         $q = parent::getEloquentQuery();
-        if (\Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Instruktur') {
-            $kIds = \App\Models\Kelas::where('instruktur_id', \Illuminate\Support\Facades\Auth::id())->pluck('id');
-            $sIds = \App\Models\SesiLive::whereIn('kelas_id', $kIds)->pluck('id');
+        if (Auth::user()?->role?->nama_role === 'Instruktur') {
+            $kIds = Kelas::where('instruktur_id', Auth::id())->pluck('id');
+            $sIds = SesiLive::whereIn('kelas_id', $kIds)->pluck('id');
             return $q->whereIn('sesi_id', $sIds);
         }
         return $q;

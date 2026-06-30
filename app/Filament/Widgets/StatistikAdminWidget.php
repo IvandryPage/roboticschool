@@ -19,7 +19,7 @@ class StatistikAdminWidget extends BaseWidget
 
     public static function canView(): bool
     {
-        return auth()->user()?->role?->nama_role === 'Admin Akademik';
+        return \Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Admin Akademik';
     }
 
     protected function getStats(): array

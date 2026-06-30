@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\MateriPembelajarans;
 
 use App\Models\MateriPembelajaran;
+use App\Models\Kelas;
+use App\Models\SesiLive;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -80,9 +82,9 @@ class MateriPembelajaranResource extends Resource
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         $q = parent::getEloquentQuery();
-        if (\Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Instruktur') {
-            $kIds = \App\Models\Kelas::where('instruktur_id', \Illuminate\Support\Facades\Auth::id())->pluck('id');
-            $sIds = \App\Models\SesiLive::whereIn('kelas_id', $kIds)->pluck('id');
+        if (Auth::user()?->role?->nama_role === 'Instruktur') {
+            $kIds = Kelas::where('instruktur_id', Auth::id())->pluck('id');
+            $sIds = SesiLive::whereIn('kelas_id', $kIds)->pluck('id');
             return $q->whereIn('sesi_id', $sIds);
         }
         return $q;

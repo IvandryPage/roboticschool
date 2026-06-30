@@ -71,8 +71,8 @@ class KelasResource extends Resource
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
         $query = parent::getEloquentQuery();
-        if (\Illuminate\Support\Facades\Auth::user()?->role?->nama_role === 'Instruktur') {
-            return $query->where('instruktur_id', \Illuminate\Support\Facades\Auth::id());
+        if (Auth::user()?->role?->nama_role === 'Instruktur') {
+            return $query->where('instruktur_id', Auth::id());
         }
         return $query;
     }
