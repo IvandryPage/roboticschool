@@ -115,7 +115,7 @@ test.describe('Siswa — kirim keluhan', () => {
 
   test('Form keluhan tampil dengan field kategori dan deskripsi', async ({ page }) => {
     await page.goto('/keluhan');
-    const hasForm = await page.locator('form').isVisible();
+    const hasForm = await page.locator('form').first().isVisible();
     expect(hasForm).toBe(true);
   });
 

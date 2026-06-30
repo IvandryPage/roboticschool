@@ -1,4 +1,4 @@
-﻿import path from 'path';
+import path from 'path';
 import { fileURLToPath } from 'url';
 import { test, expect } from '@playwright/test';
 
@@ -123,7 +123,7 @@ test.describe('RoboNesia admin and siswa resource checks', () => {
 
   test('Admin can view create user page', async ({ page }) => {
     await page.goto(`${BASE_URL}/admin/users/create`);
-    await expect(page.locator('form')).toBeVisible();
+    await expect(page.locator('form').first()).toBeVisible();
   });
 
   test('Admin can view kelas list', async ({ page }) => {
@@ -133,7 +133,7 @@ test.describe('RoboNesia admin and siswa resource checks', () => {
 
   test('Admin can view create kelas page', async ({ page }) => {
     await page.goto(`${BASE_URL}/admin/kelas/create`);
-    await expect(page.locator('form')).toBeVisible();
+    await expect(page.locator('form').first()).toBeVisible();
   });
 
   test('Admin can view aset robotik list', async ({ page }) => {

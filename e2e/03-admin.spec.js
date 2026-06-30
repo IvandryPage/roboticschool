@@ -79,7 +79,7 @@ test.describe('Admin Akademik — akses panel', () => {
       const response = await page.goto(p.url);
       expect(response?.status()).toBeLessThan(500);
       // Harus ada elemen form
-      const hasForm = await page.locator('form').isVisible();
+      const hasForm = await page.locator('form').first().isVisible();
       expect(hasForm, `${p.name}: halaman create harus punya form`).toBe(true);
     });
   }

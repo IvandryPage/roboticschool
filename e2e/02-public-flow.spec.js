@@ -223,7 +223,7 @@ test.describe('Cek status pendaftaran publik', () => {
     expect(page.url()).toMatch(/cek-status/);
 
     // Form cek status harus punya input referensi atau email
-    const hasForm = await page.locator('form').isVisible();
+    const hasForm = await page.locator('form').first().isVisible();
     expect(hasForm, 'Halaman cek-status harus punya form').toBe(true);
   });
 
