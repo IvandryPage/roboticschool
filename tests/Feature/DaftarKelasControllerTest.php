@@ -243,7 +243,7 @@ test('POST valid → Invoice terbuat dengan status Menunggu Verifikasi', functio
         'bukti_pembayaran' => fakeUploadBukti(),
     ]);
 
-    $this->assertDatabaseHas('invoices', [
+    $this->assertDatabaseHas('invoice', [
         'status_pembayaran' => 'Menunggu Verifikasi',
     ]);
 });
@@ -286,7 +286,7 @@ test('POST valid → nomor_invoice menggunakan prefix INV-RE-', function () {
     ]);
 
     $invoice = \App\Models\Invoice::first();
-    expect($invoice->nomor_invoice)->toStartWith('INV-RE-');
+    expect($invoice->no_invoice)->toStartWith('INV-RE-');
 });
 
 // ─────────────────────────────────────────────────────────────

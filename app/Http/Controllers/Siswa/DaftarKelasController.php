@@ -78,8 +78,8 @@ class DaftarKelasController extends Controller
         $invoice = Invoice::create([
             'id'                 => (string) Str::uuid(),
             'pendaftaran_id'     => null,       // siswa existing — tidak punya pendaftaran baru
-            'nomor_invoice'      => 'INV-RE-' . strtoupper(Str::random(8)),
-            'nominal'            => $kelas->batch->program->biaya ?? 0,
+            'no_invoice'         => 'INV-RE-' . strtoupper(Str::random(8)),
+            'total_tagihan'      => $kelas->batch->program->biaya ?? 0,
             'status_pembayaran'  => 'Menunggu Verifikasi',
             'tanggal_jatuh_tempo'=> now()->addDays(3),
         ]);
@@ -88,7 +88,7 @@ class DaftarKelasController extends Controller
         \App\Models\Pembayaran::create([
             'id'                => (string) Str::uuid(),
             'invoice_id'        => $invoice->id,
-            'nominal'           => $invoice->nominal,
+            'nominal'           => $invoice->total_tagihan,
             'metode_pembayaran' => 'Transfer Manual',
             'status'            => 'Menunggu Verifikasi',
             'bukti_file'        => $pathBukti,
@@ -105,7 +105,7 @@ class DaftarKelasController extends Controller
 
         return redirect()
             ->route('siswa.daftar-kelas.status')
-            ->with('success', 'Pendaftaran kelas berhasil! Menunggu verifikasi pembayaran oleh Admin. Invoice: ' . $invoice->nomor_invoice);
+            ->with('success', 'Pendaftaran kelas berhasil! Menunggu verifikasi pembayaran oleh Admin. Invoice: ' . $invoice->no_invoice);
     }
 
     /** Halaman tracking status pendaftaran kelas ulang */

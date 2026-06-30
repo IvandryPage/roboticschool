@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('invoice', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('pendaftaran_id')->constrained('pendaftaran')->unique();
+            $table->foreignUuid('pendaftaran_id')->nullable()->constrained('pendaftaran')->unique();
             $table->string('no_invoice')->unique();
             $table->decimal('total_tagihan', 14, 2)->default(0);
             $table->timestamp('tanggal_terbit')->nullable();
