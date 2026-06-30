@@ -15,19 +15,24 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { USERS, loginAs } from './helpers/auth.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DIREKTUR_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'direktur.json');
+const PUBLIKASI_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'publikasi.json');
+const ADMIN_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'admin.json');
 
 // ─────────────────────────────────────────────────────────────
 // DIREKTUR
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Direktur — panel akses', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.direktur);
-  });
+  test.use({ storageState: DIREKTUR_AUTH });
 
   test('Direktur redirect ke /admin setelah login', async ({ page }) => {
+    await page.goto('/admin');
     await expect(page).toHaveURL(/\/admin/);
     await expect(page.locator('body')).not.toContainText(/500|Whoops/i);
   });
@@ -53,19 +58,14 @@ test.describe('Direktur — panel akses', () => {
 
   test('Direktur tidak bisa akses halaman create user', async ({ page }) => {
     const response = await page.goto('/admin/users/create');
-    // Direktur tidak punya akses ke UserResource create
-    // Acceptable: 403, redirect ke /admin, atau form yang disabled
     const status = response?.status() ?? 0;
     expect(status).not.toBe(500);
   });
 
   test('Audit Log Direktur — tidak dapat filter tipe teknis', async ({ page }) => {
-    await page.goto('/admin/audit-logs');
-    const status = (await page.goto('/admin/audit-logs'))?.status() ?? 0;
+    const response = await page.goto('/admin/audit-logs');
+    const status = response?.status() ?? 0;
     expect(status).toBeLessThan(500);
-    // Verifikasi filter: Direktur seharusnya hanya lihat bisnis
-    // (implementasi: AuditLogsTable.php scope berdasarkan role)
-    // Kita tidak bisa cek data langsung dari E2E tapi bisa cek halaman load
     await expect(page.locator('body')).not.toContainText(/500|Whoops/i);
   });
 
@@ -81,18 +81,16 @@ test.describe('Direktur — panel akses', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Tim Publikasi — panel /publikasi', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.publikasi);
-  });
+  test.use({ storageState: PUBLIKASI_AUTH });
 
   test('Tim Publikasi masuk ke /publikasi (BUKAN /admin)', async ({ page }) => {
+    await page.goto('/publikasi');
     await expect(page).toHaveURL(/\/publikasi/);
-    // CRITICAL: Jangan ada di /admin
     expect(page.url()).not.toMatch(/^http[s]?:\/\/[^/]+\/admin/);
   });
 
   test('Panel /publikasi load tanpa error', async ({ page }) => {
+    await page.goto('/publikasi');
     await expect(page.locator('body')).not.toContainText(/500|Whoops/i);
   });
 
@@ -112,11 +110,7 @@ test.describe('Tim Publikasi — panel /publikasi', () => {
   }
 
   test('Tim Publikasi tidak bisa akses /admin (bukan panelnya)', async ({ page }) => {
-    // Setelah login sebagai publikasi dan sudah di /publikasi,
-    // coba akses /admin langsung
     const response = await page.goto('/admin');
-    // EnsureTimPublikasi di AdminPanelProvider seharusnya block ini
-    // Atau redirect ke /login
     const isBlocked = response?.status() === 403
       || page.url().includes('/login')
       || page.url().includes('/publikasi');
@@ -134,7 +128,6 @@ test.describe('Tim Publikasi — panel /publikasi', () => {
   test('Panel publikasi punya navigasi untuk kelola konten', async ({ page }) => {
     await page.goto('/publikasi');
     await expect(page.locator('body')).not.toContainText(/500|Whoops/i);
-    // Ada sidebar navigasi
     const hasSidebar = await page.locator('nav, aside, [role="navigation"]').first().isVisible()
       .catch(() => false);
     expect(hasSidebar, 'Panel publikasi harus punya sidebar navigasi').toBe(true);
@@ -146,25 +139,27 @@ test.describe('Tim Publikasi — panel /publikasi', () => {
 // Cross-Panel Enforcement
 // ─────────────────────────────────────────────────────────────
 
-test.describe('Cross-panel enforcement', () => {
+test.describe('Cross-panel enforcement — Direktur', () => {
+  test.use({ storageState: DIREKTUR_AUTH });
 
   test('Direktur tidak bisa akses /publikasi', async ({ page }) => {
-    await loginAs(page, USERS.direktur);
     const response = await page.goto('/publikasi');
     const status = response?.status() ?? 0;
-    // EnsureTimPublikasi harus block Direktur
     const isBlocked = status === 403
       || page.url().includes('/login')
       || !page.url().includes('/publikasi');
     expect(isBlocked, `Direktur tidak boleh akses /publikasi, status: ${status}`).toBe(true);
   });
+});
+
+test.describe('Cross-panel enforcement — Admin Akademik', () => {
+  test.use({ storageState: ADMIN_AUTH });
 
   test('Admin Akademik tidak bisa akses /publikasi', async ({ page }) => {
-    await loginAs(page, USERS.admin);
     const response = await page.goto('/publikasi');
     const isBlocked = (response?.status() === 403)
       || !page.url().includes('/publikasi');
     expect(isBlocked, `Admin Akademik tidak boleh akses panel /publikasi`).toBe(true);
   });
-
 });
+

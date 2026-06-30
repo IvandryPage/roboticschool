@@ -48,3 +48,13 @@ setup('login sebagai siswa', async ({ page }) => {
   await page.waitForURL(/\/siswa\/dashboard/, { timeout: 60_000 });
   await page.context().storageState({ path: path.join(AUTH_DIR, 'siswa.json') });
 });
+
+setup('login sebagai direktur', async ({ page }) => {
+  await page.goto('/login');
+  await page.locator('input[name="email"]').fill('direktur@robonesia.test');
+  await page.locator('input[name="password"]').fill('password');
+  await page.locator('button[type="submit"]').click();
+  await page.waitForURL(/\/admin/, { timeout: 60_000 });
+  await page.context().storageState({ path: path.join(AUTH_DIR, 'direktur.json') });
+});
+

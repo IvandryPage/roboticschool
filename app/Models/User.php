@@ -72,13 +72,23 @@ class User extends Authenticatable implements PasskeyUser, FilamentUser
             ->implode('');
     }
 
-    /**
-     * Tentukan apakah user bisa mengakses Filament panel.
-     * Semua user yang status_aktif = true boleh masuk ke admin panel.
-     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return (bool) $this->status_aktif;
+        if (! $this->status_aktif) {
+            return false;
+        }
+
+        $role = $this->role?->nama_role;
+
+        if ($panel->getId() === 'admin') {
+            return in_array($role, ['Admin Akademik', 'Instruktur', 'Direktur']);
+        }
+
+        if ($panel->getId() === 'publikasi') {
+            return $role === 'Tim Publikasi';
+        }
+
+        return true;
     }
 
     public function role(): BelongsTo

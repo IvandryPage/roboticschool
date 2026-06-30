@@ -12,20 +12,25 @@
  * Catatan: test ini lebih ke integration smoke test,
  * bukan unit test (itu tugas Pest).
  * Yang dicek adalah behavior dari sisi HTTP/UI.
- */
-
-import { test, expect } from '@playwright/test';
+ */import { test, expect } from '@playwright/test';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { USERS, loginAs } from './helpers/auth.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const ADMIN_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'admin.json');
+const SISWA_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'siswa.json');
+const INSTRUKTUR_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'instruktur.json');
+const DIREKTUR_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'direktur.json');
+const PUBLIKASI_AUTH = path.join(__dirname, '..', 'playwright', '.auth', 'publikasi.json');
 
 // ─────────────────────────────────────────────────────────────
 // Sertifikat
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Sertifikat — Admin kelola', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.admin);
-  });
+  test.use({ storageState: ADMIN_AUTH });
 
   test('Halaman list sertifikat ada di /admin/sertifikats', async ({ page }) => {
     const response = await page.goto('/admin/sertifikats');
@@ -33,26 +38,20 @@ test.describe('Sertifikat — Admin kelola', () => {
     await expect(page).not.toHaveURL(/\/login/);
   });
 
-  test('Sertifikat resource hanya tampil di nav Admin (bukan Instruktur)', async ({ page }) => {
-    // Logout dan login sebagai Instruktur
-    await page.goto('/logout').catch(() => null);
-    await page.request.post('/logout').catch(() => null);
-
-    await loginAs(page, USERS.instruktur);
-    await page.goto('/admin/sertifikats');
-    // Instruktur tidak boleh akses sertifikat resource
-    const status = (await page.goto('/admin/sertifikats'))?.status() ?? 0;
-    // Harusnya 403 atau halaman tidak ada di nav
+  test('Sertifikat resource hanya tampil di nav Admin (bukan Instruktur)', async ({ page, browser }) => {
+    // Gunakan context baru dengan session instruktur
+    const instrukturContext = await browser.newContext({ storageState: INSTRUKTUR_AUTH });
+    const instrukturPage = await instrukturContext.newPage();
+    const response = await instrukturPage.goto('/admin/sertifikats');
+    const status = response?.status() ?? 0;
     expect(status).not.toBe(500);
+    await instrukturContext.close();
   });
 
 });
 
 test.describe('Sertifikat — Siswa lihat miliknya', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   test('Siswa bisa akses /sertifikat/saya tanpa error', async ({ page }) => {
     const response = await page.goto('/sertifikat/saya');
@@ -66,29 +65,30 @@ test.describe('Sertifikat — Siswa lihat miliknya', () => {
 // Peminjaman Aset — Admin vs Siswa
 // ─────────────────────────────────────────────────────────────
 
-test.describe('Peminjaman Aset', () => {
+test.describe('Peminjaman Aset — Admin', () => {
+  test.use({ storageState: ADMIN_AUTH });
 
   test('Admin bisa akses /admin/peminjaman-item-asets', async ({ page }) => {
-    await loginAs(page, USERS.admin);
     const response = await page.goto('/admin/peminjaman-item-asets');
     expect(response?.status()).toBeLessThan(500);
   });
+});
+
+test.describe('Peminjaman Aset — Siswa', () => {
+  test.use({ storageState: SISWA_AUTH });
 
   test('Siswa bisa akses /peminjaman (panel siswa)', async ({ page }) => {
-    await loginAs(page, USERS.siswa);
     const response = await page.goto('/peminjaman');
     expect(response?.status()).toBeLessThan(500);
     await expect(page).not.toHaveURL(/\/login/);
   });
 
   test('Siswa TIDAK bisa akses /admin/peminjaman-item-asets', async ({ page }) => {
-    await loginAs(page, USERS.siswa);
     const response = await page.goto('/admin/peminjaman-item-asets');
     const isBlocked = (response?.status() === 403)
       || !page.url().includes('/peminjaman-item-asets');
     expect(isBlocked, 'Siswa tidak boleh akses resource admin peminjaman').toBe(true);
   });
-
 });
 
 // ─────────────────────────────────────────────────────────────
@@ -96,10 +96,7 @@ test.describe('Peminjaman Aset', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('Enrollment kelas baru untuk siswa existing', () => {
-
-  test.beforeEach(async ({ page }) => {
-    await loginAs(page, USERS.siswa);
-  });
+  test.use({ storageState: SISWA_AUTH });
 
   test('Halaman /daftar-kelas tampil untuk siswa', async ({ page }) => {
     const response = await page.goto('/daftar-kelas');
@@ -109,7 +106,6 @@ test.describe('Enrollment kelas baru untuk siswa existing', () => {
 
   test('Nav item "Daftar Kelas Baru" ada di sidebar siswa', async ({ page }) => {
     await page.goto('/siswa/dashboard');
-    // Check sidebar untuk link daftar kelas
     const daftarKelasLink = page.locator('a[href*="daftar-kelas"]');
     const isVisible = await daftarKelasLink.isVisible().catch(() => false);
     if (!isVisible) {
@@ -124,11 +120,6 @@ test.describe('Enrollment kelas baru untuk siswa existing', () => {
 // ─────────────────────────────────────────────────────────────
 
 test.describe('LoginResponse redirect regression test', () => {
-
-  /**
-   * Test ini guard terhadap regression LoginResponse.php yang pernah
-   * salah redirect Instruktur ke /siswa/dashboard.
-   */
 
   test('Instruktur tidak pernah redirect ke /siswa/dashboard', async ({ page }) => {
     await loginAs(page, USERS.instruktur);
@@ -172,35 +163,35 @@ test.describe('LoginResponse redirect regression test', () => {
 test.describe('Filament nav visibility per role', () => {
 
   test('Admin punya navigasi lebih banyak dari Instruktur', async ({ page, browser }) => {
-    // Hitung nav items Admin
-    await loginAs(page, USERS.admin);
-    await page.goto('/admin');
-    const adminNavCount = await page.locator('nav a, aside a').count();
+    // Admin context
+    const adminContext = await browser.newContext({ storageState: ADMIN_AUTH });
+    const adminPage = await adminContext.newPage();
+    await adminPage.goto('/admin');
+    const adminNavCount = await adminPage.locator('nav a, aside a').count();
+    await adminContext.close();
 
-    // Buka context baru untuk Instruktur
-    const instrukturContext = await browser.newContext();
+    // Instruktur context
+    const instrukturContext = await browser.newContext({ storageState: INSTRUKTUR_AUTH });
     const instrukturPage = await instrukturContext.newPage();
-    await loginAs(instrukturPage, USERS.instruktur);
     await instrukturPage.goto('/admin');
     const instrukturNavCount = await instrukturPage.locator('nav a, aside a').count();
     await instrukturContext.close();
 
-    // Admin harus punya lebih banyak atau sama banyak nav item
     expect(adminNavCount).toBeGreaterThanOrEqual(instrukturNavCount);
   });
 
-  test('Instruktur tidak ada tombol "Hapus" di resource Siswa', async ({ page }) => {
-    await loginAs(page, USERS.instruktur);
+  test('Instruktur tidak ada tombol "Hapus" di resource Siswa', async ({ browser }) => {
+    const instrukturContext = await browser.newContext({ storageState: INSTRUKTUR_AUTH });
+    const page = await instrukturContext.newPage();
     const response = await page.goto('/admin/siswas');
     if (response?.status() === 200) {
-      // Kalau bisa akses, tidak boleh ada bulk delete atau tombol hapus
       const deleteBtn = page.locator('button:has-text("Hapus"), button:has-text("Delete")');
-      // Ini bisa false jika Instruktur tidak punya akses sama sekali — itu juga oke
       const deleteCount = await deleteBtn.count();
       if (deleteCount > 0) {
         console.warn(`[WARNING] Instruktur terlihat punya ${deleteCount} tombol Hapus di /admin/siswas`);
       }
     }
+    await instrukturContext.close();
   });
 
 });
@@ -214,8 +205,6 @@ test.describe('Panel Sepian — harus disabled', () => {
   test('/sepian-disabled tidak bisa diakses publik (404 atau redirect)', async ({ page }) => {
     const response = await page.goto('/sepian-disabled');
     const status = response?.status() ?? 0;
-    // Panel ini sengaja dinonaktifkan di SepianPanelProvider
-    // Seharusnya 404 atau redirect ke /login
     expect(status).not.toBe(500);
     expect(status === 404 || page.url().includes('/login'), 
       `Panel /sepian-disabled seharusnya 404 atau redirect login, dapat: ${status}`
