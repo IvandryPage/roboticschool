@@ -70,23 +70,31 @@
                         <a href="{{ route('password.request') }}" class="text-sm font-semibold text-cyan-500 hover:text-cyan-600">Lupa Password?</a>
                     @endif
                 </div>
-                <div class="relative form-input-pill">
+                <div class="relative form-input-pill" x-data="{ showPassword: false }">
                     <svg class="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M17 11V8a5 5 0 0 0-10 0v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
                         <path d="M9 16h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
                     <input
+                        :type="showPassword ? 'text' : 'password'"
                         type="password"
                         name="password"
                         placeholder="Masukkan Password"
                         class="w-full bg-transparent pl-11 pr-10 text-sm text-slate-900 outline-none placeholder:text-slate-400"
                         required
                     />
-                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600">
-                        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600">
+                        <svg x-show="!showPassword" class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <svg x-show="showPassword" style="display: none;" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
+                            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                            <path d="M1 12s4-8 11-8"/>
+                            <path d="M4.73 7.73a11.13 11.13 0 0 0-3.73 4.27s4 8 11 8c1.78 0 3.38-.5 4.77-1.38"/>
+                            <line x1="1" y1="1" x2="23" y2="23"/>
                         </svg>
                     </button>
                 </div>
