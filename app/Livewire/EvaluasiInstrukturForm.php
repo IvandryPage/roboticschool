@@ -25,7 +25,7 @@ class EvaluasiInstrukturForm extends Component
             abort(403);
         }
 
-        if ($kelas->status !== 'selesai') {
+        if (strtolower($kelas->status) !== 'selesai') {
             abort(403);
         }
 

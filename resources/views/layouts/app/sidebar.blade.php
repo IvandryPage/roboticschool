@@ -67,7 +67,7 @@
                                     ->with('kelas')
                                     ->get()
                                     ->filter(fn ($e) =>
-                                        $e->kelas?->status === 'selesai' &&
+                                        strtolower($e->kelas?->status ?? '') === 'selesai' &&
                                         ! \App\Models\EvaluasiInstruktur::where('kelas_id', $e->kelas_id)
                                             ->where('siswa_id', $siswa->id)
                                             ->exists()
